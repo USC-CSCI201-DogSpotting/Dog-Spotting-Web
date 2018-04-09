@@ -1,11 +1,15 @@
 package csci201;
 
 import java.io.IOException;
+
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -27,14 +31,16 @@ public class Login extends HttpServlet {
 		
 		/* database starts */
 		// variables
-		String username = "a";
-		String password = "b";
+		String username = request.getParameter("loginusername");
+		String password = request.getParameter("loginpassword");
 		boolean isValid = false;
+		String next = "";
 
 		Connection conn = null;
 		Statement st = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
+		int userID = 0;
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
 			conn = DriverManager.getConnection("jdbc:mysql://localhost/DogSpotting?user=root&password=root&useSSL=false");
@@ -44,7 +50,7 @@ public class Login extends HttpServlet {
 			rs = ps.executeQuery();
 			// check if user exists and check password
 			while (rs.next()) {
-				int userID = rs.getInt("userID");
+				userID = rs.getInt("userID");
 				String dataPassword = rs.getString("password");
 				if(dataPassword.equals(password)) {
 					isValid = true;
@@ -74,8 +80,35 @@ public class Login extends HttpServlet {
 		}
 		/* database ends */
 		
+		
 		/* output boolean isValid */
 		/* output int userID if valid */
+		
+		//PROCESSING VALID BOOLEAN AND FORWARD TO APPROPRIATE PAGE
+		if(isValid) {
+			HttpSession s = request.getSession();
+			s.setAttribute("currentusername", username);
+			s.setAttribute("currentuserid", userID);
+			s.setAttribute("loggedin", true);
+			next = "/HomeFeed.jsp";
+			
+		}else {
+			
+			next = "/GuestPage.jsp";
+			request.setAttribute("login_err", "Please enter a valid username and password");
+		}
+		
+		RequestDispatcher dispatch = getServletContext().getRequestDispatcher(next);
+		
+    	try {
+    		dispatch.forward(request,response);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ServletException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 }

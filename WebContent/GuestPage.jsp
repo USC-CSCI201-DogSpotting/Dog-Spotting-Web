@@ -91,10 +91,11 @@
 					<button type="button" class="close" data-dismiss="modal">&times;</button>
 					<h1 class="modal-title">Log In</h1>
 				</div>
-				<form action="/action_page.php">
+				<form method="GET" action="Login">
 					<div class="modal-body">
-						Username:<input type="text" id="username"></><br><br>
-						 Password:<input type="password" id="password"></><br>
+						Username:<input type="text" id="loginusername"></><br><br>
+						 Password:<input type="password" id="loginpassword"></><br>
+						 <span id="err" style="color: darkred;font-weight:bold">${login_err!=null? login_err : ''}</span>
 					</div>
 					<div class="modal-footer">
 						<button type="button" id="close" class="btn btn-default"
