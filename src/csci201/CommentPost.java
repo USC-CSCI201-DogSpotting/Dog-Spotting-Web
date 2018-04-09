@@ -9,7 +9,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -18,10 +17,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * Servlet implementation class HomeFeed
+ * Servlet implementation class CommentPost
  */
-@WebServlet("/HomeFeed")
-public class HomeFeed extends HttpServlet {
+@WebServlet("/CommentPost")
+public class CommentPost extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	/**
@@ -29,11 +28,13 @@ public class HomeFeed extends HttpServlet {
 	 */
 	protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-
+		
 		/* database starts */
 		// variables
+		int postID = 1;
 		String username = "a";
-		List<Post> posts = new ArrayList<Post>();
+		String content = "a";
+		Post post;
 
 		Connection conn = null;
 		Statement st = null;
@@ -45,7 +46,7 @@ public class HomeFeed extends HttpServlet {
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
 			conn = DriverManager.getConnection("jdbc:mysql://localhost/DogSpotting?user=root&password=root&useSSL=false");
-			st = conn.createStatement();
+			// find userID
 			ps = conn.prepareStatement("SELECT userID FROM User WHERE username=?");
 			ps.setString(1, username); // set first variable in prepared statement
 			rs = ps.executeQuery();
@@ -53,15 +54,20 @@ public class HomeFeed extends HttpServlet {
 			while (rs.next()) { // get userID
 				userID = rs.getInt("userID");
 			}
-			ps = conn.prepareStatement("SELECT u.username, p.postID, p.image, p.description, p.tag1, p.tag2, p.tag3, p.tag4, p.tag5 " +
-					"FROM Post p, Follow f, User u " +
-					"WHERE p.userID = f.followingID " +
-					"AND p.userID = u.userID " +
-					"AND f.followerID = ?" +
-					"LIMIT 100");
+			// insert new comment
+			ps = conn.prepareStatement("INSERT INTO Comment (userID, postID, content) VALUES (?, ?, ?)");
 			ps.setLong(1, userID);
+			ps.setLong(2, postID);
+			ps.setString(3, content);
+			ps.executeUpdate();
+			
+			// re-fetch post
+			st = conn.createStatement();
+			ps = conn.prepareStatement("SELECT * FROM Post WHERE postID=?");
+			ps.setLong(1, postID); // set first variable in prepared statement
 			rs = ps.executeQuery();
-			while (rs.next()) { // add in posts
+			// check if user exists and check password
+			while (rs.next()) {
 				// load tags
 				List<String> tags = new ArrayList<String>();
 				if(rs.getString("tag1") != null) { tags.add(rs.getString("tag1")); }
@@ -70,7 +76,6 @@ public class HomeFeed extends HttpServlet {
 				if(rs.getString("tag4") != null) { tags.add(rs.getString("tag4")); }
 				if(rs.getString("tag5") != null) { tags.add(rs.getString("tag5")); }
 				// load comments
-				int postID = rs.getInt("postID");
 				List<Comment> comments = new ArrayList<Comment>();
 				st2 = conn.createStatement();
 				ps2 = conn.prepareStatement("SELECT u.username, c.content FROM Comment c, User u " + 
@@ -81,8 +86,7 @@ public class HomeFeed extends HttpServlet {
 					Comment tempComment = new Comment(rs2.getString("username"), rs2.getString("content"));
 					comments.add(tempComment);
 				}
-				Post tempPost = new Post(rs.getString("image"), rs.getString("username"), rs.getString("description"), tags, comments);
-				posts.add(tempPost);
+				post = new Post(rs.getString("image"), rs.getString("username"), rs.getString("description"), tags, comments);
 			}
 		} catch (SQLException sqle) {
 			System.out.println ("SQLException: " + sqle.getMessage());
@@ -105,23 +109,10 @@ public class HomeFeed extends HttpServlet {
 			} catch (SQLException sqle) {
 				System.out.println("sqle: " + sqle.getMessage());
 			}
-			try {
-				if (rs2 != null) {
-					rs2.close();
-				}
-				if (st2 != null) {
-					st2.close();
-				}
-				if (ps2 != null) {
-					ps2.close();
-				}
-			} catch (SQLException sqle) {
-				System.out.println("sqle: " + sqle.getMessage());
-			}
 		}
 		/* database ends */
 		
-		/* output List<Post> posts */
+		/* output Post post */
 	}
 
 }
