@@ -18,13 +18,15 @@ class Comment {
 }
 
 class Post {
+	int postID;
 	String imageURL;
 	String username;
 	String description;
 	List<String> tags;
 	List<Comment> comments;
 	int numOfLikes;
-	public Post(String imageURL, String username, String description, List<String> tags, List<Comment> comments) {
+	public Post(int postID, String imageURL, String username, String description, List<String> tags, List<Comment> comments) {
+		this.postID = postID;
 		this.imageURL = imageURL;
 		this.username = username;
 		this.description = description;

@@ -86,7 +86,7 @@ public class CommentPost extends HttpServlet {
 					Comment tempComment = new Comment(rs2.getString("username"), rs2.getString("content"));
 					comments.add(tempComment);
 				}
-				post = new Post(rs.getString("image"), rs.getString("username"), rs.getString("description"), tags, comments);
+				post = new Post(postID, rs.getString("image"), rs.getString("username"), rs.getString("description"), tags, comments);
 			}
 		} catch (SQLException sqle) {
 			System.out.println ("SQLException: " + sqle.getMessage());

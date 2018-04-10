@@ -81,7 +81,7 @@ public class Profile extends HttpServlet {
 					Comment tempComment = new Comment(rs2.getString("username"), rs2.getString("content"));
 					comments.add(tempComment);
 				}
-				Post tempPost = new Post(rs.getString("image"), rs.getString("username"), rs.getString("description"), tags, comments);
+				Post tempPost = new Post(postID, rs.getString("image"), rs.getString("username"), rs.getString("description"), tags, comments);
 				ownPosts.add(tempPost);
 			}
 
