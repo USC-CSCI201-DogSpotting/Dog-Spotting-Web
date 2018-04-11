@@ -17,7 +17,7 @@ class Comment {
 	}
 }
 
-class Post {
+public class Post {
 	int postID;
 	String imageURL;
 	String username;
@@ -33,19 +33,19 @@ class Post {
 		this.tags = tags;
 		this.comments = comments;
 	}
-	String getImageURL() {
+	public String getImageURL() {
 		return imageURL;
 	}
-	String getUsername() {
+	public String getUsername() {
 		return username;
 	}
-	String getDescription() {
+	public String getDescription() {
 		return description;
 	}
-	List<String> getTags() {
+	public List<String> getTags() {
 		return tags;
 	}
-	List<Comment> getComments() {
+	public List<Comment> getComments() {
 		return comments;
 	}
 }

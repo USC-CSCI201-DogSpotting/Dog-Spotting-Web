@@ -64,12 +64,12 @@
 				</div>
 				<form action="/action_page.php">
 					<div class="modal-body">
-						Username:<input type="text" id="username"></><br><br>
-						Password:<input type="password" id="password"></><br><br>
-						Retype Password:<input type="password" id="password"></><br>
+						Username:<input type="text" name="username"></><br><br>
+						Password:<input type="password" name="password"></><br><br>
+						Retype Password:<input type="password" name="repassword"></><br>
 					</div>
 					<div class="modal-footer">
-						<button type="button" id="close" class="btn btn-default"
+						<button type="button" class="btn btn-default close"
 							data-dismiss="modal">Close</button>
 						<input class="btn btn-default" type="submit">
 					</div>
@@ -93,12 +93,12 @@
 				</div>
 				<form method="GET" action="Login">
 					<div class="modal-body">
-						Username:<input type="text" id="loginusername"></><br><br>
-						 Password:<input type="password" id="loginpassword"></><br>
+						Username:<input type="text" name="loginusername"></><br><br>
+						 Password:<input type="password" name="loginpassword"></><br>
 						 <span id="err" style="color: darkred;font-weight:bold">${login_err!=null? login_err : ''}</span>
 					</div>
 					<div class="modal-footer">
-						<button type="button" id="close" class="btn btn-default"
+						<button type="button" class="btn btn-default close"
 							data-dismiss="modal">Close</button>
 						<input class="btn btn-default" type="submit">
 					</div>
@@ -107,7 +107,40 @@
 
 		</div>
 	</div>
+	
+	<div class="container" style="padding-top: 70px">
+  <div id="posts">
+  </div>
+  <div id="readMoreButton">
+  <button class="btn btn-primary" id="readMore">Read More</button>
+  </div>
+  </div>
 
+
+<script>
+  var numOfPost = 0;
+  var postEachPage = 1;
+  var curCount = 0;
+  
+  $(document).ready(function() {
+    $("#readMore").click();
+  }); 
+  $("#readMore").on("click", function() {
+	  numOfPost += postEachPage;
+	  curCount = 0;
+	  $.post("TopRank", { rank: 0, limit: numOfPost }, function(responseJson) {
+		  $("#posts").empty();
+		  $.each(responseJson, function(index, post) {
+			  curCount++;
+			  $("#posts").append("<div class='container post thumbnail'><a href='PostPage?postID=" + post.postID + "'><img src='" + post.imageURL + "'></a></div>");
+			});
+		  if (curCount <= numOfPost - postEachPage) {
+			  $("#readMoreButton").html("No more posts");
+		  }
+		});
+	});
+  
+</script>
 </body>
 </html>
 

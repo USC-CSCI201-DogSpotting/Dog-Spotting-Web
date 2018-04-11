@@ -10,6 +10,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -31,8 +32,8 @@ public class PostPage extends HttpServlet {
 		
 		/* database starts */
 		// variables
-		int postID = 1;
-		Post post;
+		int postID = Integer.parseInt(request.getParameter("postID"));
+		Post post = null;
 
 		Connection conn = null;
 		Statement st = null;
@@ -45,7 +46,9 @@ public class PostPage extends HttpServlet {
 			Class.forName("com.mysql.jdbc.Driver");
 			conn = DriverManager.getConnection("jdbc:mysql://localhost/DogSpotting?user=root&password=root&useSSL=false");
 			st = conn.createStatement();
-			ps = conn.prepareStatement("SELECT * FROM Post WHERE postID=?");
+			ps = conn.prepareStatement(
+                    "SELECT u.username, p.postID, p.image, p.description, p.tag1, p.tag2, p.tag3, p.tag4, p.tag5 "
+                            + " FROM User u, Post p" + " WHERE u.userID=p.userID AND postID=?");
 			ps.setLong(1, postID); // set first variable in prepared statement
 			rs = ps.executeQuery();
 			// check if user exists and check password
@@ -95,6 +98,10 @@ public class PostPage extends HttpServlet {
 		/* database ends */
 		
 		/* output Post post */
+		String pageToForward = "/IndividualPost.jsp";
+		request.setAttribute("post", post);
+		RequestDispatcher dispatch = getServletContext().getRequestDispatcher(pageToForward);
+		dispatch.forward(request, response);
 	}
 
 }

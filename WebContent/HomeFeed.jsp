@@ -14,9 +14,9 @@
   	<span class="nav"> <img src="none"></img> <text>DogSpotting</text>
 		<input type="text" placeholder="Search..">
 <button type="button" class="btn btn-default" data-toggle="modal" data-target="#myModal">+</button>
-<button type="button" class="btn btn-default">Top</button>
-<button type="button" class="btn btn-default">Username</button>
-<button type="button" class="btn btn-default">Log Out</button>
+<a href="TopRanked.jsp" type="button" class="btn btn-default">Top</a>
+<a type="button" class="btn btn-default">Username</a>
+<a type="button" class="btn btn-default">Log Out</a>
 	</span>
 	<br>
   <!-- Trigger the modal with a button -->
@@ -51,7 +51,39 @@
       
     </div>
   </div>
+  
+  <div class="container" style="padding-top: 70px">
+  <div id="posts">
+  </div>
+  <div id="readMoreButton">
+  <button class="btn btn-primary" id="readMore">Read More</button>
+  </div>
+  </div>
 
+<script>
+  var numOfPost = 0;
+  var postEachPage = 20;
+  var curCount = 0;
+  
+  $(document).ready(function() {
+    $("#readMore").click();
+  }); 
+  $("#readMore").on("click", function() {
+    numOfPost += postEachPage;
+    curCount = 0;
+    $.post("HomeFeed", { username: 'a', limit: numOfPost }, function(responseJson) {
+      $("#posts").empty();
+      $.each(responseJson, function(index, post) {
+        curCount++;
+        $("#posts").append("<div class='container post thumbnail'><a href='PostPage?postID=" + post.postID + "'><img src='" + post.imageURL + "'></a></div>");
+      });
+      if (curCount <= numOfPost - postEachPage) {
+        $("#readMoreButton").html("No more posts");
+      }
+    });
+  });
+  
+</script>
 </body>
 </html>
 

@@ -16,6 +16,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.gson.Gson;
+
 /**
  * Servlet implementation class TopRank
  */
@@ -31,7 +33,9 @@ public class TopRank extends HttpServlet {
 		
 		/* database starts */
 		// variables
-		int rankSelection = 0; // 0: daily, 1: weekly, 2: monthly
+		int rankSelection = Integer.parseInt(request.getParameter("rank"));
+		int limit = Integer.parseInt(request.getParameter("limit"));
+		// 0: daily, 1: weekly, 2: monthly
 		List<Post> posts = new ArrayList<Post>();
 
 		// check if ranks are up to date
@@ -50,13 +54,13 @@ public class TopRank extends HttpServlet {
 			st = conn.createStatement();
 			if(rankSelection == 0) {
 				ps = conn.prepareStatement("SELECT * FROM DailyRank r, Post p, User u " + 
-						"WHERE r.postID = p.postID AND p.userID = u.userID");
+						"WHERE r.postID = p.postID AND p.userID = u.userID " + " LIMIT " + limit);
 			}else if(rankSelection == 1) {
 				ps = conn.prepareStatement("SELECT * FROM WeeklyRank r, Post p, User u " +
-						"WHERE r.postID = p.postID AND p.userID = u.userID");
+						"WHERE r.postID = p.postID AND p.userID = u.userID " + " LIMIT " + limit);
 			}else{
 				ps = conn.prepareStatement("SELECT * FROM MonthlyRank r, Post p, User u " +
-						"WHERE r.postID = p.postID AND p.userID = u.userID");
+						"WHERE r.postID = p.postID AND p.userID = u.userID " + " LIMIT " + limit);
 			}
 			rs = ps.executeQuery();
 			while (rs.next()) { // load ranked posts
@@ -119,6 +123,14 @@ public class TopRank extends HttpServlet {
 		}
 		/* database ends */
 		
-		/* output List<Post> posts */	}
+		/* output List<Post> posts */	
+		Gson gson = new Gson();
+		String json = gson.toJson(posts);
+//		System.out.println(limit + " " + posts.size());
+//		System.out.println(json);
+	    response.setContentType("application/json");
+	    response.setCharacterEncoding("UTF-8");
+	    response.getWriter().write(json);
+	}
 
 }

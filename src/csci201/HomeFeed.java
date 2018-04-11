@@ -17,6 +17,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.gson.Gson;
+
 /**
  * Servlet implementation class HomeFeed
  */
@@ -32,7 +34,8 @@ public class HomeFeed extends HttpServlet {
 
 		/* database starts */
 		// variables
-		String username = "a";
+		String username = request.getParameter("username");
+		int limit = Integer.parseInt(request.getParameter("limit"));
 		List<Post> posts = new ArrayList<Post>();
 
 		Connection conn = null;
@@ -57,8 +60,8 @@ public class HomeFeed extends HttpServlet {
 					"FROM Post p, Follow f, User u " +
 					"WHERE p.userID = f.followingID " +
 					"AND p.userID = u.userID " +
-					"AND f.followerID = ?" +
-					"LIMIT 100");
+					"AND f.followerID = ? " +
+					"LIMIT " + limit);
 			ps.setLong(1, userID);
 			rs = ps.executeQuery();
 			while (rs.next()) { // add in posts
@@ -122,6 +125,13 @@ public class HomeFeed extends HttpServlet {
 		/* database ends */
 		
 		/* output List<Post> posts */
+		Gson gson = new Gson();
+		String json = gson.toJson(posts);
+//		System.out.println(limit + " " + posts.size());
+//		System.out.println(json);
+	    response.setContentType("application/json");
+	    response.setCharacterEncoding("UTF-8");
+	    response.getWriter().write(json);
 	}
 
 }
