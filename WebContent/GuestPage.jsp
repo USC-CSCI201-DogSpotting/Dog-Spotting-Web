@@ -11,27 +11,26 @@
 <script
 	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <script>
-	function validate() {
-		console.log("here");
-		var requeststr = "Login?";
-		requeststr += "username="
-				+ document.getElementById("loginusername").value;
-		requeststr += "&password="
-				+ document.getElementById("loginpassword").value;
-		console.log(requeststr);
-		var xhttp = new XMLHttpRequest();
-		xhttp.open("GET", requeststr, false);
-		xhttp.send();
-		console.log(xhttp.responseText);
-		if (xhttp.responseText.trim().length > 0) {
-			console.log('login failed')
-			document.getElementById("login_err").innerHTML = xhttp.responseText;
-		} else {
-			console.log('login success')
-			window.location = "HomeFeed.jsp"
-		}
-
-	}
+    function validate() {
+        console.log("here");
+        var requeststr = "Login?";
+        requeststr += "username="
+                + document.getElementById("loginusername").value;
+        requeststr += "&password="
+                + document.getElementById("loginpassword").value;
+        console.log(requeststr);
+        var xhttp = new XMLHttpRequest();
+        xhttp.open("POST", requeststr, false);
+        xhttp.send();
+        console.log(xhttp.responseText);
+        if (xhttp.responseText.trim().length > 0) {
+            console.log('login failed')
+            document.getElementById("login_err").innerHTML = xhttp.responseText;
+        } else {
+            console.log('login success')
+            window.location = "HomeFeed.jsp"
+        }
+    }
 </script>
 </head>
 <body>
@@ -72,13 +71,9 @@
 		</div>
 	</div>
 	<!-- Trigger the modal with a button -->
-
-
-
 	<!-- Modal2 -->
 	<div class="modal fade" id="myModal2" role="dialog">
 		<div class="modal-dialog">
-
 			<!-- Modal content-->
 			<div class="modal-content">
 				<div class="modal-header">
@@ -99,16 +94,12 @@
 					</div>
 				</form>
 			</div>
-
 		</div>
 	</div>
-
 	<div></div>
-
 	<!-- Modal -->
 	<div class="modal fade" id="myModal" role="dialog">
 		<div class="modal-dialog">
-
 			<!-- Modal content-->
 			<div class="modal-content">
 				<div class="modal-header">
@@ -128,84 +119,55 @@
 					</div>
 				</div>
 			</div>
-
 		</div>
 	</div>
 	<div class="container" style="padding-top: 70px">
-
 		<div id="posts"></div>
-
 		<div id="readMoreButton">
-
 			<button class="btn btn-primary" id="readMore">Read More</button>
-
 		</div>
-
 	</div>
-
-
-
 	<script>
-		var numOfPost = 0;
-
-		var postEachPage = 1;
-
-		var curCount = 0;
-
-		$(document).ready(function() {
-
-			$("#readMore").click();
-
-		});
-
-		$("#readMore")
-				.on(
-						"click",
-						function() {
-
-							numOfPost += postEachPage;
-
-							curCount = 0;
-
-							$
-									.post(
-											"TopRank",
-											{
-												rank : 0,
-												limit : numOfPost
-											},
-											function(responseJson) {
-
-												$("#posts").empty();
-
-												$
-														.each(
-																responseJson,
-																function(index,
-																		post) {
-
-																	curCount++;
-
-																	$("#posts")
-																			.append(
-																					"<div class='container post thumbnail'><a href='PostPage?postID="
-																							+ post.postID
-																							+ "'><img src='" + post.imageURL + "'></a></div>");
-
-																});
-
-												if (curCount <= numOfPost
-														- postEachPage) {
-
-													$("#readMoreButton").html(
-															"No more posts");
-
-												}
-
-											});
-
-						});
-	</script>
+        var numOfPost = 0;
+        var postEachPage = 1;
+        var curCount = 0;
+        $(document).ready(function() {
+            $("#readMore").click();
+        });
+        $("#readMore")
+                .on(
+                        "click",
+                        function() {
+                            numOfPost += postEachPage;
+                            curCount = 0;
+                            $
+                                    .post(
+                                            "TopRank",
+                                            {
+                                                rank : 0,
+                                                limit : numOfPost
+                                            },
+                                            function(responseJson) {
+                                                $("#posts").empty();
+                                                $
+                                                        .each(
+                                                                responseJson,
+                                                                function(index,
+                                                                        post) {
+                                                                    curCount++;
+                                                                    $("#posts")
+                                                                            .append(
+                                                                                    "<div class='container post thumbnail'><a href='PostPage?postID="
+                                                                                            + post.postID
+                                                                                            + "'><img src='" + post.imageURL + "'></a></div>");
+                                                                });
+                                                if (curCount <= numOfPost
+                                                        - postEachPage) {
+                                                    $("#readMoreButton").html(
+                                                            "No more posts");
+                                                }
+                                            });
+                        });
+    </script>
 </body>
 </html>
-
