@@ -71,7 +71,7 @@
   $("#readMore").on("click", function() {
     numOfPost += postEachPage;
     curCount = 0;
-    $.post("HomeFeed", { username: 'a', limit: numOfPost }, function(responseJson) {
+    $.post("HomeFeed", { username: "a", limit: numOfPost }, function(responseJson) {
       $("#posts").empty();
       $.each(responseJson, function(index, post) {
         curCount++;

@@ -119,7 +119,7 @@
 
 <script>
   var numOfPost = 0;
-  var postEachPage = 1;
+  var postEachPage = 20;
   var curCount = 0;
   
   $(document).ready(function() {
