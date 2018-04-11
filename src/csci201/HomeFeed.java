@@ -37,6 +37,8 @@ public class HomeFeed extends HttpServlet {
 		String username = request.getParameter("username");
 		int limit = Integer.parseInt(request.getParameter("limit"));
 		List<Post> posts = new ArrayList<Post>();
+		
+		System.out.println(username);
 
 		Connection conn = null;
 		Statement st = null;
