@@ -128,26 +128,47 @@
 		</div>
 	</div>
 	<script>
-    var numOfPost = 0;
-    var postEachPage = 1;
-    var curCount = 0;
-    $(document).ready(function() {
-      $("#readMore").click();
-    });
-    $("#readMore").on("click", function() {
-        numOfPost += postEachPage;
-        curCount = 0;
-        $.post("TopRank", { rank : 0, limit : numOfPost }, function(responseJson) {
-          $("#posts").empty();
-          $.each(responseJson, function(index, post) {
-            curCount++;
-            $("#posts").append("<div class='container post thumbnail'><a href='PostPage?postID=" + post.postID + "'><img src='" + post.imageURL + "'></a></div>");
-          });
-          if (curCount <= numOfPost - postEachPage) {
-            $("#readMoreButton").html("No more posts");
-          }
-        });
-      });
+	  var numOfPost = 0;
+	  var postEachPage = 20;
+	  var curCount = 0;
+	  var rank = 0;
+	  
+	  $(document).ready(function() {
+	    $("#readMore").click();
+	  });
+	  
+	  $("#today").on("click", function() {
+	    rank = 0;
+	    numOfPost = 0;
+	    $("#readMore").click();
+	  })
+	  
+	  $("#week").on("click", function() {
+	    rank = 1;
+	    numOfPost = 0;
+	    $("#readMore").click();
+	  })
+	  
+	  $("#month").on("click", function() {
+	    rank = 2;
+	    numOfPost = 0;
+	    $("#readMore").click();
+	  })
+	  
+	  $("#readMore").on("click", function() {
+	    numOfPost += postEachPage;
+	    curCount = 0;
+	    $.post("TopRank", { rank: rank, limit: numOfPost }, function(responseJson) {
+	      $("#posts").empty();
+	      $.each(responseJson, function(index, post) {
+	        curCount++;
+	        $("#posts").append("<div class='container post thumbnail'><a href='PostPage?postID=" + post.postID + "'><img src='" + post.imageURL + "'></a></div>");
+	      });
+	      if (curCount <= numOfPost - postEachPage) {
+	        $("#readMoreButton").html("No more posts");
+	      }
+	    });
+	  });
     </script>
 </body>
 </html>
