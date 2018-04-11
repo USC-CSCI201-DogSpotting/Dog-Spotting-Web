@@ -20,7 +20,7 @@
 				+ document.getElementById("loginpassword").value;
 		console.log(requeststr);
 		var xhttp = new XMLHttpRequest();
-		xhttp.open("GET", requeststr, false);
+		xhttp.open("POST", requeststr, false);
 		xhttp.send();
 		console.log(xhttp.responseText);
 		if (xhttp.responseText.trim().length > 0) {
