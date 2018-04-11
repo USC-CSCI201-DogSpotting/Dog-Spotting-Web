@@ -11,14 +11,30 @@
 <body>
 
 <div class="container">
-  	<span class="nav"> <img src="none"></img> <text>DogSpotting</text>
-		<input type="text" placeholder="Search..">
-<button type="button" class="btn btn-default" data-toggle="modal" data-target="#myModal">+</button>
-<a href="TopRanked.jsp" type="button" class="btn btn-default">Top</a>
-<a type="button" class="btn btn-default">Username</a>
-<a type="button" class="btn btn-default">Log Out</a>
-	</span>
-	<br>
+  	<nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <a class="navbar-brand" href="#">DogSpotting</a>
+      </div>
+      <form method="GET" class="navbar-form navbar-left" action="Search.jsp">
+        <div class="input-group">
+          <input type="text" id="search" class="form-control"
+            placeholder="Search" name="search">
+          <div class="input-group-btn">
+            <button class="btn btn-default" type="submit">
+              <i class="glyphicon glyphicon-search"></i>
+            </button>
+          </div>
+        </div>
+      </form>
+      <ul class="nav navbar-nav">
+      <li><button type="button" class="btn btn-default" data-toggle="modal" data-target="#myModal">+</button></li>
+      <li><a href="TopRanked.jsp" type="button">Top</a></li>
+      <li><a type="button">Username</a></li>
+      <li><a type="button">Log Out</a></li>
+      </ul>
+    </div>
+  </nav>
   <!-- Trigger the modal with a button -->
 
   <!-- Modal -->
