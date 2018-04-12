@@ -21,7 +21,7 @@ CREATE TABLE User (
   userID int(10) primary key not null auto_increment,
     username varchar(15) not null,
     password varchar(15) not null,
-    picture varchar(50) not null
+    picture varchar(300) not null
 );
 
 INSERT INTO User (username, password, picture)

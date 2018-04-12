@@ -8,6 +8,22 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
   	<script>
+  	window.onload = function(){
+  		var loggedin = <%=request.getSession().getAttribute("loggedin")%>;
+  		if(loggedin===false){
+  			console.log("loggedin");
+  			window.location = "GuestPage.jsp";
+  		}
+  	}
+  	function logout(){
+  		<%
+  		HttpSession s = request.getSession();
+		s.setAttribute("currentuser", null);
+		s.setAttribute("loggedin", false);
+		%>
+		window.location = "GuestPage.jsp";
+  		
+  	}
     function validate() {
         console.log("here");
         var requeststr = "NewPost?";
@@ -63,7 +79,7 @@
 <button type="button" class="btn btn-default" data-toggle="modal" data-target="#myModal">+</button>
 <button type="button" class="btn btn-default">Top</button>
 <button type="submit" class="btn btn-default" onclick="location.href='UserProfile.jsp'"><%=(String)session.getAttribute("currentusername")%></button>
-<button type="button" class="btn btn-default">Log Out</button>
+<button type="button" class="btn btn-default" onclick="logout()">Log Out</button>
 	</span>
 	<br>
 	</div>
