@@ -6,6 +6,22 @@
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 		<title>Dog Spotting</title>
+		<script>
+	  	window.onload = function(){
+	  		var loggedin = <%=request.getSession().getAttribute("loggedin")%>;
+	  		console.log(loggedin);
+	  		if(loggedin===false){
+	  			console.log("loggedin");
+	  			window.location = "GuestPage.jsp";
+	  		}
+	  	}
+	  	function logout(){
+	  		var xhttp = new XMLHttpRequest();
+	  		xhttp.open("GET", "Logout?", true); //synchronous
+	  		xhttp.send();
+	  		window.location.replace("GuestPage.jsp");	
+	  	}
+	  	</script>
 	</head>
 	<body>
 		<% 

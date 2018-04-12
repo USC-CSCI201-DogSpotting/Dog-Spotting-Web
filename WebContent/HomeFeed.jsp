@@ -10,19 +10,17 @@
   	<script>
   	window.onload = function(){
   		var loggedin = <%=request.getSession().getAttribute("loggedin")%>;
+  		console.log(loggedin);
   		if(loggedin===false){
   			console.log("loggedin");
   			window.location = "GuestPage.jsp";
   		}
   	}
   	function logout(){
-  		<%
-  		HttpSession s = request.getSession();
-		s.setAttribute("currentuser", null);
-		s.setAttribute("loggedin", false);
-		%>
-		window.location = "GuestPage.jsp";
-  		
+  		var xhttp = new XMLHttpRequest();
+  		xhttp.open("GET", "Logout?", true); //synchronous
+  		xhttp.send();
+  		window.location.replace("GuestPage.jsp");	
   	}
     function validate() {
         console.log("here");

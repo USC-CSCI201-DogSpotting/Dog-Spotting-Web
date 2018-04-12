@@ -11,6 +11,22 @@
   src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script
   src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <script>
+	window.onload = function(){
+  		var loggedin = <%=request.getSession().getAttribute("loggedin")%>;
+  		console.log(loggedin);
+  		if(loggedin===false){
+  			console.log("loggedin");
+  			window.location = "GuestPage.jsp";
+  		}
+  	}
+  	function logout(){
+  		var xhttp = new XMLHttpRequest();
+  		xhttp.open("GET", "Logout?", true); //synchronous
+  		xhttp.send();
+  		window.location.replace("GuestPage.jsp");	
+  	}
+  	</script>
 </head>
 <body>
 
@@ -39,7 +55,7 @@ String search = (String)request.getParameter("search");
       <li><button type="button" class="btn btn-default" data-toggle="modal" data-target="#myModal">+</button></li>
 			<li><a href="TopRanked.jsp" type="button">Top</a></li>
 			<li><a type="button">Username</a></li>
-			<li><a type="button">Log Out</a></li>
+			<li><a type="button" onclick="logout()">Log Out</a></li>
       </ul>
     </div>
   </nav>
