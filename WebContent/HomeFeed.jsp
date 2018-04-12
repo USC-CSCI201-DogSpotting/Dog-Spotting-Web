@@ -74,14 +74,30 @@
 <body>
 
 <div class="container">
-  	<span class="nav"> <img src="none"></img> <text>DogSpotting</text>
-		<input type="text" placeholder="Search..">
-<button type="button" class="btn btn-default" data-toggle="modal" data-target="#myModal">+</button>
-<button type="button" class="btn btn-default">Top</button>
-<button type="submit" class="btn btn-default" onclick="location.href='UserProfile.jsp'"><%=(String)session.getAttribute("currentusername")%></button>
-<button type="button" class="btn btn-default" onclick="logout()">Log Out</button>
-	</span>
-	<br>
+  	 <nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <a class="navbar-brand" href="#">DogSpotting</a>
+      </div>
+      <form method="GET" class="navbar-form navbar-left" action="Search.jsp">
+        <div class="input-group">
+          <input type="text" id="search" class="form-control"
+            placeholder="Search" name="search">
+          <div class="input-group-btn">
+            <button class="btn btn-default" type="submit">
+              <i class="glyphicon glyphicon-search"></i>
+            </button>
+          </div>
+        </div>
+      </form>
+      <ul class="nav navbar-nav">
+      <li><button type="button" class="btn btn-default" data-toggle="modal" data-target="#myModal">+</button></li>
+      <li><a href="TopRanked.jsp" type="button">Top</a></li>
+      <li><a type="button" onclick="location.href='UserProfile.jsp'"><%=(String)session.getAttribute("currentusername")%></a></li>
+      <li><a type="button" onclick="logout()">Log Out</a></li>
+      </ul>
+    </div>
+  </nav>
 	</div>
   <!-- Trigger the modal with a button -->
 
@@ -116,7 +132,6 @@
     </div>
   </div>
     </div>
-  </div>
 
   <div class="container" style="padding-top: 70px">
   <div id="posts">

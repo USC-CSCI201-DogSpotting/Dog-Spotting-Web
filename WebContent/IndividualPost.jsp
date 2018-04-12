@@ -6,15 +6,6 @@
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 		<title>Dog Spotting</title>
-		<script>
-	  	window.onload = function(){
-	  		var loggedin = <%=request.getSession().getAttribute("loggedin")%>;
-	  		if(loggedin===false){
-	  			console.log("loggedin");
-	  			window.location = "GuestPage.jsp";
-	  		}
-	  	}
-	  	</script>
 	</head>
 	<body>
 		<% 
