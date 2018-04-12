@@ -37,7 +37,7 @@ public class Login extends HttpServlet {
 		String password = request.getParameter("password");
 		System.out.println(username);
 		System.out.println(password);
-		
+
 		boolean isValid = false;
 
 		Connection conn = null;
@@ -94,7 +94,7 @@ public class Login extends HttpServlet {
 
 		/* output boolean isValid */
 		/* output int userID if valid */
-		System.out.println("isValid: "+isValid);
+		System.out.println("isValid: " + isValid);
 		System.out.println(userID);
 
 		// PROCESSING VALID BOOLEAN AND FORWARD TO APPROPRIATE PAGE
@@ -102,29 +102,30 @@ public class Login extends HttpServlet {
 		if (isValid) {
 			HttpSession s = request.getSession();
 			s.setAttribute("currentusername", username);
-			s.setAttribute("currentuserid", userID);
 			s.setAttribute("loggedin", true);
-			//next = "/HomeFeed.jsp";
+			// next = "/HomeFeed.jsp";
+			System.out.println("inside login success");
 
 		} else {
-			//next = "/GuestPage.jsp";
+			System.out.println("inside login failed");
+			// next = "/GuestPage.jsp";
 			request.setAttribute("login_err", "Please enter a valid username and password");
 			pw.println("Please enter a valid username and password");
+			pw.flush();
 		}
-		pw.flush();
 		pw.close();
 
-//		RequestDispatcher dispatch = getServletContext().getRequestDispatcher(next);
-//
-//		try {
-//			dispatch.forward(request, response);
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		} catch (ServletException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
+		// RequestDispatcher dispatch = getServletContext().getRequestDispatcher(next);
+		//
+		// try {
+		// dispatch.forward(request, response);
+		// } catch (IOException e) {
+		// // TODO Auto-generated catch block
+		// e.printStackTrace();
+		// } catch (ServletException e) {
+		// // TODO Auto-generated catch block
+		// e.printStackTrace();
+		// }
 	}
 
 }

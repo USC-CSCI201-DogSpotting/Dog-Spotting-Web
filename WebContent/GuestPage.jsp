@@ -11,6 +11,13 @@
 <script
 	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <script>
+window.onload = function(){
+	var loggedin = <%=request.getSession().getAttribute("loggedin")%>;
+	if(loggedin===true){
+		console.log("loggedin");
+		window.location = "TopRanked.jsp";
+	}
+}
     function validate() {
         console.log("here");
         var requeststr = "Login?";
@@ -28,6 +35,30 @@
             document.getElementById("login_err").innerHTML = xhttp.responseText;
         } else {
             console.log('login success')
+            window.location = "HomeFeed.jsp"
+        }
+    }
+    function validatesignup() {
+        console.log("here");
+        var requeststr = "Signup?";
+        requeststr += "username="
+                + document.getElementById("signupusername").value;
+        requeststr += "&password="
+                + document.getElementById("signuppassword").value;
+        requeststr += "&retypepassword="
+            + document.getElementById("signupretypepassword").value;
+        requeststr += "&url="
+            + document.getElementById("signupurl").value;
+        console.log(requeststr);
+        var xhttp = new XMLHttpRequest();
+        xhttp.open("POST", requeststr, false);
+        xhttp.send();
+        console.log(xhttp.responseText);
+        if (xhttp.responseText.trim().length > 0) {
+            console.log('Sign Up failed')
+            document.getElementById("signup_err").innerHTML = xhttp.responseText;
+        } else {
+            console.log('sign up success')
             window.location = "HomeFeed.jsp"
         }
     }
@@ -71,32 +102,32 @@
 		</div>
 	</div>
 	<!-- Trigger the modal with a button -->
-	<!-- Modal2 -->
+	<!-- Modal -->
 	<div class="modal fade" id="myModal2" role="dialog">
 		<div class="modal-dialog">
 			<!-- Modal content-->
 			<div class="modal-content">
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal">&times;</button>
-					<h4 class="modal-title">Sign Up</h4>
+					<h1 class="modal-title">Sign Up</h1>
 				</div>
-				<form action="/action_page.php">
+				<div id="signupform">
 					<div class="modal-body">
-						Username:<input type="text" id="username"></><br> <br>
-						Password:<input type="password" id="signuppassword"></><br>
-						<br> Retype Password:<input type="password"
-							id="retypepassword"></><br>
+						Username:<input type="text" id="signupusername"></><br>
+						<br> Password:<input type="password" id="signuppassword"></><br>
+						<br> Retype Password:<input type="password" id="signupretypepassword"></><br>
+						<br> Profile Image URL Link:<input type="url" id="signupurl"></><br>
+						<span id="signup_err" style="color: darkred; font-weight: bold"></span>
 					</div>
 					<div class="modal-footer">
 						<button type="button" id="closesignup" class="btn btn-default"
 							data-dismiss="modal">Close</button>
-						<input class="btn btn-default" type="submit">
+						<button type="button" class="btn btn-default" onclick="validatesignup()">Submit</button>
 					</div>
-				</form>
+				</div>
 			</div>
 		</div>
 	</div>
-	<div></div>
 	<!-- Modal -->
 	<div class="modal fade" id="myModal" role="dialog">
 		<div class="modal-dialog">
