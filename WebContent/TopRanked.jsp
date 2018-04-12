@@ -29,7 +29,7 @@
       </form>
       <ul class="nav navbar-nav">
       <li><button type="button" class="btn btn-default" data-toggle="modal" data-target="#myModal">+</button></li>
-      <li><a href="TopRanked.jsp" type="button">Top</a></li>
+      <li><a href="HomeFeed.jsp" type="button">Feed</a></li>
       <li><a type="button">Username</a></li>
       <li><a type="button">Log Out</a></li>
       </ul>
