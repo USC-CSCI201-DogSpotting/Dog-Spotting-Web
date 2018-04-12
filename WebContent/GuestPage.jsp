@@ -70,7 +70,7 @@ window.onload = function(){
 			<div class="navbar-header">
 				<a class="navbar-brand" href="#">DogSpotting</a>
 			</div>
-			<form class="navbar-form navbar-left" action="/action_page.php">
+			<form method="GET" class="navbar-form navbar-left" action="Search.jsp">
 				<div class="input-group">
 					<input type="text" id="search" class="form-control"
 						placeholder="Search" name="search">

@@ -78,7 +78,7 @@ public class HomeFeed extends HttpServlet {
 				int postID = rs.getInt("postID");
 				List<Comment> comments = new ArrayList<Comment>();
 				st2 = conn.createStatement();
-				ps2 = conn.prepareStatement("SELECT u.username, c.content FROM Comment c, User u " + 
+				ps2 = conn.prepareStatement("SELECT u.username, c.content FROM Comment c, User u " +
 						"WHERE postID=? AND c.userID = u.userID");
 				ps2.setLong(1, postID); // set first variable in prepared statement
 				rs2 = ps2.executeQuery();
@@ -125,7 +125,7 @@ public class HomeFeed extends HttpServlet {
 			}
 		}
 		/* database ends */
-		
+
 		/* output List<Post> posts */
 		Gson gson = new Gson();
 		String json = gson.toJson(posts);

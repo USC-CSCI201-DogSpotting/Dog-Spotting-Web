@@ -1,13 +1,13 @@
 package csci201;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -33,6 +33,10 @@ public class NewPost extends HttpServlet {
 		// System.out.println("newpostservelt");
 		/* database starts */
 		// variables
+		System.out.println("******************");
+		System.out.println("newpost");
+		PrintWriter pw = response.getWriter();
+
 		String username = "";
 		String pic = "";
 		String imageURL = "";
@@ -47,38 +51,77 @@ public class NewPost extends HttpServlet {
 		username = (String) s.getAttribute("currentusername");
 		pic = request.getParameter("pic");
 		imageURL = request.getParameter("img");
-		description = request.getParameter("descr");
+		description = request.getParameter("description");
 		tag1 = request.getParameter("tag1");
 		tag2 = request.getParameter("tag2");
 		tag3 = request.getParameter("tag3");
 		tag4 = request.getParameter("tag4");
 		tag5 = request.getParameter("tag5");
+		System.out.println("Check before sending errors username: " + username + " pic: " + pic + " img: " + imageURL
+				+ " descrip: " + description + " tag1: " + tag1);
+		if (description == null) {
+			description = "";
+		}
+		if (imageURL == null) {
+			imageURL = "";
+		}
 
-		String next = "/HomeFeed.jsp";
-		RequestDispatcher dispatch = getServletContext().getRequestDispatcher(next);
-
+		boolean tagValid = true;
+		boolean imgValid = true;
+		boolean descrValid = true;
 		if (tag1.trim().equals("") && tag2.trim().equals("") && tag3.trim().equals("") && tag4.trim().equals("")
 				&& tag5.trim().equals("")) {
-			next = "/HomeFeed.jsp"; // checks if the user inputed at least 1 tags
+			// next = "/HomeFeed.jsp"; // checks if the user inputed at least 1 tags
+			System.out.println("need 1 tag");
 			request.setAttribute("tagError", "Need at least 1 tag to continue");
-			dispatch = getServletContext().getRequestDispatcher(next);
+			// dispatch = getServletContext().getRequestDispatcher(next);
 			validInputs = false;
+			tagValid = false;
 		}
-		if (pic.trim().equals("") && imageURL.trim().equals("")) {
-			next = "/HomeFeed.jsp"; // checks if the user inputed a file or a url for the image
+		// if(pic == null) System.out.println("testnul111111111111111111111111");
+		// if ((pic.trim().equals("") || pic == null)&&
+		// check for both pic and url
+		if (imageURL.trim().equals("")) {
+			System.out.println("need img");
+			// next = "/HomeFeed.jsp"; // checks if the user inputed a file or a url for the
+			// image
 			request.setAttribute("imgError", "Need an imageURL to continue");
-			dispatch = getServletContext().getRequestDispatcher(next);
+			// dispatch = getServletContext().getRequestDispatcher(next);
 			validInputs = false;
+			imgValid = false;
 		}
 		if (description.trim().equals("")) {
-			next = "/HomeFeed.jsp"; // checks if the user inputed a description
+			System.out.println("need description");
+			// next = "/HomeFeed.jsp"; // checks if the user inputed a description
 			request.setAttribute("descriptionError", "Need a description to continue");
-			dispatch = getServletContext().getRequestDispatcher(next);
+			// dispatch = getServletContext().getRequestDispatcher(next);
 			validInputs = false;
+			descrValid = false;
 		}
+		System.out.println("Check after sending username: " + username + " img: " + imageURL + " descrip: "
+				+ description + " tag1: " + tag1);
 		if (!validInputs) { // if there is any of these contents not filled out, then the appropriate error
 							// message is outputed
-			dispatch.forward(request, response);
+			// request.setAttribute("login_err", "Please enter a valid username and
+			// password");
+			pw.println("Please enter a valid ");
+			if (!descrValid) {
+				pw.println("description");
+			}
+			if (!imgValid) {
+				if (!descrValid) {
+					pw.println("and");
+				}
+				pw.println(" image");
+			}
+			if (!tagValid) {
+				if (!descrValid || !imgValid) {
+					pw.println("and");
+				}
+				pw.println(" tag");
+			}
+			pw.flush();
+			pw.close();
 		}
 
 		if (validInputs) {
@@ -104,7 +147,6 @@ public class NewPost extends HttpServlet {
 				while (rs.next()) { // get userID
 					userID = rs.getInt("userID");
 				}
-
 				// insert new post
 				// System.out.println("test2");
 				ps = conn.prepareStatement(
@@ -144,12 +186,8 @@ public class NewPost extends HttpServlet {
 					System.out.println("sqle: " + sqle.getMessage());
 				}
 			}
-			// request.setAttribute("posts", post);
+			pw.println("Thanks for posting!");
 			/* database ends */
-			next = "/HomeFeed.jsp"; // where do we want to go after the user posts?
-			request.setAttribute("postFinish", "Thank you for posting");
-			dispatch = getServletContext().getRequestDispatcher(next);
-			dispatch.forward(request, response);
 		}
 	}
 }

@@ -16,6 +16,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.gson.Gson;
+
 /**
  * Servlet implementation class Search
  */
@@ -31,8 +33,11 @@ public class Search extends HttpServlet {
 
 		/* database starts */
 		// variables
-		String tag = "a";
+		String tag = request.getParameter("search");
+		int limit = Integer.parseInt(request.getParameter("limit"));
 		List<Post> posts = new ArrayList<Post>();
+		
+		System.out.println(tag);
 
 		Connection conn = null;
 		Statement st = null;
@@ -46,14 +51,14 @@ public class Search extends HttpServlet {
 			conn = DriverManager.getConnection("jdbc:mysql://localhost/DogSpotting?user=root&password=root&useSSL=false");
 			st = conn.createStatement();
 			ps = conn.prepareStatement("SELECT u.username, p.postID, p.image, p.description, p.tag1, p.tag2, p.tag3, p.tag4, p.tag5 " +
-					"FROM Post p, User u" +
-					"WHERE p.userID = u.userID" +
+					"FROM Post p, User u " +
+					"WHERE p.userID = u.userID " +
 					"AND (p.tag1 = ? " +
 					"OR p.tag2 = ? " +
 					"OR p.tag3 = ? " +
 					"OR p.tag4 = ? " +
-					"OR p.tag5 = ?)" +
-					"LIMIT 100");
+					"OR p.tag5 = ?) " +
+					"LIMIT " + limit);
 			ps.setString(1, tag);
 			ps.setString(2, tag);
 			ps.setString(3, tag);
@@ -121,5 +126,12 @@ public class Search extends HttpServlet {
 		/* database ends */
 		
 		/* output List<Post> posts */
+		Gson gson = new Gson();
+		String json = gson.toJson(posts);
+//		System.out.println(limit + " " + posts.size());
+//		System.out.println(json);
+	    response.setContentType("application/json");
+	    response.setCharacterEncoding("UTF-8");
+	    response.getWriter().write(json);
 	}
 }
