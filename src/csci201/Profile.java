@@ -74,12 +74,12 @@ public class Profile extends HttpServlet {
 				// load comments
 				int postID = rs.getInt("postID");
 				List<Comment> comments = new ArrayList<Comment>();
-				ps2 = conn.prepareStatement("SELECT u.username, c.content FROM Comment c, User u " + 
+				ps2 = conn.prepareStatement("SELECT c.commentID, u.username, c.content FROM Comment c, User u " + 
 						"WHERE postID=? AND c.userID = u.userID");
 				ps2.setLong(1, postID); // set first variable in prepared statement
 				rs2 = ps2.executeQuery();
 				while(rs2.next()) {
-					Comment tempComment = new Comment(rs2.getString("username"), rs2.getString("content"));
+					Comment tempComment = new Comment(rs2.getInt("commentID"), rs2.getString("username"), rs2.getString("content"));
 					comments.add(tempComment);
 				}
 				Post tempPost = new Post(postID, rs.getString("image"), rs.getString("username"), rs.getString("description"), tags, comments);
@@ -97,7 +97,7 @@ public class Profile extends HttpServlet {
 					"LIMIT 100");
 			ps.setLong(1, userID);
 			rs = ps.executeQuery();
-			ps2 = conn.prepareStatement("SELECT u.username, c.content FROM Comment c, User u " + 
+			ps2 = conn.prepareStatement("SELECT c.commentID, u.username, c.content FROM Comment c, User u " + 
 					"WHERE postID=? AND c.userID = u.userID");
 			ps3 = conn.prepareStatement("SELECT * FROM Likes WHERE userID = ? AND postID = ? AND valid = 1");
 			ps3.setInt(1, userID);
@@ -117,7 +117,7 @@ public class Profile extends HttpServlet {
 				ps2.setLong(1, postID); // set first variable in prepared statement
 				rs2 = ps2.executeQuery();
 				while(rs2.next()) {
-					Comment tempComment = new Comment(rs2.getString("username"), rs2.getString("content"));
+					Comment tempComment = new Comment(rs2.getInt("commentID"), rs2.getString("username"), rs2.getString("content"));
 					comments.add(tempComment);
 				}
 				Post tempPost = new Post(postID, rs.getString("image"), rs.getString("username"), rs.getString("description"), tags, comments);
