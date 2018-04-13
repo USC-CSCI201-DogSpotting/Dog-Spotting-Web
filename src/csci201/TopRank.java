@@ -39,6 +39,7 @@ public class TopRank extends HttpServlet {
 		List<Post> posts = new ArrayList<Post>();
 
 		// check if ranks are up to date
+		new RankUpdate();
 		
 		// load posts
 		Connection conn = null;

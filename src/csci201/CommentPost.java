@@ -37,10 +37,8 @@ public class CommentPost extends HttpServlet {
 		Post post;
 
 		Connection conn = null;
-		Statement st = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
-		Statement st2 = null;
 		PreparedStatement ps2 = null;
 		ResultSet rs2 = null;
 		try {
@@ -54,15 +52,17 @@ public class CommentPost extends HttpServlet {
 			while (rs.next()) { // get userID
 				userID = rs.getInt("userID");
 			}
+			ps.close();
 			// insert new comment
 			ps = conn.prepareStatement("INSERT INTO Comment (userID, postID, content) VALUES (?, ?, ?)");
 			ps.setLong(1, userID);
 			ps.setLong(2, postID);
 			ps.setString(3, content);
 			ps.executeUpdate();
+			ps.close();
+			rs.close();
 			
 			// re-fetch post
-			st = conn.createStatement();
 			ps = conn.prepareStatement("SELECT * FROM Post WHERE postID=?");
 			ps.setLong(1, postID); // set first variable in prepared statement
 			rs = ps.executeQuery();
@@ -77,7 +77,6 @@ public class CommentPost extends HttpServlet {
 				if(rs.getString("tag5") != null) { tags.add(rs.getString("tag5")); }
 				// load comments
 				List<Comment> comments = new ArrayList<Comment>();
-				st2 = conn.createStatement();
 				ps2 = conn.prepareStatement("SELECT u.username, c.content FROM Comment c, User u " + 
 						"WHERE postID=? AND c.userID = u.userID");
 				ps2.setLong(1, postID); // set first variable in prepared statement
@@ -96,9 +95,6 @@ public class CommentPost extends HttpServlet {
 			try {
 				if (rs != null) {
 					rs.close();
-				}
-				if (st != null) {
-					st.close();
 				}
 				if (ps != null) {
 					ps.close();

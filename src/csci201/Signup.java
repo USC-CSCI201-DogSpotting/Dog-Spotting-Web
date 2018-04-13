@@ -94,6 +94,7 @@ public class Signup extends HttpServlet {
 					isValid = false;
 					System.out.println("username = " + username + " is already taken!");
 				}
+				ps.close();
 				if (isValid) {
 					ps = conn.prepareStatement("INSERT INTO User (username, password, picture) VALUES (?, ?, ?)");
 					ps.setString(1, username);

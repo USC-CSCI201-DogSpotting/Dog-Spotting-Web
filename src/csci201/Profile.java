@@ -56,6 +56,8 @@ public class Profile extends HttpServlet {
 			while (rs.next()) {
 				userID = rs.getInt("userID");
 			}
+			ps.close();
+			rs.close();
 			
 			// get user's posts
 			ps = conn.prepareStatement("SELECT * FROM Post WHERE userID = ? LIMIT 100");
