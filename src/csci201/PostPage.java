@@ -93,6 +93,7 @@ public class PostPage extends HttpServlet {
 				rs2 = ps2.executeQuery();
 				while(rs2.next()) {
 					Comment tempComment = new Comment(rs2.getInt("commentID"), rs2.getString("username"), rs2.getString("content"));
+					tempComment.getCommentOnThis();
 					comments.add(tempComment);
 				}
 				post = new Post(postID, rs.getString("image"), rs.getString("username"), rs.getString("description"), tags, comments);
