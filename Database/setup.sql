@@ -13,9 +13,9 @@ CREATE TABLE GeneralInfo (
 INSERT INTO GeneralInfo (infoname, infonum)
   VALUES  ('numpost', 0),
       ('numuser', 0),
-            ('dailyrenew', 20180408),
-            ('weekrenew', 20180408),
-            ('monthrenew', 20180408);
+            ('dailyrenew', 20000000),
+            ('monthlyrenew', 20000000),
+            ('yearlyrenew', 20000000);
 
 CREATE TABLE User (
   userID int(10) primary key not null auto_increment,
@@ -57,14 +57,14 @@ CREATE TABLE Post (
     tag4 varchar(10),
     tag5 varchar(10),
     dailylike int(10) not null,
-    weeklylike int(10) not null,
     monthlylike int(10) not null,
+    yearlylike int(10) not null,
     FOREIGN KEY fk1(userID) REFERENCES User(userID)
 );
 
-INSERT INTO Post (userID, image, description, tag1, tag2, dailylike, weeklylike, monthlylike)
+INSERT INTO Post (userID, image, description, tag1, tag2, dailylike, monthlylike, yearlylike)
   VALUES  (1, 'https://images.pexels.com/photos/460823/pexels-photo-460823.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940', 'a', 'a', NULL, 1, 1, 1);
-INSERT INTO Post (userID, image, description, tag1, tag2, dailylike, weeklylike, monthlylike)
+INSERT INTO Post (userID, image, description, tag1, tag2, dailylike, monthlylike, yearlylike)
   VALUES  (2, 'https://images.pexels.com/photos/356378/pexels-photo-356378.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940', 'a', 'a', NULL, 1, 1, 1);
 
 CREATE TABLE Likes (
@@ -100,13 +100,13 @@ CREATE TABLE DailyRank (
     FOREIGN KEY fk2(postID) REFERENCES Post(postID)
 );
 
-CREATE TABLE WeeklyRank (
+CREATE TABLE MonthlyRank (
   rankID int(4) primary key not null auto_increment,
     postID int(10) not null,
     FOREIGN KEY fk2(postID) REFERENCES Post(postID)
 );
 
-CREATE TABLE MonthlyRank (
+CREATE TABLE YearlyRank (
   rankID int(4) primary key not null auto_increment,
     postID int(10) not null,
     FOREIGN KEY fk2(postID) REFERENCES Post(postID)
@@ -114,11 +114,9 @@ CREATE TABLE MonthlyRank (
 
 INSERT INTO DailyRank (postID)
   VALUES  (1);
-INSERT INTO DailyRank (postID)
-  VALUES  (2);
     
-INSERT INTO WeeklyRank (postID)
+INSERT INTO MOnthlyRank (postID)
   VALUES  (2);
 
-INSERT INTO MonthlyRank (postID)
+INSERT INTO YearlyRank (postID)
   VALUES  (1);

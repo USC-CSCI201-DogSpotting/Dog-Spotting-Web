@@ -8,7 +8,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -147,6 +146,7 @@ public class NewPost extends HttpServlet {
 				while (rs.next()) { // get userID
 					userID = rs.getInt("userID");
 				}
+				ps.close();
 				// insert new post
 				// System.out.println("test2");
 				ps = conn.prepareStatement(

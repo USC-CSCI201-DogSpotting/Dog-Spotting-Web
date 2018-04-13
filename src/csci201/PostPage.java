@@ -6,7 +6,6 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,16 +35,13 @@ public class PostPage extends HttpServlet {
 		Post post = null;
 
 		Connection conn = null;
-		Statement st = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
-		Statement st2 = null;
 		PreparedStatement ps2 = null;
 		ResultSet rs2 = null;
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
 			conn = DriverManager.getConnection("jdbc:mysql://localhost/DogSpotting?user=root&password=root&useSSL=false");
-			st = conn.createStatement();
 			ps = conn.prepareStatement(
                     "SELECT u.username, p.postID, p.image, p.description, p.tag1, p.tag2, p.tag3, p.tag4, p.tag5 "
                             + " FROM User u, Post p" + " WHERE u.userID=p.userID AND postID=?");
@@ -62,7 +58,6 @@ public class PostPage extends HttpServlet {
 				if(rs.getString("tag5") != null) { tags.add(rs.getString("tag5")); }
 				// load comments
 				List<Comment> comments = new ArrayList<Comment>();
-				st2 = conn.createStatement();
 				ps2 = conn.prepareStatement("SELECT u.username, c.content FROM Comment c, User u " + 
 						"WHERE postID=? AND c.userID = u.userID");
 				ps2.setLong(1, postID); // set first variable in prepared statement
@@ -81,9 +76,6 @@ public class PostPage extends HttpServlet {
 			try {
 				if (rs != null) {
 					rs.close();
-				}
-				if (st != null) {
-					st.close();
 				}
 				if (ps != null) {
 					ps.close();

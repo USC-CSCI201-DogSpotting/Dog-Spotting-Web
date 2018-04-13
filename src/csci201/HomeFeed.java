@@ -9,7 +9,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -48,6 +47,7 @@ public class HomeFeed extends HttpServlet {
 		PreparedStatement ps2 = null;
 		ResultSet rs2 = null;
 		try {
+			// get userID
 			Class.forName("com.mysql.jdbc.Driver");
 			conn = DriverManager.getConnection("jdbc:mysql://localhost/DogSpotting?user=root&password=root&useSSL=false");
 			st = conn.createStatement();
@@ -58,6 +58,10 @@ public class HomeFeed extends HttpServlet {
 			while (rs.next()) { // get userID
 				userID = rs.getInt("userID");
 			}
+			ps.close();
+			rs.close();
+			
+			// get list of posts
 			ps = conn.prepareStatement("SELECT u.username, p.postID, p.image, p.description, p.tag1, p.tag2, p.tag3, p.tag4, p.tag5 " +
 					"FROM Post p, Follow f, User u " +
 					"WHERE p.userID = f.followingID " +

@@ -27,6 +27,9 @@ public class Like extends HttpServlet {
 	protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		
+		// check if ranks are up to date
+		new RankUpdate();
+		
 		/* database starts */
 		// variables
 		int postID = 1;
@@ -48,6 +51,8 @@ public class Like extends HttpServlet {
 			while (rs.next()) { // get userID
 				userID = rs.getInt("userID");
 			}
+			ps.close();
+			rs.close();
 			
 			if(isLike) { // add like
 				// check if like relationship exists
@@ -57,20 +62,36 @@ public class Like extends HttpServlet {
 				rs = ps.executeQuery();
 				int likesID = 0;
 				if (rs.next()) { // re-validate the like
+					ps.close();
 					ps = conn.prepareStatement("UPDATE Likes SET valid = 1 WHERE likesID = ?");
 					ps.setLong(1, likesID);
 					ps.executeUpdate();
+					ps.close();
 				}else { // insert new like
+					ps.close();
 					ps = conn.prepareStatement("INSERT INTO Likes (userID, postID, valid) VALUES (?, ?, 1)");
 					ps.setLong(1, userID);
 					ps.setLong(2, postID);
 					ps.executeUpdate();
+					ps.close();
+					// increase the like for the postID
+					ps = conn.prepareStatement(
+							"UPDATE Post " +
+							"SET dailylike = dailylike + 1, " +
+							"monthlylike = monthlylike + 1, " +
+							"yearlylike = yearlylike + 1 " +
+							"WHERE postID = ?");
+					ps.setInt(1, postID);
+					ps.executeQuery();
+					ps.close();
 				}
 			}else { // invalidate like
+				ps.close();
 				ps = conn.prepareStatement("UPDATE Likes SET valid = 0 WHERE userID = ? AND postID = ?");
 				ps.setLong(1, userID);
 				ps.setLong(2, postID);
 				ps.executeUpdate();
+				ps.close();
 			}
 		} catch (SQLException sqle) {
 			System.out.println ("SQLException: " + sqle.getMessage());
