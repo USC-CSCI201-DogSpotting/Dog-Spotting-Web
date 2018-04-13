@@ -32,6 +32,8 @@ public class TopRank extends HttpServlet {
 		
 		/* database starts */
 		// variables
+		boolean isLoggedin = false;
+		String username = "a";
 		int rankSelection = Integer.parseInt(request.getParameter("rank"));
 		int limit = Integer.parseInt(request.getParameter("limit"));
 		// 0: daily, 1: weekly, 2: monthly
@@ -46,9 +48,28 @@ public class TopRank extends HttpServlet {
 		ResultSet rs = null;
 		PreparedStatement ps2 = null;
 		ResultSet rs2 = null;
+		PreparedStatement ps3 = null;
+		ResultSet rs3 = null;
+		PreparedStatement ps4 = null;
+		ResultSet rs4 = null;
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
 			conn = DriverManager.getConnection("jdbc:mysql://localhost/DogSpotting?user=root&password=root&useSSL=false");
+			// get userID if loggedin
+			int userID = 0;
+			if(isLoggedin) {
+				Class.forName("com.mysql.jdbc.Driver");
+				conn = DriverManager.getConnection("jdbc:mysql://localhost/DogSpotting?user=root&password=root&useSSL=false");
+				ps = conn.prepareStatement("SELECT userID FROM User WHERE username=?");
+				ps.setString(1, username); // set first variable in prepared statement
+				rs = ps.executeQuery();
+				while (rs.next()) { // get userID
+					userID = rs.getInt("userID");
+				}
+				ps.close();
+				rs.close();
+			}
+			// get respective lists
 			if(rankSelection == 0) {
 				ps = conn.prepareStatement("SELECT * FROM DailyRank r, Post p, User u " + 
 						"WHERE r.postID = p.postID AND p.userID = u.userID " + " LIMIT " + limit);
@@ -60,6 +81,14 @@ public class TopRank extends HttpServlet {
 						"WHERE r.postID = p.postID AND p.userID = u.userID " + " LIMIT " + limit);
 			}
 			rs = ps.executeQuery();
+			ps2 = conn.prepareStatement("SELECT u.username, c.content FROM Comment c, User u " + 
+					"WHERE postID=? AND c.userID = u.userID");
+			if(isLoggedin) {
+				ps3 = conn.prepareStatement("SELECT * FROM Likes WHERE userID = ? AND postID = ? AND valid = 1");
+				ps3.setInt(1, userID);
+				ps4 = conn.prepareStatement("Select * FROM Follow WHERE followerID = ? AND followingID = ?");
+				ps4.setInt(1, userID);
+			}
 			while (rs.next()) { // load ranked posts
 				// load tags
 				List<String> tags = new ArrayList<String>();
@@ -70,16 +99,28 @@ public class TopRank extends HttpServlet {
 				if(rs.getString("tag5") != null) { tags.add(rs.getString("tag5")); }
 				// load comments
 				int postID = rs.getInt("postID");
+				int postUserID = rs.getInt("userID");
 				List<Comment> comments = new ArrayList<Comment>();
-				ps2 = conn.prepareStatement("SELECT u.username, c.content FROM Comment c, User u " + 
-						"WHERE postID=? AND c.userID = u.userID");
-				ps2.setLong(1, postID); // set first variable in prepared statement
+				ps2.setLong(1, postID);
 				rs2 = ps2.executeQuery();
 				while(rs2.next()) {
 					Comment tempComment = new Comment(rs2.getString("username"), rs2.getString("content"));
 					comments.add(tempComment);
 				}
 				Post tempPost = new Post(postID, rs.getString("image"), rs.getString("username"), rs.getString("description"), tags, comments);
+				// check like and comment if loggedin
+				if(isLoggedin) {
+					ps3.setInt(2, postID);
+					rs3 = ps3.executeQuery();
+					if(rs3.next()) {
+						tempPost.setIsLike(true);
+					}
+					ps4.setInt(2, postUserID);
+					rs4 = ps4.executeQuery();
+					if(rs4.next()) {
+						tempPost.setIsFollow(true);
+					}
+				}
 				posts.add(tempPost);
 			}
 		} catch (SQLException sqle) {
