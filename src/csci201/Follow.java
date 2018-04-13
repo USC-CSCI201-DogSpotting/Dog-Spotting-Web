@@ -29,9 +29,9 @@ public class Follow extends HttpServlet {
 		
 		/* database starts */
 		// variables
-		String followingUsername = "a"; // username of the user being followed
-		String followerUsername = "a"; // username of the user following the other
-		boolean isFollow = true;
+		String followingUsername = request.getParameter("following"); // username of the user being followed
+		String followerUsername = request.getParameter("follower"); // username of the user following the other
+		boolean isFollow = Boolean.parseBoolean(request.getParameter("isFollow"));
 
 		Connection conn = null;
 		Statement st = null;

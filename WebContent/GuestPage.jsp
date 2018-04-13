@@ -204,7 +204,15 @@
       // Add each post through the response Json string
       $.each(responseJson, function(index, post) {
         curCount++;
-        $("#posts").append("<div class='container post thumbnail'><a href='PostPage?postID=" + post.postID + "'><img src='" + post.imageURL + "'></a></div>");
+        var html = "";
+        html += "<div class='container'>";
+        html += "<p>" + post.username + "</p>";
+        if (post.username === "<%= request.getSession().getAttribute("currentusername") %>") {
+        	  html += "<button onclick='follow()'>" + (post.isFollow ? "Unfollow" : "Follow") + "</button>";
+        }
+        html += "<div class='container thumbnail'><a href='PostPage?postID=" + post.postID + "'><img src='" + post.imageURL + "'></a></div>";
+        html += "</div>";
+        $("#posts").append(html);
       });
       // No more posts
       if (curCount <= numOfPost - postEachPage) {
@@ -213,6 +221,12 @@
       }
     });
   });
+  
+  function follow() {
+	  var xhttp = new XMLHttpRequest();
+	  xhttp.open("GET", "Follow?follower=" + username + "&following=" + <%= request.getSession().getAttribute("currentusername") %> + "&isFollow=" + isFollow, true);
+	  xhttp.send();
+  }
     </script>
 </body>
 </html>

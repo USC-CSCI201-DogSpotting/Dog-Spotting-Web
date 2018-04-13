@@ -116,8 +116,6 @@ public class TopRank extends HttpServlet {
 		/* output List<Post> posts */	
 		Gson gson = new Gson();
 		String json = gson.toJson(posts);
-//		System.out.println(limit + " " + posts.size());
-//		System.out.println(json);
 	    response.setContentType("application/json");
 	    response.setCharacterEncoding("UTF-8");
 	    response.getWriter().write(json);
