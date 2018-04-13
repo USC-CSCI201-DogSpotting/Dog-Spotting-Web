@@ -31,10 +31,16 @@ public class CommentPost extends HttpServlet {
 		
 		/* database starts */
 		// variables
-		int postID = Integer.parseInt(request.getParameter("postid"));
-		String username = (String) request.getSession().getAttribute("currentusername");
-		String content = request.getParameter("comment");
+		int postID = 1;//Integer.parseInt(request.getParameter("postid"));
+		String username = "a";//(String) request.getSession().getAttribute("currentusername");
+		String content = "c";//request.getParameter("comment");
 		Post post = null;
+
+		int commentID = 1;
+		boolean isOnPost = true; // change here!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		if(!isOnPost) {
+			commentID = 3; // change here!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		}
 
 		Connection conn = null;
 		PreparedStatement ps = null;
@@ -54,13 +60,23 @@ public class CommentPost extends HttpServlet {
 			}
 			ps.close();
 			// insert new comment
-			ps = conn.prepareStatement("INSERT INTO Comment (userID, postID, content) VALUES (?, ?, ?)");
-			ps.setLong(1, userID);
-			ps.setLong(2, postID);
-			ps.setString(3, content);
-			ps.executeUpdate();
-			ps.close();
-			rs.close();
+			if(isOnPost) {
+				ps = conn.prepareStatement("INSERT INTO Comment (userID, postID, content) VALUES (?, ?, ?)");
+				ps.setLong(1, userID);
+				ps.setLong(2, postID);
+				ps.setString(3, content);
+				ps.executeUpdate();
+				ps.close();
+				rs.close();
+			}else {
+				ps = conn.prepareStatement("INSERT INTO Comment (userID, refcommentID, content) VALUES (?, ?, ?)");
+				ps.setLong(1, userID);
+				ps.setLong(2, commentID);
+				ps.setString(3, content);
+				ps.executeUpdate();
+				ps.close();
+				rs.close();
+			}
 			
 			// re-fetch post
 			ps = conn.prepareStatement(
@@ -79,12 +95,13 @@ public class CommentPost extends HttpServlet {
 				if(rs.getString("tag5") != null) { tags.add(rs.getString("tag5")); }
 				// load comments
 				List<Comment> comments = new ArrayList<Comment>();
-				ps2 = conn.prepareStatement("SELECT u.username, c.content FROM Comment c, User u " + 
-						"WHERE postID=? AND c.userID = u.userID");
+				ps2 = conn.prepareStatement("SELECT c.commentID, u.username, c.content FROM Comment c, User u " + 
+						"WHERE postID=? AND c.userID = u.userID ORDER BY commentID ASC");
 				ps2.setLong(1, postID); // set first variable in prepared statement
 				rs2 = ps2.executeQuery();
 				while(rs2.next()) {
-					Comment tempComment = new Comment(rs2.getString("username"), rs2.getString("content"));
+					Comment tempComment = new Comment(rs2.getInt("commentID"), rs2.getString("username"), rs2.getString("content"));
+					tempComment.getCommentOnThis();
 					comments.add(tempComment);
 				}
 				post = new Post(postID, rs.getString("image"), rs.getString("username"), rs.getString("description"), tags, comments);
