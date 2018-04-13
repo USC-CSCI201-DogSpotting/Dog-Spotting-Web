@@ -9,6 +9,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -30,10 +31,10 @@ public class CommentPost extends HttpServlet {
 		
 		/* database starts */
 		// variables
-		int postID = 1;
-		String username = "a";
-		String content = "a";
-		Post post;
+		int postID = Integer.parseInt(request.getParameter("postid"));
+		String username = (String) request.getSession().getAttribute("currentusername");
+		String content = request.getParameter("comment");
+		Post post = null;
 
 		Connection conn = null;
 		PreparedStatement ps = null;
@@ -62,7 +63,9 @@ public class CommentPost extends HttpServlet {
 			rs.close();
 			
 			// re-fetch post
-			ps = conn.prepareStatement("SELECT * FROM Post WHERE postID=?");
+			ps = conn.prepareStatement(
+                    "SELECT u.username, p.postID, p.image, p.description, p.tag1, p.tag2, p.tag3, p.tag4, p.tag5 "
+                            + " FROM User u, Post p" + " WHERE u.userID=p.userID AND postID=?");
 			ps.setLong(1, postID); // set first variable in prepared statement
 			rs = ps.executeQuery();
 			// check if user exists and check password
@@ -108,6 +111,11 @@ public class CommentPost extends HttpServlet {
 		/* database ends */
 		
 		/* output Post post */
+		
+		String pageToForward = "/IndividualPost.jsp";
+		request.setAttribute("post", post);
+		RequestDispatcher dispatch = getServletContext().getRequestDispatcher(pageToForward);
+		dispatch.forward(request, response);
 	}
 
 }
