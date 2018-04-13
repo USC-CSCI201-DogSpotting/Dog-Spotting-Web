@@ -123,13 +123,13 @@
 	  $("#readMore").click();
   })
   
-  $("#week").on("click", function() {
+  $("#month").on("click", function() {
     rank = 1;
     numOfPost = 0;
     $("#readMore").click();
   })
   
-  $("#month").on("click", function() {
+  $("#year").on("click", function() {
     rank = 2;
     numOfPost = 0;
     $("#readMore").click();
