@@ -98,6 +98,7 @@ public class PostPage extends HttpServlet {
 		/* database ends */
 		
 		/* output Post post */
+		
 		String pageToForward = "/IndividualPost.jsp";
 		request.setAttribute("post", post);
 		RequestDispatcher dispatch = getServletContext().getRequestDispatcher(pageToForward);

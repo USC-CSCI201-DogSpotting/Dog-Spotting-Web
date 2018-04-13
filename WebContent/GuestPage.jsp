@@ -90,7 +90,7 @@ window.onload = function(){
 		</div>
 	</nav>
 	<div class="btn-group btn-group-justified" role="group"
-		aria-label="...">
+		aria-label="..."  style="padding-top: 70px">
 		<div class="btn-group" role="group">
 			<button type="button" class="btn btn-default">Today</button>
 		</div>
@@ -152,33 +152,72 @@ window.onload = function(){
 			</div>
 		</div>
 	</div>
-	<div class="container" style="padding-top: 70px">
-		<div id="posts"></div>
-		<div id="readMoreButton">
-			<button class="btn btn-primary" id="readMore">Read More</button>
-		</div>
-	</div>
-	<script>
-    var numOfPost = 0;
-    var postEachPage = 1;
-    var curCount = 0;
-    $(document).ready(function() {
-      $("#readMore").click();
-    });
-    $("#readMore").on("click", function() {
-        numOfPost += postEachPage;
-        curCount = 0;
-        $.post("TopRank", { rank : 0, limit : numOfPost }, function(responseJson) {
-          $("#posts").empty();
-          $.each(responseJson, function(index, post) {
-            curCount++;
-            $("#posts").append("<div class='container post thumbnail'><a href='PostPage?postID=" + post.postID + "'><img src='" + post.imageURL + "'></a></div>");
-          });
-          if (curCount <= numOfPost - postEachPage) {
-            $("#readMoreButton").html("No more posts");
-          }
-        });
+	  <div class="container" style="padding-top: 70px">
+  <div id="posts">
+  </div>
+  <div id="readMoreButton">
+  <button class="btn btn-primary" id="readMore">Read More</button>
+  <p id="noMore">No more posts</p>
+  </div>
+  </div>
+
+<script>
+  var numOfPost = 0;
+  var postEachPage = 20;
+  var curCount = 0;
+  var rank = 0;
+  $("#noMore").css("display", "none");
+  
+  // Load posts when entering this page
+  $(document).ready(function() {
+    $("#readMore").click();
+  });
+  
+  // Change to Daily
+  $("#today").on("click", function() {
+    $("#readMoreButton").css("display", "block");
+    $("#noMore").css("display", "none");
+    rank = 0;
+    numOfPost = 0;
+    $("#readMore").click();
+  })
+  
+  // Change to Weekly
+  $("#week").on("click", function() {
+    $("#readMoreButton").css("display", "block");
+    $("#noMore").css("display", "none");
+    rank = 1;
+    numOfPost = 0;
+    $("#readMore").click();
+  })
+  
+  // Change to Monthly
+  $("#month").on("click", function() {
+    $("#readMoreButton").css("display", "block");
+    $("#noMore").css("display", "none");
+    rank = 2;
+    numOfPost = 0;
+    $("#readMore").click();
+  })
+  
+  $("#readMore").on("click", function() {
+    numOfPost += postEachPage; // Add max number of posts on this page
+    curCount = 0; // Count current number of posts
+    $.post("TopRank", { rank: rank, limit: numOfPost }, function(responseJson) {
+      $("#posts").empty();
+      // Add each post through the response Json string
+      $.each(responseJson, function(index, post) {
+        curCount++;
+        $("#posts").append("<div class='container post thumbnail'><a href='PostPage?postID=" + post.postID + "'><img src='" + post.imageURL + "'></a></div>");
       });
-    </script>
+      // No more posts
+      if (curCount <= numOfPost - postEachPage) {
+        $("#readMoreButton").css("display", "none");
+        $("#noMore").css("display", "block");
+      }
+    });
+  });
+  
+</script>
 </body>
 </html>

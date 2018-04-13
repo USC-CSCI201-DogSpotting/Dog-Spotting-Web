@@ -51,12 +51,12 @@
       </ul>
     </div>
   </nav>
-	<span class="tab" id="toprankfilter">
+	<div class="tab" id="toprankfilter"  style="padding-top: 70px">
 		<button class="tablinks" id="today">Today</button>
     <button class="tablinks" id="week">This Week</button>
 		<button class="tablinks" id="month">This Month</button>
 
-	</span>
+	</div>
   <!-- Trigger the modal with a button -->
 
   <!-- Modal -->
@@ -95,6 +95,7 @@
   </div>
   <div id="readMoreButton">
   <button class="btn btn-primary" id="readMore">Read More</button>
+  <p id="noMore">No more posts</p>
   </div>
   </div>
 
@@ -103,6 +104,7 @@
   var postEachPage = 20;
   var curCount = 0;
   var rank = 0;
+  $("#noMore").css("display", "none");
   
   // Load posts when entering this page
   $(document).ready(function() {
@@ -111,6 +113,8 @@
   
   // Change to Daily
   $("#today").on("click", function() {
+	  $("#readMoreButton").css("display", "block");
+    $("#noMore").css("display", "none");
 	  rank = 0;
 	  numOfPost = 0;
 	  $("#readMore").click();
@@ -118,6 +122,8 @@
   
   // Change to Weekly
   $("#week").on("click", function() {
+	  $("#readMoreButton").css("display", "block");
+	  $("#noMore").css("display", "none");
     rank = 1;
     numOfPost = 0;
     $("#readMore").click();
@@ -125,6 +131,8 @@
   
   // Change to Monthly
   $("#month").on("click", function() {
+	  $("#readMoreButton").css("display", "block");
+	  $("#noMore").css("display", "none");
     rank = 2;
     numOfPost = 0;
     $("#readMore").click();
@@ -138,11 +146,12 @@
       // Add each post through the response Json string
       $.each(responseJson, function(index, post) {
         curCount++;
-        $("#posts").append("<div class='container'><button class='btn btn-default' class='follow" + "'></button><a href='PostPage?postID=" + post.postID + "'><img class='thumbnail' src='" + post.imageURL + "'></a></div>");
+        $("#posts").append("<div class='container post thumbnail'><a href='PostPage?postID=" + post.postID + "'><img src='" + post.imageURL + "'></a></div>");
       });
       // No more posts
       if (curCount <= numOfPost - postEachPage) {
-        $("#readMoreButton").html("No more posts");
+        $("#readMoreButton").css("display", "none");
+        $("#noMore").css("display", "block");
       }
     });
   });

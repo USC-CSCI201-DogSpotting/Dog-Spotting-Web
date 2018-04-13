@@ -2,21 +2,6 @@ package csci201;
 
 import java.util.List;
 
-class Comment {
-	String username;
-	String content;
-	public Comment(String username, String content) {
-		this.username = username;
-		this.content = content;
-	}
-	public String getUsername() {
-		return username;
-	}
-	public String getContent() {
-		return content;
-	}
-}
-
 public class Post {
 	int postID;
 	String imageURL;
@@ -37,6 +22,9 @@ public class Post {
 		this.isFollow = false;
 		this.isLike = false;
 	}
+	public int getPostID() {
+		return postID;
+	}
 	public String getImageURL() {
 		return imageURL;
 	}
@@ -52,10 +40,10 @@ public class Post {
 	public List<Comment> getComments() {
 		return comments;
 	}
-	public Boolean getIsFollow() {
+	public Boolean isFollow() {
 		return isFollow;
 	}
-	public Boolean getIsLike() {
+	public Boolean isLike() {
 		return isLike;
 	}
 	public void setIsFollow(Boolean isFollow) {

@@ -131,11 +131,12 @@
   </div>
     </div>
 
-  <div class="container" style="padding-top: 70px">
+    <div class="container" style="padding-top: 70px">
   <div id="posts">
   </div>
   <div id="readMoreButton">
   <button class="btn btn-primary" id="readMore">Read More</button>
+  <p id="noMore">No more posts</p>
   </div>
   </div>
 
@@ -143,25 +144,32 @@
   var numOfPost = 0;
   var postEachPage = 20;
   var curCount = 0;
-
+  var rank = 0;
+  $("#noMore").css("display", "none");
+  
+  // Load posts when entering this page
   $(document).ready(function() {
     $("#readMore").click();
   });
+  
   $("#readMore").on("click", function() {
-    numOfPost += postEachPage;
-    curCount = 0;
-    $.post("HomeFeed", { username: "<%= request.getSession().getAttribute("currentusername") %>", limit: numOfPost }, function(responseJson) {
+    numOfPost += postEachPage; // Add max number of posts on this page
+    curCount = 0; // Count current number of posts
+    $.post("TopRank", { rank: rank, limit: numOfPost }, function(responseJson) {
       $("#posts").empty();
+      // Add each post through the response Json string
       $.each(responseJson, function(index, post) {
         curCount++;
         $("#posts").append("<div class='container post thumbnail'><a href='PostPage?postID=" + post.postID + "'><img src='" + post.imageURL + "'></a></div>");
       });
+      // No more posts
       if (curCount <= numOfPost - postEachPage) {
-        $("#readMoreButton").html("No more posts");
+        $("#readMoreButton").css("display", "none");
+        $("#noMore").css("display", "block");
       }
     });
   });
-
+  
 </script>
 </body>
 </html>
