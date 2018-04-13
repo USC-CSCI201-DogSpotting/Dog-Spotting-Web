@@ -51,7 +51,7 @@
       </ul>
     </div>
   </nav>
-	<div class="tab" id="toprankfilter"  style="padding-top: 70px">
+	<div class="tab" id="toprankfilter">
 		<button class="tablinks" id="today">Today</button>
     <button class="tablinks" id="week">This Week</button>
 		<button class="tablinks" id="month">This Month</button>

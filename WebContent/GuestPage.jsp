@@ -90,7 +90,7 @@ window.onload = function(){
 		</div>
 	</nav>
 	<div class="btn-group btn-group-justified" role="group"
-		aria-label="..."  style="padding-top: 70px">
+		aria-label="...">
 		<div class="btn-group" role="group">
 			<button type="button" class="btn btn-default">Today</button>
 		</div>
