@@ -43,6 +43,10 @@ public class HomeFeed extends HttpServlet {
 		ResultSet rs = null;
 		PreparedStatement ps2 = null;
 		ResultSet rs2 = null;
+		PreparedStatement ps3 = null;
+		ResultSet rs3 = null;
+		PreparedStatement ps4 = null;
+		ResultSet rs4 = null;
 		try {
 			// get userID
 			Class.forName("com.mysql.jdbc.Driver");
@@ -58,7 +62,7 @@ public class HomeFeed extends HttpServlet {
 			rs.close();
 			
 			// get list of posts
-			ps = conn.prepareStatement("SELECT u.username, p.postID, p.image, p.description, p.tag1, p.tag2, p.tag3, p.tag4, p.tag5 " +
+			ps = conn.prepareStatement("SELECT u.username, p.userID, p.postID, p.image, p.description, p.tag1, p.tag2, p.tag3, p.tag4, p.tag5 " +
 					"FROM Post p, Follow f, User u " +
 					"WHERE p.userID = f.followingID " +
 					"AND p.userID = u.userID " +
@@ -66,6 +70,13 @@ public class HomeFeed extends HttpServlet {
 					"LIMIT " + limit);
 			ps.setLong(1, userID);
 			rs = ps.executeQuery();
+			// for each post
+			ps2 = conn.prepareStatement("SELECT u.username, c.content FROM Comment c, User u " +
+					"WHERE postID=? AND c.userID = u.userID");
+			ps3 = conn.prepareStatement("SELECT * FROM Likes WHERE userID = ? AND postID = ? AND valid = 1");
+			ps3.setInt(1, userID);
+			ps4 = conn.prepareStatement("Select * FROM Follow WHERE followerID = ? AND followingID = ?");
+			ps4.setInt(1, userID);
 			while (rs.next()) { // add in posts
 				// load tags
 				List<String> tags = new ArrayList<String>();
@@ -77,8 +88,6 @@ public class HomeFeed extends HttpServlet {
 				// load comments
 				int postID = rs.getInt("postID");
 				List<Comment> comments = new ArrayList<Comment>();
-				ps2 = conn.prepareStatement("SELECT u.username, c.content FROM Comment c, User u " +
-						"WHERE postID=? AND c.userID = u.userID");
 				ps2.setLong(1, postID); // set first variable in prepared statement
 				rs2 = ps2.executeQuery();
 				while(rs2.next()) {
@@ -87,6 +96,20 @@ public class HomeFeed extends HttpServlet {
 				}
 				ps2.close();
 				Post tempPost = new Post(postID, rs.getString("image"), rs.getString("username"), rs.getString("description"), tags, comments);
+				// check like and comment if loggedin
+				ps3.setInt(2, postID);
+				rs3 = ps3.executeQuery();
+				if(rs3.next()) {
+					tempPost.setIsLike(true);
+				}
+				ps3.close();
+				int postUserID = rs.getInt("userID");
+				ps3.setInt(2, postUserID);
+				rs4 = ps4.executeQuery();
+				if(rs4.next()) {
+					tempPost.setIsFollow(true);
+				}
+				ps4.close();
 				posts.add(tempPost);
 			}
 		} catch (SQLException sqle) {

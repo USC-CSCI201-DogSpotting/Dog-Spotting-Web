@@ -32,6 +32,7 @@ public class TopRank extends HttpServlet {
 		
 		/* database starts */
 		// variables
+		// for user
 		boolean isLoggedin = false;
 		String username = "a";
 		int rankSelection = Integer.parseInt(request.getParameter("rank"));
@@ -81,6 +82,7 @@ public class TopRank extends HttpServlet {
 						"WHERE r.postID = p.postID AND p.userID = u.userID " + " LIMIT " + limit);
 			}
 			rs = ps.executeQuery();
+			// for each post
 			ps2 = conn.prepareStatement("SELECT u.username, c.content FROM Comment c, User u " + 
 					"WHERE postID=? AND c.userID = u.userID");
 			if(isLoggedin) {
@@ -99,7 +101,6 @@ public class TopRank extends HttpServlet {
 				if(rs.getString("tag5") != null) { tags.add(rs.getString("tag5")); }
 				// load comments
 				int postID = rs.getInt("postID");
-				int postUserID = rs.getInt("userID");
 				List<Comment> comments = new ArrayList<Comment>();
 				ps2.setLong(1, postID);
 				rs2 = ps2.executeQuery();
@@ -115,11 +116,14 @@ public class TopRank extends HttpServlet {
 					if(rs3.next()) {
 						tempPost.setIsLike(true);
 					}
+					ps3.close();
+					int postUserID = rs.getInt("userID");
 					ps4.setInt(2, postUserID);
 					rs4 = ps4.executeQuery();
 					if(rs4.next()) {
 						tempPost.setIsFollow(true);
 					}
+					ps4.close();
 				}
 				posts.add(tempPost);
 			}
