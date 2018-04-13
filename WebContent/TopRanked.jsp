@@ -104,22 +104,26 @@
   var curCount = 0;
   var rank = 0;
   
+  // Load posts when entering this page
   $(document).ready(function() {
     $("#readMore").click();
   });
   
+  // Change to Daily
   $("#today").on("click", function() {
 	  rank = 0;
 	  numOfPost = 0;
 	  $("#readMore").click();
   })
   
+  // Change to Weekly
   $("#week").on("click", function() {
     rank = 1;
     numOfPost = 0;
     $("#readMore").click();
   })
   
+  // Change to Monthly
   $("#month").on("click", function() {
     rank = 2;
     numOfPost = 0;
@@ -127,14 +131,16 @@
   })
   
   $("#readMore").on("click", function() {
-    numOfPost += postEachPage;
-    curCount = 0;
+    numOfPost += postEachPage; // Add max number of posts on this page
+    curCount = 0; // Count current number of posts
     $.post("TopRank", { rank: rank, limit: numOfPost }, function(responseJson) {
       $("#posts").empty();
+      // Add each post through the response Json string
       $.each(responseJson, function(index, post) {
         curCount++;
-        $("#posts").append("<div class='container post thumbnail'><a href='PostPage?postID=" + post.postID + "'><img src='" + post.imageURL + "'></a></div>");
+        $("#posts").append("<div class='container'><button class='btn btn-default' class='follow" + "'></button><a href='PostPage?postID=" + post.postID + "'><img class='thumbnail' src='" + post.imageURL + "'></a></div>");
       });
+      // No more posts
       if (curCount <= numOfPost - postEachPage) {
         $("#readMoreButton").html("No more posts");
       }

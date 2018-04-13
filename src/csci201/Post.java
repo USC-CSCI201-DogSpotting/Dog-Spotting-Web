@@ -25,6 +25,8 @@ public class Post {
 	List<String> tags;
 	List<Comment> comments;
 	int numOfLikes;
+	Boolean isFollow;
+	Boolean isLike;
 	public Post(int postID, String imageURL, String username, String description, List<String> tags, List<Comment> comments) {
 		this.postID = postID;
 		this.imageURL = imageURL;
@@ -32,6 +34,8 @@ public class Post {
 		this.description = description;
 		this.tags = tags;
 		this.comments = comments;
+		this.isFollow = false;
+		this.isLike = false;
 	}
 	public String getImageURL() {
 		return imageURL;
@@ -47,6 +51,18 @@ public class Post {
 	}
 	public List<Comment> getComments() {
 		return comments;
+	}
+	public Boolean getIsFollow() {
+		return isFollow;
+	}
+	public Boolean getIsLike() {
+		return isLike;
+	}
+	public void setIsFollow(Boolean isFollow) {
+		this.isFollow = isFollow;
+	}
+	public void setIsLike(Boolean isLike) {
+		this.isLike = isLike;
 	}
 }
 
