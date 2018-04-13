@@ -154,6 +154,7 @@
       $("#posts").empty();
       $.each(responseJson, function(index, post) {
         curCount++;
+        //MAKE POSTS HERE--update postpageservlet with post id
         $("#posts").append("<div class='container post thumbnail'><a href='PostPage?postID=" + post.postID + "'><img src='" + post.imageURL + "'></a></div>");
       });
       if (curCount <= numOfPost - postEachPage) {

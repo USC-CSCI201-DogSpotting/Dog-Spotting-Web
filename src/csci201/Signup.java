@@ -46,6 +46,14 @@ public class Signup extends HttpServlet {
 		Statement st = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
+		if (username == null || username.equals("") || password == null || password.equals("") || retypepassword == null || retypepassword.equals("") || imageUrl == null || imageUrl.equals("")) {
+			PrintWriter pw = response.getWriter();
+			request.setAttribute("signup_err", "Please do not leave any fields blank.");
+			pw.println("Please do not leave any fields blank.");
+			pw.flush();
+			return;
+
+		}
 
 		if (!password.equals(retypepassword)) {
 			System.out.println("not same");

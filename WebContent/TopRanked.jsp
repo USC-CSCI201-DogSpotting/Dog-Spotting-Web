@@ -50,13 +50,22 @@
       <li><a type="button" onclick="logout()">Log Out</a></li>
       </ul>
     </div>
+			<div class="btn-group btn-group-justified" role="group"
+		aria-label="...">
+		<div class="btn-group" role="group">
+			<button type="button" class="btn btn-default" id="today">Today</button>
+		</div>
+		<div class="btn-group" role="group">
+			<button type="button" class="btn btn-default" id="month">This Month</button>
+		</div>
+		<div class="btn-group" role="group">
+			<button type="button" class="btn btn-default" id="year">This Year</button>
+		</div>
+	</div>
   </nav>
-	<span class="tab" id="toprankfilter">
-		<button class="tablinks" id="today">Today</button>
-    <button class="tablinks" id="week">This Week</button>
-		<button class="tablinks" id="month">This Month</button>
+  	<br>
+	<br>
 
-	</span>
   <!-- Trigger the modal with a button -->
 
   <!-- Modal -->

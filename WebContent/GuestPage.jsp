@@ -88,19 +88,21 @@ window.onload = function(){
 						Up</a></li>
 			</ul>
 		</div>
-	</nav>
-	<div class="btn-group btn-group-justified" role="group"
+			<div class="btn-group btn-group-justified" role="group"
 		aria-label="...">
 		<div class="btn-group" role="group">
-			<button type="button" class="btn btn-default">Today</button>
+			<button type="button" class="btn btn-default" id="today">Today</button>
 		</div>
 		<div class="btn-group" role="group">
-			<button type="button" class="btn btn-default">This Week</button>
+			<button type="button" class="btn btn-default" id="month">This Month</button>
 		</div>
 		<div class="btn-group" role="group">
-			<button type="button" class="btn btn-default">This Month</button>
+			<button type="button" class="btn btn-default" id="year">This Year</button>
 		</div>
 	</div>
+	</nav>
+		<br>
+	<br>
 	<!-- Trigger the modal with a button -->
 	<!-- Modal -->
 	<div class="modal fade" id="myModal2" role="dialog">
@@ -172,7 +174,7 @@ window.onload = function(){
           $("#posts").empty();
           $.each(responseJson, function(index, post) {
             curCount++;
-            $("#posts").append("<div class='container post thumbnail'><a href='PostPage?postID=" + post.postID + "'><img src='" + post.imageURL + "'></a></div>");
+            $("#posts").append("<div class='container post thumbnail'><span><img id='userpic' src='none'>"+post.username+"</span><br><a href='PostPage?postID=" + post.postID + "'><img id='postimage' src='" + post.imageURL + "'></a></div>");
           });
           if (curCount <= numOfPost - postEachPage) {
             $("#readMoreButton").html("No more posts");

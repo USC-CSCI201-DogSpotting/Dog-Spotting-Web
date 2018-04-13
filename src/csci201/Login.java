@@ -45,6 +45,22 @@ public class Login extends HttpServlet {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		int userID = 0;
+		if (username == null || username.equals("") || password == null || password.equals("")) {
+			PrintWriter pw = response.getWriter();
+			request.setAttribute("login_err", "Username and password cannot be blank");
+			pw.println("Username and password cannot be blank");
+			pw.flush();
+			return;
+
+		}
+		if (username.length() > 15 || password.length() > 15) {
+			PrintWriter pw = response.getWriter();
+			request.setAttribute("login_err", "Username and password can only be up to 15 characters");
+			pw.println("Username and password can only be up to 15 characters");
+			pw.flush();
+			return;
+
+		}
 		try {
 			System.out.println("Starting Check");
 			Class.forName("com.mysql.jdbc.Driver");
