@@ -6,7 +6,6 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,17 +39,14 @@ public class HomeFeed extends HttpServlet {
 		System.out.println(username);
 
 		Connection conn = null;
-		Statement st = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
-		Statement st2 = null;
 		PreparedStatement ps2 = null;
 		ResultSet rs2 = null;
 		try {
 			// get userID
 			Class.forName("com.mysql.jdbc.Driver");
 			conn = DriverManager.getConnection("jdbc:mysql://localhost/DogSpotting?user=root&password=root&useSSL=false");
-			st = conn.createStatement();
 			ps = conn.prepareStatement("SELECT userID FROM User WHERE username=?");
 			ps.setString(1, username); // set first variable in prepared statement
 			rs = ps.executeQuery();
@@ -81,7 +77,6 @@ public class HomeFeed extends HttpServlet {
 				// load comments
 				int postID = rs.getInt("postID");
 				List<Comment> comments = new ArrayList<Comment>();
-				st2 = conn.createStatement();
 				ps2 = conn.prepareStatement("SELECT u.username, c.content FROM Comment c, User u " +
 						"WHERE postID=? AND c.userID = u.userID");
 				ps2.setLong(1, postID); // set first variable in prepared statement
@@ -90,6 +85,7 @@ public class HomeFeed extends HttpServlet {
 					Comment tempComment = new Comment(rs2.getString("username"), rs2.getString("content"));
 					comments.add(tempComment);
 				}
+				ps2.close();
 				Post tempPost = new Post(postID, rs.getString("image"), rs.getString("username"), rs.getString("description"), tags, comments);
 				posts.add(tempPost);
 			}
@@ -101,9 +97,6 @@ public class HomeFeed extends HttpServlet {
 			try {
 				if (rs != null) {
 					rs.close();
-				}
-				if (st != null) {
-					st.close();
 				}
 				if (ps != null) {
 					ps.close();
@@ -117,9 +110,6 @@ public class HomeFeed extends HttpServlet {
 			try {
 				if (rs2 != null) {
 					rs2.close();
-				}
-				if (st2 != null) {
-					st2.close();
 				}
 				if (ps2 != null) {
 					ps2.close();
