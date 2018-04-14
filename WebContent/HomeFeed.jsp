@@ -46,26 +46,13 @@
         xhttp.send();
         console.log(xhttp.responseText);
 
-        if(document.getElementById("img").value.trim().length == 0 || document.getElementById("description").value.trim().length == 0 ||
-        		(document.getElementById("tag1").value.trim().length == 0||document.getElementById("tag2").value.trim().length == 0||
-        				document.getElementById("tag3").value.trim().length == 0||document.getElementById("tag4").value.trim().length == 0||
-        				document.getElementById("tag5").value.trim().length == 0)){
-        		if(document.getElementById("img").value.trim().length == 0){
-       		 	document.getElementById("inputError").innerHTML = xhttp.responseText;
-       		 }
-        		if(document.getElementById("description").value.trim().length == 0){
-       		 	document.getElementById("inputError").innerHTML = xhttp.responseText;
-       		 }
-       		 if(document.getElementById("tag1").value.trim().length == 0||document.getElementById("tag2").value.trim().length == 0||
-				document.getElementById("tag3").value.trim().length == 0||document.getElementById("tag4").value.trim().length == 0||
-				document.getElementById("tag5").value.trim().length == 0){
-        			document.getElementById("inputError").innerHTML = xhttp.responseText;
-       		 }
+        if(xhttp.responseText.trim().length>0){
+			console.log('post failed');
+			document.getElementById("inputError").innerHTML = xhttp.responseText;
         }
         else{
-        		document.getElementById("inputCorrect").innerHTML = xhttp.responseText;
-         	alert('Post Successful')
-        		window.location = "HomeFeed.jsp"
+        		console.log('post success');
+         	$('#myModal').modal('hide');
         }
     }
 </script>
@@ -76,7 +63,7 @@
   	 <nav class="navbar navbar-inverse navbar-fixed-top">
     <div class="container-fluid">
       <div class="navbar-header">
-        <a class="navbar-brand" href="#">DogSpotting</a>
+        <a class="navbar-brand" href="TopRanked.jsp">DogSpotting</a>
       </div>
       <form method="GET" class="navbar-form navbar-left" action="Search.jsp">
         <div class="input-group">
@@ -108,25 +95,23 @@
    <div class="modal-content">
      <div class="modal-header">
           <button type="button" class="close" data-dismiss="modal">&times;</button>
-          <h4 class="modal-title">New Post</h4>
+          <h1 class="modal-title">New Post</h1>
     </div>
      <div id="postform">
         <div class="modal-body">
-  		<input type="file" id="pic" name="pic" accept="image/*"><br>
-  		<input type="text" id="img" name="img">Image:<br>
-  		<input type="text" id="description" name="description">Description:</><br>
-  		<input type="text" id="tag1" name="tag1">Tag 1:</><br>
-  		<input type="text" id="tag2" name="tag2">Tag 2:</><br>
-  		<input type="text" id="tag3" name="tag3">Tag 3:</><br>
-  		<input type="text" id="tag4" name="tag4">Tag 4:</><br>
-  		<input type="text" id="tag5" name="tag5">Tag 5:</><br>
+  		Image URL:<input type="url" id="img" name="img"><br>
+  		Caption:<input type="text" id="description" name="description"><br>
+  		Tag 1:<input type="text" id="tag1" name="tag1"><br>
+  		Tag 2:<input type="text" id="tag2" name="tag2"><br>
+  		Tag 3:<input type="text" id="tag3" name="tag3"><br>
+  		Tag 4:<input type="text" id="tag4" name="tag4"><br>
+  		Tag 5:<input type="text" id="tag5" name="tag5"><br>
   		<span id="inputError" style="color: darkred; font-weight: bold"></span>
-  		<span id="inputCorrect" style="color: darkred; font-weight: bold"></span>
       </div>
       </div>
       <div class="modal-footer">
-          <button type="button" id="close" class="btn btn-default" data-dismiss="modal">Close</button>
-          <button type="button" id="post" class="btn btn-default" onclick="validate()">Post</button>
+          <button type="button" id="closebutton" class="btn btn-default" data-dismiss="modal">Close</button>
+          <button type="button" id="postbutton" class="btn btn-default" onclick="validate()">Post</button>
       </div>
     </div>
   </div>
@@ -136,10 +121,12 @@
   <div id="posts">
   </div>
   <div id="readMoreButton">
-  <button class="btn btn-primary" id="readMore">Read More</button>
+  <button class="btn btn-default" id="readMore">Read More</button>
   </div>
   <p id="noMore">No more posts</p>
   </div>
+  <br>
+  <br>
 
 <script>
   var numOfPost = 0;
@@ -162,7 +149,7 @@
       $.each(responseJson, function(index, post) {
         curCount++;
         //MAKE POSTS HERE--update postpageservlet with post id
-        $("#posts").append("<div class='container post thumbnail'><a href='PostPage?postID=" + post.postID + "'><img src='" + post.imageURL + "'></a></div>");
+        $("#posts").append("<div id='post' class='container post thumbnail'></span><a href='PostPage?postID=" + post.postID + "'><img id='dogpic' src='" + post.imageURL + "'></a></div><br><br><br>");
       });
       // No more posts
       if (curCount <= numOfPost - postEachPage) {

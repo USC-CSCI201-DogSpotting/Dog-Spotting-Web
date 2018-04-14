@@ -23,6 +23,38 @@
   		xhttp.send();
   		window.location.replace("GuestPage.jsp");	
   	}
+    function validate() {
+        console.log("here");
+        var requeststr = "NewPost?";
+        requeststr += "img="
+                + document.getElementById("img").value;
+        requeststr += "&description="
+                + document.getElementById("description").value;
+        requeststr += "&tag1="
+            + document.getElementById("tag1").value;
+        requeststr += "&tag2="
+            + document.getElementById("tag2").value;
+        requeststr += "&tag3="
+            + document.getElementById("tag3").value;
+        requeststr += "&tag4="
+            + document.getElementById("tag4").value;
+        requeststr += "&tag5="
+            + document.getElementById("tag5").value;
+        console.log(requeststr);
+        var xhttp = new XMLHttpRequest();
+        xhttp.open("POST", requeststr, false);
+        xhttp.send();
+        console.log(xhttp.responseText);
+
+        if(xhttp.responseText.trim().length>0){
+			console.log('post failed');
+			document.getElementById("inputError").innerHTML = xhttp.responseText;
+        }
+        else{
+        		console.log('post success');
+         	$('#myModal').modal('hide');
+        }
+    }
   	</script>
 </head>
 <body>
@@ -31,7 +63,7 @@
   	<nav class="navbar navbar-inverse navbar-fixed-top">
     <div class="container-fluid">
       <div class="navbar-header">
-        <a class="navbar-brand" href="#">DogSpotting</a>
+        <a class="navbar-brand" href="TopRanked.jsp">DogSpotting</a>
       </div>
       <form method="GET" class="navbar-form navbar-left" action="Search.jsp">
         <div class="input-group">
@@ -47,7 +79,7 @@
       <ul class="nav navbar-nav">
       <li><a type="button" data-toggle="modal" data-target="#myModal">+</a></li>
       <li><a href="HomeFeed.jsp" type="button">Feed</a></li>
-      <li><a type="button">Username</a></li>
+ <li><a type="button" onclick="location.href='UserProfile.jsp'"><%=(String)session.getAttribute("currentusername")%></a></li>
       <li><a type="button" onclick="logout()">Log Out</a></li>
       </ul>
     </div>
@@ -72,42 +104,43 @@
   <!-- Modal -->
   <div class="modal fade" id="myModal" role="dialog">
     <div class="modal-dialog">
-    
+
       <!-- Modal content-->
-      <div class="modal-content">
-        <div class="modal-header">
+   <div class="modal-content">
+     <div class="modal-header">
           <button type="button" class="close" data-dismiss="modal">&times;</button>
-          <h4 class="modal-title">New Post</h4>
-        </div>
+          <h1 class="modal-title">New Post</h1>
+    </div>
+     <div id="postform">
         <div class="modal-body">
-       <form action="/action_page.php">
-  		<input type="file" name="pic" accept="image/*"><br>
-  		<input type="text" id="description">Description:</><br>
-  		<input type="text" id="tag1">Tag 1:</><br>
-  		<input type="text" id="tag2">Tag 2:</><br>
-  		<input type="text" id="tag3">Tag 3:</><br>
-  		<input type="text" id="tag4">Tag 4:</><br>
-  		<input type="text" id="tag5">Tag 5:</><br>
-  		<input type="submit">
-		</form>
-        </div>
-        <div class="modal-footer">
-          <button type="button" id="close" class="btn btn-default" data-dismiss="modal">Close</button>
-          <button type="button" id="post" class="btn btn-default" data-dismiss="modal">Post</button>
-        </div>
+  		Image URL:<input type="url" id="img" name="img"><br>
+  		Caption:<input type="text" id="description" name="description"><br>
+  		Tag 1:<input type="text" id="tag1" name="tag1"><br>
+  		Tag 2:<input type="text" id="tag2" name="tag2"><br>
+  		Tag 3:<input type="text" id="tag3" name="tag3"><br>
+  		Tag 4:<input type="text" id="tag4" name="tag4"><br>
+  		Tag 5:<input type="text" id="tag5" name="tag5"><br>
+  		<span id="inputError" style="color: darkred; font-weight: bold"></span>
       </div>
-      
+      </div>
+      <div class="modal-footer">
+          <button type="button" id="closebutton" class="btn btn-default" data-dismiss="modal">Close</button>
+          <button type="button" id="postbutton" class="btn btn-default" onclick="validate()">Post</button>
+      </div>
     </div>
   </div>
+    </div>
   
   <div class="container" style="padding-top: 70px">
   <div id="posts">
   </div>
   <div id="readMoreButton">
-  <button class="btn btn-primary" id="readMore">Read More</button>
+  <button class="btn btn-default" id="readMore">Read More</button>
   </div>
   <p id="noMore">No more posts</p>
   </div>
+  <br>
+  <br>
 
 <script>
   var numOfPost = 0;
@@ -127,6 +160,15 @@
     $("#noMore").css("display", "none");
 	  rank = 0;
 	  numOfPost = 0;
+		$("#today").css({
+			"background-color" : "#D8BFD8"
+		});
+		$("#month").css({
+			"background-color" : "#D9D9F0"
+		});
+		$("#year").css({
+			"background-color" : "#D9D9F0"
+		});
 	  $("#readMore").click();
   })
   
@@ -136,6 +178,15 @@
 	  $("#noMore").css("display", "none");
     rank = 1;
     numOfPost = 0;
+    $("#month").css({
+		"background-color" : "#D8BFD8"
+	});
+	$("#today").css({
+		"background-color" : "#D9D9F0"
+	});
+	$("#year").css({
+		"background-color" : "#D9D9F0"
+	});
     $("#readMore").click();
   })
   
@@ -145,6 +196,15 @@
 	  $("#noMore").css("display", "none");
     rank = 2;
     numOfPost = 0;
+	$("#year").css({
+		"background-color" : "#D8BFD8"
+	});
+	$("#month").css({
+		"background-color" : "#D9D9F0"
+	});
+	$("#today").css({
+		"background-color" : "#D9D9F0"
+	});
     $("#readMore").click();
   })
   
@@ -156,7 +216,7 @@
       // Add each post through the response Json string
       $.each(responseJson, function(index, post) {
         curCount++;
-        $("#posts").append("<div class='container post thumbnail'><a href='PostPage?postID=" + post.postID + "'><img src='" + post.imageURL + "'></a></div>");
+        $("#posts").append("<div id='post' class='container post thumbnail'></span><a href='PostPage?postID=" + post.postID + "'><img id='dogpic' src='" + post.imageURL + "'></a></div><br><br><br>");
       });
       // No more posts
       if (curCount <= numOfPost - postEachPage) {
