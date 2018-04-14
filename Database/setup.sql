@@ -11,8 +11,8 @@ CREATE TABLE GeneralInfo (
 );
 
 INSERT INTO GeneralInfo (infoname, infonum)
-  VALUES  ('numpost', 0),
-      ('numuser', 0),
+  VALUES  	('numpost', 0),
+			('numuser', 0),
             ('dailyrenew', 20180408),
             ('weekrenew', 20180408),
             ('monthrenew', 20180408);
@@ -25,7 +25,7 @@ CREATE TABLE User (
 );
 
 INSERT INTO User (username, password, picture)
-  VALUES  ('a', 'a', 'a'),
+  VALUES  	('a', 'a', 'a'),
             ('b', 'b', 'b'),
             ('c', 'c', 'c');
 
