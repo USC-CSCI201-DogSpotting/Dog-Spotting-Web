@@ -5,6 +5,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <link rel="stylesheet" href="guestfile.css" />
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
   	<script>
@@ -89,7 +90,7 @@
         </div>
       </form>
       <ul class="nav navbar-nav">
-      <li><button type="button" class="btn btn-default" data-toggle="modal" data-target="#myModal">+</button></li>
+      <li><a type="button" data-toggle="modal" data-target="#myModal">+</a></li>
       <li><a href="TopRanked.jsp" type="button">Top</a></li>
       <li><a type="button" onclick="location.href='UserProfile.jsp'"><%=(String)session.getAttribute("currentusername")%></a></li>
       <li><a type="button" onclick="logout()">Log Out</a></li>
@@ -131,38 +132,46 @@
   </div>
     </div>
 
-  <div class="container" style="padding-top: 70px">
+    <div class="container" style="padding-top: 70px">
   <div id="posts">
   </div>
   <div id="readMoreButton">
   <button class="btn btn-primary" id="readMore">Read More</button>
   </div>
+  <p id="noMore">No more posts</p>
   </div>
 
 <script>
   var numOfPost = 0;
   var postEachPage = 20;
   var curCount = 0;
-
+  var rank = 0;
+  
+  // Load posts when entering this page
   $(document).ready(function() {
+	  $("#noMore").css("display", "none");
     $("#readMore").click();
   });
+  
   $("#readMore").on("click", function() {
-    numOfPost += postEachPage;
-    curCount = 0;
-    $.post("HomeFeed", { username: "<%= request.getSession().getAttribute("currentusername") %>", limit: numOfPost }, function(responseJson) {
+    numOfPost += postEachPage; // Add max number of posts on this page
+    curCount = 0; // Count current number of posts
+    $.post("TopRank", { rank: rank, limit: numOfPost }, function(responseJson) {
       $("#posts").empty();
+      // Add each post through the response Json string
       $.each(responseJson, function(index, post) {
         curCount++;
         //MAKE POSTS HERE--update postpageservlet with post id
         $("#posts").append("<div class='container post thumbnail'><a href='PostPage?postID=" + post.postID + "'><img src='" + post.imageURL + "'></a></div>");
       });
+      // No more posts
       if (curCount <= numOfPost - postEachPage) {
-        $("#readMoreButton").html("No more posts");
+        $("#readMoreButton").css("display", "none");
+        $("#noMore").css("display", "block");
       }
     });
   });
-
+  
 </script>
 </body>
 </html>

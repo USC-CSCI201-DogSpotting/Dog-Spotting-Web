@@ -12,7 +12,7 @@
 	  		console.log(loggedin);
 	  		if(loggedin===false){
 	  			console.log("loggedin");
-	  			window.location = "GuestPage.jsp";
+	  			//window.location = "GuestPage.jsp";
 	  		}
 	  	}
 	  	function logout(){
@@ -31,6 +31,14 @@
 	     <p><%= post.getUsername() %></p>
 	     <img src="<%= post.getImageURL() %>">
 	     <p><%= post.getDescription() %></p>
+	     <% for (int i = 0; i < post.getComments().size(); i++) { %>
+	     <p><%= post.getComments().get(i).getUsername() %>: <%= post.getComments().get(i).getContent() %></p>
+	     <% } %>
+	     <form method="POST" action="CommentPost">
+	       <input type="text" placeholder="New Comment..." class="form-control" name="comment"><br>
+	       <input type="hidden" name="postid" value="<%= post.getPostID() %>">
+	       <button type="submit">submit</button>
+	     </form>
 	  </div>
 	</body>
 </html>
