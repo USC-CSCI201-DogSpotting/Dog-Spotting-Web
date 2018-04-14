@@ -12,6 +12,13 @@
 <script
 	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <script>
+window.onload = function(){
+		var loggedin = <%=request.getSession().getAttribute("loggedin")%>;
+		console.log(loggedin);
+		if(loggedin===true){
+			window.location = "TopRanked.jsp";
+		}
+	}
     function validate() {
         console.log("here");
         var requeststr = "Login?";
@@ -62,7 +69,7 @@
 	<nav class="navbar navbar-inverse navbar-fixed-top">
 		<div class="container-fluid">
 			<div class="navbar-header">
-				<a class="navbar-brand" href="#">DogSpotting</a>
+				<a class="navbar-brand" href="GuestPage.jsp">DogSpotting</a>
 			</div>
 			<form method="GET" class="navbar-form navbar-left" action="Search.jsp">
 				<div class="input-group">
@@ -85,13 +92,13 @@
 			<div class="btn-group btn-group-justified" role="group"
 		aria-label="...">
 		<div class="btn-group" role="group">
-			<button type="button" class="btn btn-default" id="today">Today</button>
+			<button id="today" type="button" class="btn btn-default">Today</button>
 		</div>
 		<div class="btn-group" role="group">
-			<button type="button" class="btn btn-default" id="month">This Month</button>
+			<button id="month" type="button" class="btn btn-default">This Month</button>
 		</div>
 		<div class="btn-group" role="group">
-			<button type="button" class="btn btn-default" id="year">This Year</button>
+			<button id="year" type="button" class="btn btn-default">This Year</button>
 		</div>
 	</div>
 	</nav>
@@ -151,9 +158,11 @@
 	<div class="container" style="padding-top: 70px">
 		<div id="posts"></div>
 		<div id="readMoreButton">
-			<button class="btn btn-primary" id="readMore">Read More</button>
+			<button id="readMore">Read More</button>
 		</div>
 	</div>
+	<br>
+	<br>
 	<script>
 	var numOfPost = 0;
 	  var postEachPage = 20;
@@ -167,18 +176,27 @@
 	  $("#today").on("click", function() {
 		  rank = 0;
 		  numOfPost = 0;
+		  $("#today").css({"background-color": "#D8BFD8"});
+		  $("#month").css({"background-color": "#D9D9F0"});
+		  $("#year").css({"background-color": "#D9D9F0"});
 		  $("#readMore").click();
 	  })
 	  
 	  $("#month").on("click", function() {
 	    rank = 1;
 	    numOfPost = 0;
+		  $("#month").css({"background-color": "#D8BFD8"});
+		  $("#today").css({"background-color": "#D9D9F0"});
+		  $("#year").css({"background-color": "#D9D9F0"});
 	    $("#readMore").click();
 	  })
 	  
 	  $("#year").on("click", function() {
 	    rank = 2;
 	    numOfPost = 0;
+		  $("#year").css({"background-color": "#D8BFD8"});
+		  $("#month").css({"background-color": "#D9D9F0"});
+		  $("#today").css({"background-color": "#D9D9F0"});
 	    $("#readMore").click();
 	  })
 	  
@@ -189,7 +207,8 @@
 	      $("#posts").empty();
 	      $.each(responseJson, function(index, post) {
 	        curCount++;
-	        $("#posts").append("<div class='container post thumbnail'><a href='PostPage?postID=" + post.postID + "'><img src='" + post.imageURL + "'></a></div>");
+	        $("#posts").append("<span id='userinfo'></span>");
+	        $("#posts").append("<div id='post' class='container post thumbnail'></span><a href='PostPage?postID=" + post.postID + "'><img id='dogpic' src='" + post.imageURL + "'></a></div><br><br><br>");
 	      });
 	      if (curCount <= numOfPost - postEachPage) {
 	        $("#readMoreButton").html("No more posts");

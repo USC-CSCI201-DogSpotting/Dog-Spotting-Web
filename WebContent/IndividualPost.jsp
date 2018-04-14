@@ -12,7 +12,7 @@
 	  		console.log(loggedin);
 	  		if(loggedin===false){
 	  			console.log("loggedin");
-	  			window.location = "GuestPage.jsp";
+	  			//window.location = "GuestPage.jsp";
 	  		}
 	  	}
 	  	function logout(){

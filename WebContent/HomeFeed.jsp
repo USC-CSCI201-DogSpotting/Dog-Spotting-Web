@@ -5,6 +5,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <link rel="stylesheet" href="guestfile.css" />
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
   	<script>
@@ -89,7 +90,7 @@
         </div>
       </form>
       <ul class="nav navbar-nav">
-      <li><button type="button" class="btn btn-default" data-toggle="modal" data-target="#myModal">+</button></li>
+      <li><a type="button" data-toggle="modal" data-target="#myModal">+</a></li>
       <li><a href="TopRanked.jsp" type="button">Top</a></li>
       <li><a type="button" onclick="location.href='UserProfile.jsp'"><%=(String)session.getAttribute("currentusername")%></a></li>
       <li><a type="button" onclick="logout()">Log Out</a></li>
