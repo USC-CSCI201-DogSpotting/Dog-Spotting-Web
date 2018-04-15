@@ -207,9 +207,6 @@
         var html = "";
         html += "<div class='container'>";
         html += "<p>" + post.username + "</p>";
-        if (post.username === "<%= request.getSession().getAttribute("currentusername") %>") {
-        	  html += "<button onclick='follow()'>" + (post.isFollow ? "Unfollow" : "Follow") + "</button>";
-        }
         html += "<div class='container thumbnail'><a href='PostPage?postID=" + post.postID + "'><img src='" + post.imageURL + "'></a></div>";
         html += "</div>";
         $("#posts").append(html);
@@ -221,12 +218,6 @@
       }
     });
   });
-  
-  function follow() {
-	  var xhttp = new XMLHttpRequest();
-	  xhttp.open("GET", "Follow?follower=" + username + "&following=" + <%= request.getSession().getAttribute("currentusername") %> + "&isFollow=" + isFollow, true);
-	  xhttp.send();
-  }
     </script>
 </body>
 </html>

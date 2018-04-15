@@ -33,8 +33,8 @@ public class TopRank extends HttpServlet {
 		/* database starts */
 		// variables
 		// for user
-		boolean isLoggedin = false;
-		String username = "a";
+		boolean isLoggedin = (boolean)request.getSession().getAttribute("loggedin");
+		String username = (String)request.getSession().getAttribute("currentusername");
 		int rankSelection = Integer.parseInt(request.getParameter("rank"));
 		int limit = Integer.parseInt(request.getParameter("limit"));
 		// 0: daily, 1: weekly, 2: monthly
@@ -88,7 +88,7 @@ public class TopRank extends HttpServlet {
 			if(isLoggedin) {
 				ps3 = conn.prepareStatement("SELECT * FROM Likes WHERE userID = ? AND postID = ? AND valid = 1");
 				ps3.setInt(1, userID);
-				ps4 = conn.prepareStatement("Select * FROM Follow WHERE followerID = ? AND followingID = ?");
+				ps4 = conn.prepareStatement("Select * FROM Follow WHERE followerID = ? AND followingID = ? AND valid = 1");
 				ps4.setInt(1, userID);
 			}
 			while (rs.next()) { // load ranked posts
@@ -116,14 +116,12 @@ public class TopRank extends HttpServlet {
 					if(rs3.next()) {
 						tempPost.setIsLike(true);
 					}
-					ps3.close();
 					int postUserID = rs.getInt("userID");
 					ps4.setInt(2, postUserID);
 					rs4 = ps4.executeQuery();
 					if(rs4.next()) {
 						tempPost.setIsFollow(true);
 					}
-					ps4.close();
 				}
 				posts.add(tempPost);
 			}
@@ -151,6 +149,12 @@ public class TopRank extends HttpServlet {
 				}
 				if (ps2 != null) {
 					ps2.close();
+				}
+				if (ps3 != null) {
+					ps3.close();
+				}
+				if (ps4 != null) {
+					ps4.close();
 				}
 			} catch (SQLException sqle) {
 				System.out.println("sqle: " + sqle.getMessage());
