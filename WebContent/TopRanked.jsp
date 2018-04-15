@@ -16,6 +16,17 @@
   			console.log("loggedin");
   			window.location = "GuestPage.jsp";
   		}
+
+  		// socket
+  		alert("starting socket");
+  		socket = new WebSocket("ws://localhost:8080/DogSpotting/ws");
+  		alert("soket started");
+  		var socketUsername = <%=(String)request.getSession().getAttribute("currentusername")%>;
+  		alert(socketUsername);
+//  		socket.send(socketUsername);
+		socket.onmessage = function(event){
+			document.getElementById("notifyNum").innerHTML += event.data + "<br />";
+		}
   	}
   	function logout(){
   		var xhttp = new XMLHttpRequest();
@@ -50,6 +61,8 @@
       <li><a type="button">Username</a></li>
       <li><a type="button" onclick="logout()">Log Out</a></li>
       </ul>
+      <div id="notifyNum">
+      </div>
     </div>
 			<div class="btn-group btn-group-justified" role="group"
 		aria-label="...">
