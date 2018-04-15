@@ -34,7 +34,7 @@ public class Like extends HttpServlet {
 		/* database starts */
 		// variables
 		int postID = 1;
-		String username = "a";
+		String username = "b";
 		boolean isLike = true;
 
 		Connection conn = null;
@@ -62,6 +62,7 @@ public class Like extends HttpServlet {
 				rs = ps.executeQuery();
 				int likesID = 0;
 				if (rs.next()) { // re-validate the like
+					likesID = rs.getInt("likesID");
 					ps.close();
 					ps = conn.prepareStatement("UPDATE Likes SET valid = 1 WHERE likesID = ?");
 					ps.setLong(1, likesID);
@@ -82,7 +83,7 @@ public class Like extends HttpServlet {
 							"yearlylike = yearlylike + 1 " +
 							"WHERE postID = ?");
 					ps.setInt(1, postID);
-					ps.executeQuery();
+					ps.executeUpdate();
 					ps.close();
 				}
 				// get username of the post to push notification

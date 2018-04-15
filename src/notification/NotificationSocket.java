@@ -86,12 +86,15 @@ public class NotificationSocket extends Thread {
 	}
 	
 	private static void broadcastNewNotification(String username, int numOfNotifications) {
-		try {
-			for(Session s: sessions.get(username)) {
-				s.getBasicRemote().sendText("" + numOfNotifications);
+		Vector<Session> userSessions = sessions.get(username);
+		if(userSessions != null) {
+			try {
+				for(Session s: sessions.get(username)) {
+					s.getBasicRemote().sendText("" + numOfNotifications);
+				}
+			} catch (IOException ioe) {
+				System.out.println("IOException in braodcastNewNotification: " + ioe.getMessage());
 			}
-		} catch (IOException ioe) {
-			System.out.println("IOException in braodcastNewNotification: " + ioe.getMessage());
 		}
 	}
 	/*
