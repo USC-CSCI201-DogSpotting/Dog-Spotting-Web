@@ -182,7 +182,8 @@ public class NewPost extends HttpServlet {
 					System.out.println("sqle: " + sqle.getMessage());
 				}
 			}
-			pw.println("Thanks for posting!");
+			pw.flush();
+			pw.close();
 			/* database ends */
 		}
 	}

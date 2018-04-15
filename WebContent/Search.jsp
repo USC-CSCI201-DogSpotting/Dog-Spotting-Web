@@ -20,6 +20,7 @@
   			console.log("loggedin");
   			//window.location = "GuestPage.jsp";
   			document.getElementById("guestusernavbar").innerHTML = "<li><a href=\"#\" data-toggle=\"modal\" data-target=\"#myModalg\">Log In</a></li><li><a href=\"#\" data-toggle=\"modal\" data-target=\"#myModalg2\">Sign Up</a></li>";
+  			document.getElementById("dogspottinglogo").innerHTML = "<a class=\"navbar-brand\" href=\"GuestPage.jsp\">DogSpotting</a>";
   		}
   	}
   	function logout(){
@@ -72,6 +73,38 @@
             window.location = "HomeFeed.jsp"
         }
     }
+    function validatePost() {
+        console.log("here");
+        var requeststr = "NewPost?";
+        requeststr += "img="
+                + document.getElementById("img").value;
+        requeststr += "&description="
+                + document.getElementById("description").value;
+        requeststr += "&tag1="
+            + document.getElementById("tag1").value;
+        requeststr += "&tag2="
+            + document.getElementById("tag2").value;
+        requeststr += "&tag3="
+            + document.getElementById("tag3").value;
+        requeststr += "&tag4="
+            + document.getElementById("tag4").value;
+        requeststr += "&tag5="
+            + document.getElementById("tag5").value;
+        console.log(requeststr);
+        var xhttp = new XMLHttpRequest();
+        xhttp.open("POST", requeststr, false);
+        xhttp.send();
+        console.log(xhttp.responseText);
+
+        if(xhttp.responseText.trim().length>0){
+			console.log('post failed');
+			document.getElementById("inputError").innerHTML = xhttp.responseText;
+        }
+        else{
+        		console.log('post success');
+        		window.location = 'Search.jsp?search='+'<%=(String)request.getParameter("search")%>';
+        }
+    }
   	</script>
 </head>
 <body>
@@ -83,7 +116,7 @@ String search = (String)request.getParameter("search");
 	<div class="container">
 		<nav class="navbar navbar-inverse navbar-fixed-top">
 		<div class="container-fluid">
-			<div class="navbar-header">
+			<div id="dogspottinglogo" class="navbar-header">
 				<a class="navbar-brand" href="TopRanked.jsp">DogSpotting</a>
 			</div>
 			<form method="GET" class="navbar-form navbar-left"
@@ -99,8 +132,8 @@ String search = (String)request.getParameter("search");
 				</div>
 			</form>
 			<ul id="guestusernavbar" class="nav navbar-nav">
-				<li><button type="button" class="btn btn-default"
-						data-toggle="modal" data-target="#myModal">+</button></li>
+				<li><a type="button"
+						data-toggle="modal" data-target="#myModal">+</a></li>
 				<li><a href="TopRanked.jsp" type="button">Top</a></li>
 				<li><a type="button">Username</a></li>
 				<li><a type="button" onclick="logout()">Log Out</a></li>
@@ -110,38 +143,35 @@ String search = (String)request.getParameter("search");
 	</div>
 	<!-- Trigger the modal with a button -->
 
-	<!-- Modal -->
-	<div class="modal fade" id="myModal" role="dialog">
-		<div class="modal-dialog">
+  <!-- Modal -->
+  <div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog">
 
-			<!-- Modal content-->
-			<div class="modal-content">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal">&times;</button>
-					<h4 class="modal-title">New Post</h4>
-				</div>
-				<div class="modal-body">
-					<form action="/action_page.php">
-						<input type="file" name="pic" accept="image/*"><br> <input
-							type="text" id="description">Description:</><br> <input
-							type="text" id="tag1">Tag 1:</><br> <input
-							type="text" id="tag2">Tag 2:</><br> <input
-							type="text" id="tag3">Tag 3:</><br> <input
-							type="text" id="tag4">Tag 4:</><br> <input
-							type="text" id="tag5">Tag 5:</><br> <input
-							type="submit">
-					</form>
-				</div>
-				<div class="modal-footer">
-					<button type="button" id="close" class="btn btn-default"
-						data-dismiss="modal">Close</button>
-					<button type="button" id="post" class="btn btn-default"
-						data-dismiss="modal">Post</button>
-				</div>
-			</div>
-
-		</div>
-	</div>
+      <!-- Modal content-->
+   <div class="modal-content">
+     <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h1 class="modal-title">New Post</h1>
+    </div>
+     <div id="postform">
+        <div class="modal-body">
+  		Image URL:<input type="url" id="img" name="img"><br>
+  		Caption:<input type="text" id="description" name="description"><br>
+  		Tag 1:<input type="text" id="tag1" name="tag1"><br>
+  		Tag 2:<input type="text" id="tag2" name="tag2"><br>
+  		Tag 3:<input type="text" id="tag3" name="tag3"><br>
+  		Tag 4:<input type="text" id="tag4" name="tag4"><br>
+  		Tag 5:<input type="text" id="tag5" name="tag5"><br>
+  		<span id="inputError" style="color: darkred; font-weight: bold"></span>
+      </div>
+      </div>
+      <div class="modal-footer">
+          <button type="button" id="closebutton" class="btn btn-default" data-dismiss="modal">Close</button>
+          <button type="button" id="postbutton" class="btn btn-default" onclick="validatePost()">Post</button>
+      </div>
+    </div>
+  </div>
+    </div>
 	
 	<!-- Modal guest sign up-->
 	<div class="modal fade" id="myModalg2" role="dialog">

@@ -14,7 +14,7 @@
 <script>
 	window.onload = function() {
 		var loggedin =
-<%=request.getSession().getAttribute("loggedin")%>
+			<%=request.getSession().getAttribute("loggedin")%>
 	;
 		console.log(loggedin);
 		if (loggedin === true) {
