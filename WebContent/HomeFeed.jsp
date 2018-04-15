@@ -100,7 +100,7 @@
      <div id="postform">
         <div class="modal-body">
   		Image URL:<input type="url" id="img" name="img"><br>
-  		Caption:<input type="text" id="description" name="description"><br>
+  		Caption:<input type="textarea" id="description" name="description"><br>
   		Tag 1:<input type="text" id="tag1" name="tag1"><br>
   		Tag 2:<input type="text" id="tag2" name="tag2"><br>
   		Tag 3:<input type="text" id="tag3" name="tag3"><br>
@@ -123,38 +123,30 @@
   <div id="readMoreButton">
   <button class="btn btn-default" id="readMore">Read More</button>
   </div>
-  <p id="noMore">No more posts</p>
   </div>
   <br>
   <br>
 
 <script>
+  
   var numOfPost = 0;
   var postEachPage = 20;
   var curCount = 0;
-  var rank = 0;
   
-  // Load posts when entering this page
   $(document).ready(function() {
-	  $("#noMore").css("display", "none");
     $("#readMore").click();
   });
-  
   $("#readMore").on("click", function() {
-    numOfPost += postEachPage; // Add max number of posts on this page
-    curCount = 0; // Count current number of posts
-    $.post("TopRank", { rank: rank, limit: numOfPost }, function(responseJson) {
+    numOfPost += postEachPage;
+    curCount = 0;
+    $.post("HomeFeed", { username: "<%= request.getSession().getAttribute("currentusername") %>", limit: numOfPost }, function(responseJson) {
       $("#posts").empty();
-      // Add each post through the response Json string
       $.each(responseJson, function(index, post) {
         curCount++;
-        //MAKE POSTS HERE--update postpageservlet with post id
-        $("#posts").append("<div id='post' class='container post thumbnail'></span><a href='PostPage?postID=" + post.postID + "'><img id='dogpic' src='" + post.imageURL + "'></a></div><br><br><br>");
+        $("#posts").append("<div class='container post thumbnail'><a href='PostPage?postID=" + post.postID + "'><img src='" + post.imageURL + "'></a></div>");
       });
-      // No more posts
       if (curCount <= numOfPost - postEachPage) {
-        $("#readMoreButton").css("display", "none");
-        $("#noMore").css("display", "block");
+        $("#readMoreButton").html("No more posts");
       }
     });
   });

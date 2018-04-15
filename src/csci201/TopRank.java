@@ -75,10 +75,10 @@ public class TopRank extends HttpServlet {
 				ps = conn.prepareStatement("SELECT * FROM DailyRank r, Post p, User u " + 
 						"WHERE r.postID = p.postID AND p.userID = u.userID " + " LIMIT " + limit);
 			}else if(rankSelection == 1) {
-				ps = conn.prepareStatement("SELECT * FROM WeeklyRank r, Post p, User u " +
+				ps = conn.prepareStatement("SELECT * FROM MonthlyRank r, Post p, User u " +
 						"WHERE r.postID = p.postID AND p.userID = u.userID " + " LIMIT " + limit);
 			}else{
-				ps = conn.prepareStatement("SELECT * FROM MonthlyRank r, Post p, User u " +
+				ps = conn.prepareStatement("SELECT * FROM YearlyRank r, Post p, User u " +
 						"WHERE r.postID = p.postID AND p.userID = u.userID " + " LIMIT " + limit);
 			}
 			rs = ps.executeQuery();
@@ -128,7 +128,7 @@ public class TopRank extends HttpServlet {
 				posts.add(tempPost);
 			}
 		} catch (SQLException sqle) {
-			System.out.println ("SQLException: " + sqle.getMessage());
+			System.out.println ("SQLException in TopRank: " + sqle.getMessage());
 		} catch (ClassNotFoundException cnfe) {
 			System.out.println ("ClassNotFoundException: " + cnfe.getMessage());
 		} finally {
