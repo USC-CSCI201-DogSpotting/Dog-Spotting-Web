@@ -102,7 +102,7 @@
         }
         else{
         		console.log('post success');
-         	window.location = 'Search.jsp?search='+'<%=(String)request.getParameter("search")%>';
+        		window.location = 'Search.jsp?search='+'<%=(String)request.getParameter("search")%>';
         }
     }
   	</script>

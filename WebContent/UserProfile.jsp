@@ -10,7 +10,7 @@
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
   <script>
 	window.onload = function(){
-  		var loggedin = <%=request.getSession().getAttribute("loggedin")%>;
+		var loggedin = <%=request.getSession().getAttribute("loggedin")%>;
   		console.log(loggedin);
   		if(loggedin===false){
   			console.log("loggedin");
