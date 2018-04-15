@@ -20,6 +20,8 @@
 	  		if(loggedin===false || loggedin===null){
 	  			console.log("loggedin");
 	  			//window.location = "GuestPage.jsp";
+	  			document.getElementById("guestusernavbar").innerHTML = "<li><a href=\"#\" data-toggle=\"modal\" data-target=\"#myModalg\">Log In</a></li><li><a href=\"#\" data-toggle=\"modal\" data-target=\"#myModalg2\">Sign Up</a></li>";
+	  			document.getElementById("dogspottinglogo").innerHTML = "<a class=\"navbar-brand\" href=\"GuestPage.jsp\">DogSpotting</a>";
 	  		}else{
 	  	  		// socket
 	  	  		var socketUsername = '<%=(String)request.getSession().getAttribute("currentusername")%>';
@@ -30,8 +32,6 @@
 	  			socket.onmessage = function(event){
 	  				document.getElementById("notifyNum").innerHTML += event.data + "<br />";
 	  			}
-	  			document.getElementById("guestusernavbar").innerHTML = "<li><a href=\"#\" data-toggle=\"modal\" data-target=\"#myModalg\">Log In</a></li><li><a href=\"#\" data-toggle=\"modal\" data-target=\"#myModalg2\">Sign Up</a></li>";
-	  			document.getElementById("dogspottinglogo").innerHTML = "<a class=\"navbar-brand\" href=\"GuestPage.jsp\">DogSpotting</a>";
 	  		}
 	  	}
 	  	function logout(){

@@ -130,6 +130,8 @@
 
     <div class="container" style="padding-top: 70px">
   <div id="posts">
+  <br>
+  <br>
   </div>
   <div id="readMoreButton">
   <button class="btn btn-default" id="readMore">Read More</button>
@@ -153,7 +155,7 @@ $("#readMore").on("click", function() {
     $("#posts").empty();
     $.each(responseJson, function(index, post) {
       curCount++;
-      $("#posts").append("<div class='container post thumbnail'><a href='PostPage?postID=" + post.postID + "'><img src='" + post.imageURL + "'></a></div>");
+      $("#posts").append("<br><div id='post' class='container post thumbnail'><a href='PostPage?postID=" + post.postID + "'><img src='" + post.imageURL + "'></a></div><br><br><br>");
     });
     if (curCount <= numOfPost - postEachPage) {
       $("#readMoreButton").html("No more posts");
