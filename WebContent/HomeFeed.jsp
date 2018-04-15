@@ -12,14 +12,14 @@
   	window.onload = function(){
   		var loggedin = <%=request.getSession().getAttribute("loggedin")%>;
   		console.log(loggedin);
-  		if(loggedin===false){
+  		if(loggedin===false || loggedin===null){
   			console.log("loggedin");
   			window.location = "GuestPage.jsp";
   		}
   	}
   	function logout(){
   		var xhttp = new XMLHttpRequest();
-  		xhttp.open("GET", "Logout?", true); //synchronous
+  		xhttp.open("GET", "Logout?", false); //synchronous
   		xhttp.send();
   		window.location.replace("GuestPage.jsp");	
   	}
@@ -128,28 +128,27 @@
   <br>
 
 <script>
-  
-  var numOfPost = 0;
-  var postEachPage = 20;
-  var curCount = 0;
-  
-  $(document).ready(function() {
-    $("#readMore").click();
-  });
-  $("#readMore").on("click", function() {
-    numOfPost += postEachPage;
-    curCount = 0;
-    $.post("HomeFeed", { username: "<%= request.getSession().getAttribute("currentusername") %>", limit: numOfPost }, function(responseJson) {
-      $("#posts").empty();
-      $.each(responseJson, function(index, post) {
-        curCount++;
-        $("#posts").append("<div class='container post thumbnail'><a href='PostPage?postID=" + post.postID + "'><img src='" + post.imageURL + "'></a></div>");
-      });
-      if (curCount <= numOfPost - postEachPage) {
-        $("#readMoreButton").html("No more posts");
-      }
+var numOfPost = 0;
+var postEachPage = 20;
+var curCount = 0;
+
+$(document).ready(function() {
+  $("#readMore").click();
+});
+$("#readMore").on("click", function() {
+  numOfPost += postEachPage;
+  curCount = 0;
+  $.post("HomeFeed", { username: "<%= request.getSession().getAttribute("currentusername") %>", limit: numOfPost }, function(responseJson) {
+    $("#posts").empty();
+    $.each(responseJson, function(index, post) {
+      curCount++;
+      $("#posts").append("<div class='container post thumbnail'><a href='PostPage?postID=" + post.postID + "'><img src='" + post.imageURL + "'></a></div>");
     });
+    if (curCount <= numOfPost - postEachPage) {
+      $("#readMoreButton").html("No more posts");
+    }
   });
+});
   
 </script>
 </body>

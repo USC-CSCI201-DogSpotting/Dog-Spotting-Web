@@ -26,7 +26,7 @@
 	  	}
 	  	function logout(){
 	  		var xhttp = new XMLHttpRequest();
-	  		xhttp.open("GET", "Logout?", true); //synchronous
+	  		xhttp.open("GET", "Logout?", false); //synchronous
 	  		xhttp.send();
 	  		window.location.replace("GuestPage.jsp");	
 	  	}
