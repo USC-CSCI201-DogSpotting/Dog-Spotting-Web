@@ -35,7 +35,7 @@
   	}
   	function logout(){
   		var xhttp = new XMLHttpRequest();
-  		xhttp.open("GET", "Logout?", true); //synchronous
+  		xhttp.open("GET", "Logout?", false); //synchronous
   		xhttp.send();
   		window.location.replace("GuestPage.jsp");	
   	}
@@ -145,7 +145,7 @@ String search = (String)request.getParameter("search");
 				<li><a type="button"
 						data-toggle="modal" data-target="#myModal">+</a></li>
 				<li><a href="TopRanked.jsp" type="button">Top</a></li>
-				<li><a type="button">Username</a></li>
+				<li><a type="button"><%=request.getSession().getAttribute("currentusername")%></a></li>
 				<li><a type="button" onclick="logout()">Log Out</a></li>
 			</ul>
 	      <div id="notifyNum"> </div>
@@ -260,7 +260,7 @@ String search = (String)request.getParameter("search");
   $("#readMore").on("click", function() {
     numOfPost += postEachPage;
     curCount = 0;
-    console.log("<%= search %>");
+    console.log("hellohi<%= search %>");
     $.post("Search", { search: "<%= search %>", limit: numOfPost }, function(responseJson) {
       $("#posts").empty();
       $.each(responseJson, function(index, post) {

@@ -19,6 +19,7 @@ public class Logout extends HttpServlet {
 		HttpSession s = request.getSession();
 		s.setAttribute("currentuser", null);
 		s.setAttribute("loggedin", false);
+		
 	}
 
 }

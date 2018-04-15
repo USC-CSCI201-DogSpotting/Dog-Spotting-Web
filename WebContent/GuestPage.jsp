@@ -14,7 +14,7 @@
 <script>
 	window.onload = function() {
 		var loggedin =
-			<%=request.getSession().getAttribute("loggedin")%>
+<%=request.getSession().getAttribute("loggedin")%>
 	;
 		console.log(loggedin);
 		if (loggedin === true) {
@@ -162,7 +162,8 @@
 		</div>
 	</div>
 	<div class="container" style="padding-top: 70px">
-		<div id="posts"></div>
+		<div id="posts">
+		</div>
 		<div id="readMoreButton">
 			<button class="btn btn-default" id="readMore">Read More</button>
 		</div>
@@ -259,14 +260,7 @@
 																function(index,
 																		post) {
 																	curCount++;
-																	$("#posts")
-																			.append(
-																					"<span id='userinfo'></span>");
-																	$("#posts")
-																			.append(
-																					"<div id='post' class='container post thumbnail'></span><a href='PostPage?postID="
-																							+ post.postID
-																							+ "'><img id='dogpic' src='" + post.imageURL + "'></a></div><br><br><br>");
+																	$("#posts").append("<div id='post' class='container post thumbnail'><span><img id=\"userprofpic\" src=\"https://pbs.twimg.com/profile_images/948761950363664385/Fpr2Oz35_400x400.jpg\"><a id=\"userusername\" href=\"#\">" + post.username + "</a></span><a href=\"#\"><img src=\"" +post.imageURL+"\"></a></div><br><br><br>")
 																});
 												// No more posts
 												if (curCount <= numOfPost

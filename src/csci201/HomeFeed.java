@@ -88,12 +88,14 @@ public class HomeFeed extends HttpServlet {
 				// load comments
 				int postID = rs.getInt("postID");
 				List<Comment> comments = new ArrayList<Comment>();
+				System.out.println("yoooooo");
 				ps2.setLong(1, postID); // set first variable in prepared statement
 				rs2 = ps2.executeQuery();
 				while(rs2.next()) {
 					Comment tempComment = new Comment(rs2.getInt("commentID"), rs2.getString("username"), rs2.getString("content"));
 					comments.add(tempComment);
 				}
+
 				Post tempPost = new Post(postID, rs.getString("image"), rs.getString("username"), rs.getString("description"), tags, comments);
 				// check like and comment if loggedin
 				ps3.setInt(2, postID);
@@ -101,16 +103,19 @@ public class HomeFeed extends HttpServlet {
 				if(rs3.next()) {
 					tempPost.setIsLike(true);
 				}
+
 				int postUserID = rs.getInt("userID");
-				ps3.setInt(2, postUserID);
+				ps4.setInt(2, postUserID);
 				rs4 = ps4.executeQuery();
 				if(rs4.next()) {
 					tempPost.setIsFollow(true);
 				}
+
 				posts.add(tempPost);
 			}
 		} catch (SQLException sqle) {
-			System.out.println ("SQLException: " + sqle.getMessage());
+			//sqle.printStackTrace();
+			System.out.println ("SQLException homefeed: " + sqle.getMessage());
 		} catch (ClassNotFoundException cnfe) {
 			System.out.println ("ClassNotFoundException: " + cnfe.getMessage());
 		} finally {
