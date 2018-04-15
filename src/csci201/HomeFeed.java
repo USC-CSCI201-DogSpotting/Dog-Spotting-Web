@@ -28,6 +28,7 @@ public class HomeFeed extends HttpServlet {
 	 * @see HttpServlet#service(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		System.out.println("homefeeeeed");
 		// TODO Auto-generated method stub
 
 		/* database starts */
@@ -36,7 +37,7 @@ public class HomeFeed extends HttpServlet {
 		int limit = Integer.parseInt(request.getParameter("limit"));
 		List<Post> posts = new ArrayList<Post>();
 		
-		System.out.println(username);
+		System.out.println("username "+ username);
 
 		Connection conn = null;
 		PreparedStatement ps = null;
