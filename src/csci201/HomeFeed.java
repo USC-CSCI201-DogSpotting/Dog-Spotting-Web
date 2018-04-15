@@ -94,7 +94,6 @@ public class HomeFeed extends HttpServlet {
 					Comment tempComment = new Comment(rs2.getInt("commentID"), rs2.getString("username"), rs2.getString("content"));
 					comments.add(tempComment);
 				}
-				ps2.close();
 				Post tempPost = new Post(postID, rs.getString("image"), rs.getString("username"), rs.getString("description"), tags, comments);
 				// check like and comment if loggedin
 				ps3.setInt(2, postID);
@@ -102,14 +101,12 @@ public class HomeFeed extends HttpServlet {
 				if(rs3.next()) {
 					tempPost.setIsLike(true);
 				}
-				ps3.close();
 				int postUserID = rs.getInt("userID");
 				ps3.setInt(2, postUserID);
 				rs4 = ps4.executeQuery();
 				if(rs4.next()) {
 					tempPost.setIsFollow(true);
 				}
-				ps4.close();
 				posts.add(tempPost);
 			}
 		} catch (SQLException sqle) {
@@ -136,6 +133,26 @@ public class HomeFeed extends HttpServlet {
 				}
 				if (ps2 != null) {
 					ps2.close();
+				}
+			} catch (SQLException sqle) {
+				System.out.println("sqle: " + sqle.getMessage());
+			}
+			try {
+				if (rs3 != null) {
+					rs3.close();
+				}
+				if (ps3 != null) {
+					ps3.close();
+				}
+			} catch (SQLException sqle) {
+				System.out.println("sqle: " + sqle.getMessage());
+			}
+			try {
+				if (rs4 != null) {
+					rs4.close();
+				}
+				if (ps4 != null) {
+					ps4.close();
 				}
 			} catch (SQLException sqle) {
 				System.out.println("sqle: " + sqle.getMessage());

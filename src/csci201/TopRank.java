@@ -75,10 +75,10 @@ public class TopRank extends HttpServlet {
 				ps = conn.prepareStatement("SELECT * FROM DailyRank r, Post p, User u " + 
 						"WHERE r.postID = p.postID AND p.userID = u.userID " + " LIMIT " + limit);
 			}else if(rankSelection == 1) {
-				ps = conn.prepareStatement("SELECT * FROM WeeklyRank r, Post p, User u " +
+				ps = conn.prepareStatement("SELECT * FROM MonthlyRank r, Post p, User u " +
 						"WHERE r.postID = p.postID AND p.userID = u.userID " + " LIMIT " + limit);
 			}else{
-				ps = conn.prepareStatement("SELECT * FROM MonthlyRank r, Post p, User u " +
+				ps = conn.prepareStatement("SELECT * FROM YearlyRank r, Post p, User u " +
 						"WHERE r.postID = p.postID AND p.userID = u.userID " + " LIMIT " + limit);
 			}
 			rs = ps.executeQuery();
@@ -116,14 +116,12 @@ public class TopRank extends HttpServlet {
 					if(rs3.next()) {
 						tempPost.setIsLike(true);
 					}
-					ps3.close();
 					int postUserID = rs.getInt("userID");
 					ps4.setInt(2, postUserID);
 					rs4 = ps4.executeQuery();
 					if(rs4.next()) {
 						tempPost.setIsFollow(true);
 					}
-					ps4.close();
 				}
 				posts.add(tempPost);
 			}
@@ -151,6 +149,26 @@ public class TopRank extends HttpServlet {
 				}
 				if (ps2 != null) {
 					ps2.close();
+				}
+			} catch (SQLException sqle) {
+				System.out.println("sqle: " + sqle.getMessage());
+			}
+			try {
+				if (rs3 != null) {
+					rs3.close();
+				}
+				if (ps3 != null) {
+					ps3.close();
+				}
+			} catch (SQLException sqle) {
+				System.out.println("sqle: " + sqle.getMessage());
+			}
+			try {
+				if (rs4 != null) {
+					rs4.close();
+				}
+				if (ps4 != null) {
+					ps4.close();
 				}
 			} catch (SQLException sqle) {
 				System.out.println("sqle: " + sqle.getMessage());

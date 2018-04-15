@@ -33,7 +33,7 @@ public class CommentPost extends HttpServlet {
 		
 		/* database starts */
 		// variables
-		int postID = 1;//Integer.parseInt(request.getParameter("postid"));
+		int postID = Integer.parseInt(request.getParameter("postid"));
 		String username = (String) request.getSession().getAttribute("currentusername");
 		String content = request.getParameter("comment");
 		Post post = null;

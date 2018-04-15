@@ -154,7 +154,7 @@
   $("#readMore").on("click", function() {
     numOfPost += postEachPage; // Add max number of posts on this page
     curCount = 0; // Count current number of posts
-    $.post("TopRank", { rank: rank, limit: numOfPost }, function(responseJson) {
+    $.post("HomeFeed", { rank: rank, limit: numOfPost }, function(responseJson) {
       $("#posts").empty();
       // Add each post through the response Json string
       $.each(responseJson, function(index, post) {
