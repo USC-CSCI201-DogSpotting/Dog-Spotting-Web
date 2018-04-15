@@ -13,6 +13,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import notification.NotificationSocket;
+
 /**
  * Servlet implementation class Like
  */
@@ -83,6 +85,15 @@ public class Like extends HttpServlet {
 					ps.executeQuery();
 					ps.close();
 				}
+				// get username of the post to push notification
+				ps = conn.prepareStatement("SELECT u.username FROM User u, Post p WHERE u.userID = p.userID AND p.postID = ?");
+				ps.setInt(1, postID);
+				rs = ps.executeQuery();
+				String postUsername = "";
+				while(rs.next()) {
+					postUsername = rs.getString("username");
+				}
+				NotificationSocket.addUserNotification(postUsername, username + " liked your post!");
 			}else { // invalidate like
 				ps.close();
 				ps = conn.prepareStatement("UPDATE Likes SET valid = 0 WHERE userID = ? AND postID = ?");

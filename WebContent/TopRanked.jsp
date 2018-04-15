@@ -15,19 +15,18 @@
   		if(loggedin===false || loggedin===null){
   			console.log("loggedin");
   			window.location = "GuestPage.jsp";
+  		}else{
+  	  		// socket
+  	  		var socketUsername = '<%=(String)request.getSession().getAttribute("currentusername")%>';
+  	  		socket = new WebSocket("ws://localhost:8080/DogSpotting/ws");
+  	  		socket.onopen = function(event){
+  	  			socket.send(socketUsername);
+  	  		}
+  			socket.onmessage = function(event){
+  				document.getElementById("notifyNum").innerHTML += event.data + "<br />";
+  			}
   		}
-
-  		// socket
-  		alert("starting socket");
-  		socket = new WebSocket("ws://localhost:8080/DogSpotting/ws");
-  		alert("soket started");
-  		var socketUsername = <%=(String)request.getSession().getAttribute("currentusername")%>;
-  		alert(socketUsername);
-//  		socket.send(socketUsername);
-		socket.onmessage = function(event){
-			document.getElementById("notifyNum").innerHTML += event.data + "<br />";
-		}
-  	}
+	}
   	function logout(){
   		var xhttp = new XMLHttpRequest();
   		xhttp.open("GET", "Logout?", true); //synchronous
@@ -93,8 +92,7 @@
  <li><a type="button" onclick="location.href='UserProfile.jsp'"><%=(String)session.getAttribute("currentusername")%></a></li>
       <li><a type="button" onclick="logout()">Log Out</a></li>
       </ul>
-      <div id="notifyNum">
-      </div>
+      <div id="notifyNum"> </div>
     </div>
 			<div class="btn-group btn-group-justified" role="group"
 		aria-label="...">

@@ -14,6 +14,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import notification.NotificationSocket;
+
 /**
  * Servlet implementation class Follow
  */
@@ -77,6 +79,8 @@ public class Follow extends HttpServlet {
 					ps.setLong(2, followerUserID);
 					ps.executeUpdate();
 				}
+				// notify for the follow action
+				NotificationSocket.addUserNotification(followingUsername, followerUsername + " has followed you!");
 			}else { // invalidate follow
 				ps = conn.prepareStatement("UPDATE Follow SET valid = 0 WHERE followingID = ? AND followerID = ?");
 				ps.setLong(1, followingUserID);

@@ -13,6 +13,16 @@
 	  		if(loggedin===false){
 	  			console.log("loggedin");
 	  			//window.location = "GuestPage.jsp";
+	  		}else{
+	  	  		// socket
+	  	  		var socketUsername = '<%=(String)request.getSession().getAttribute("currentusername")%>';
+	  	  		socket = new WebSocket("ws://localhost:8080/DogSpotting/ws");
+	  	  		socket.onopen = function(event){
+	  	  			socket.send(socketUsername);
+	  	  		}
+	  			socket.onmessage = function(event){
+	  				document.getElementById("notifyNum").innerHTML += event.data + "<br />";
+	  			}
 	  		}
 	  	}
 	  	function logout(){

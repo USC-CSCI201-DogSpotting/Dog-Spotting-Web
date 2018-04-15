@@ -21,6 +21,16 @@
   			//window.location = "GuestPage.jsp";
   			document.getElementById("guestusernavbar").innerHTML = "<li><a href=\"#\" data-toggle=\"modal\" data-target=\"#myModalg\">Log In</a></li><li><a href=\"#\" data-toggle=\"modal\" data-target=\"#myModalg2\">Sign Up</a></li>";
   			document.getElementById("dogspottinglogo").innerHTML = "<a class=\"navbar-brand\" href=\"GuestPage.jsp\">DogSpotting</a>";
+  		}else{
+  	  		// socket
+  	  		var socketUsername = '<%=(String)request.getSession().getAttribute("currentusername")%>';
+  	  		socket = new WebSocket("ws://localhost:8080/DogSpotting/ws");
+  	  		socket.onopen = function(event){
+  	  			socket.send(socketUsername);
+  	  		}
+  			socket.onmessage = function(event){
+  				document.getElementById("notifyNum").innerHTML += event.data + "<br />";
+  			}
   		}
   	}
   	function logout(){
@@ -138,6 +148,7 @@ String search = (String)request.getParameter("search");
 				<li><a type="button">Username</a></li>
 				<li><a type="button" onclick="logout()">Log Out</a></li>
 			</ul>
+	      <div id="notifyNum"> </div>
 		</div>
 		</nav>
 	</div>

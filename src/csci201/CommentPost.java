@@ -16,6 +16,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import notification.NotificationSocket;
+
 /**
  * Servlet implementation class CommentPost
  */
@@ -32,8 +34,8 @@ public class CommentPost extends HttpServlet {
 		/* database starts */
 		// variables
 		int postID = 1;//Integer.parseInt(request.getParameter("postid"));
-		String username = "a";//(String) request.getSession().getAttribute("currentusername");
-		String content = "c";//request.getParameter("comment");
+		String username = (String) request.getSession().getAttribute("currentusername");
+		String content = request.getParameter("comment");
 		Post post = null;
 
 		int commentID = 1;
@@ -84,7 +86,7 @@ public class CommentPost extends HttpServlet {
                             + " FROM User u, Post p" + " WHERE u.userID=p.userID AND postID=?");
 			ps.setLong(1, postID); // set first variable in prepared statement
 			rs = ps.executeQuery();
-			// check if user exists and check password
+			String postUsername = "";
 			while (rs.next()) {
 				// load tags
 				List<String> tags = new ArrayList<String>();
@@ -104,8 +106,11 @@ public class CommentPost extends HttpServlet {
 					tempComment.getCommentOnThis();
 					comments.add(tempComment);
 				}
+				postUsername = rs.getString("username");
 				post = new Post(postID, rs.getString("image"), rs.getString("username"), rs.getString("description"), tags, comments);
 			}
+			// push notification to the post user
+			NotificationSocket.addUserNotification(postUsername, username + " commented on your post!");
 		} catch (SQLException sqle) {
 			System.out.println ("SQLException: " + sqle.getMessage());
 		} catch (ClassNotFoundException cnfe) {
