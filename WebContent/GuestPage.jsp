@@ -12,59 +12,68 @@
 <script
 	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <script>
-    function validate() {
-        console.log("here");
-        var requeststr = "Login?";
-        requeststr += "username="
-                + document.getElementById("loginusername").value;
-        requeststr += "&password="
-                + document.getElementById("loginpassword").value;
-        console.log(requeststr);
-        var xhttp = new XMLHttpRequest();
-        xhttp.open("POST", requeststr, false);
-        xhttp.send();
-        console.log(xhttp.responseText);
-        if (xhttp.responseText.trim().length > 0) {
-            console.log('login failed')
-            document.getElementById("login_err").innerHTML = xhttp.responseText;
-        } else {
-            console.log('login success')
-            window.location = "HomeFeed.jsp"
-        }
-    }
-    function validatesignup() {
-        console.log("here");
-        var requeststr = "Signup?";
-        requeststr += "username="
-                + document.getElementById("signupusername").value;
-        requeststr += "&password="
-                + document.getElementById("signuppassword").value;
-        requeststr += "&retypepassword="
-            + document.getElementById("signupretypepassword").value;
-        requeststr += "&url="
-            + document.getElementById("signupurl").value;
-        console.log(requeststr);
-        var xhttp = new XMLHttpRequest();
-        xhttp.open("POST", requeststr, false);
-        xhttp.send();
-        console.log(xhttp.responseText);
-        if (xhttp.responseText.trim().length > 0) {
-            console.log('Sign Up failed')
-            document.getElementById("signup_err").innerHTML = xhttp.responseText;
-        } else {
-            console.log('sign up success')
-            window.location = "HomeFeed.jsp"
-        }
-    }
+	window.onload = function() {
+		var loggedin =
+			<%=request.getSession().getAttribute("loggedin")%>
+	;
+		console.log(loggedin);
+		if (loggedin === true) {
+			window.location = "TopRanked.jsp";
+		}
+	}
+	function validate() {
+		console.log("here");
+		var requeststr = "Login?";
+		requeststr += "username="
+				+ document.getElementById("loginusername").value;
+		requeststr += "&password="
+				+ document.getElementById("loginpassword").value;
+		console.log(requeststr);
+		var xhttp = new XMLHttpRequest();
+		xhttp.open("POST", requeststr, false);
+		xhttp.send();
+		console.log(xhttp.responseText);
+		if (xhttp.responseText.trim().length > 0) {
+			console.log('login failed')
+			document.getElementById("login_err").innerHTML = xhttp.responseText;
+		} else {
+			console.log('login success')
+			window.location = "HomeFeed.jsp"
+		}
+	}
+	function validatesignup() {
+		console.log("here");
+		var requeststr = "Signup?";
+		requeststr += "username="
+				+ document.getElementById("signupusername").value;
+		requeststr += "&password="
+				+ document.getElementById("signuppassword").value;
+		requeststr += "&retypepassword="
+				+ document.getElementById("signupretypepassword").value;
+		requeststr += "&url=" + document.getElementById("signupurl").value;
+		console.log(requeststr);
+		var xhttp = new XMLHttpRequest();
+		xhttp.open("POST", requeststr, false);
+		xhttp.send();
+		console.log(xhttp.responseText);
+		if (xhttp.responseText.trim().length > 0) {
+			console.log('Sign Up failed')
+			document.getElementById("signup_err").innerHTML = xhttp.responseText;
+		} else {
+			console.log('sign up success')
+			window.location = "HomeFeed.jsp"
+		}
+	}
 </script>
 </head>
 <body>
 	<nav class="navbar navbar-inverse navbar-fixed-top">
 		<div class="container-fluid">
 			<div class="navbar-header">
-				<a class="navbar-brand" href="#">DogSpotting</a>
+				<a class="navbar-brand" href="GuestPage.jsp">DogSpotting</a>
 			</div>
-			<form method="GET" class="navbar-form navbar-left" action="Search.jsp">
+			<form method="GET" class="navbar-form navbar-left"
+				action="Search.jsp">
 				<div class="input-group">
 					<input type="text" id="search" class="form-control"
 						placeholder="Search" name="search">
@@ -82,20 +91,22 @@
 						Up</a></li>
 			</ul>
 		</div>
-			<div class="btn-group btn-group-justified" role="group"
-		aria-label="...">
-		<div class="btn-group" role="group">
-			<button type="button" class="btn btn-default" id="today">Today</button>
+		<div class="btn-group btn-group-justified" role="group"
+			aria-label="...">
+			<div class="btn-group" role="group">
+				<button id="today" type="button" class="btn btn-default">Today</button>
+			</div>
+			<div class="btn-group" role="group">
+				<button id="month" type="button" class="btn btn-default">This
+					Month</button>
+			</div>
+			<div class="btn-group" role="group">
+				<button id="year" type="button" class="btn btn-default">This
+					Year</button>
+			</div>
 		</div>
-		<div class="btn-group" role="group">
-			<button type="button" class="btn btn-default" id="month">This Month</button>
-		</div>
-		<div class="btn-group" role="group">
-			<button type="button" class="btn btn-default" id="year">This Year</button>
-		</div>
-	</div>
 	</nav>
-		<br>
+	<br>
 	<br>
 	<!-- Trigger the modal with a button -->
 	<!-- Modal -->
@@ -111,14 +122,16 @@
 					<div class="modal-body">
 						Username:<input type="text" id="signupusername"></><br>
 						<br> Password:<input type="password" id="signuppassword"></><br>
-						<br> Retype Password:<input type="password" id="signupretypepassword"></><br>
-						<br> Profile Image URL Link:<input type="url" id="signupurl"></><br>
+						<br> Retype Password:<input type="password"
+							id="signupretypepassword"></><br> <br> Profile
+						Image URL Link:<input type="url" id="signupurl"></><br>
 						<span id="signup_err" style="color: darkred; font-weight: bold"></span>
 					</div>
 					<div class="modal-footer">
 						<button type="button" id="closesignup" class="btn btn-default"
 							data-dismiss="modal">Close</button>
-						<button type="button" class="btn btn-default" onclick="validatesignup()">Submit</button>
+						<button type="button" class="btn btn-default"
+							onclick="validatesignup()">Submit</button>
 					</div>
 				</div>
 			</div>
@@ -149,13 +162,14 @@
 		</div>
 	</div>
 	<div class="container" style="padding-top: 70px">
-  <div id="posts">
-  </div>
-  <div id="readMoreButton">
-  <button class="btn btn-primary" id="readMore">Read More</button>
-  </div>
-  <p id="noMore">No more posts</p>
-  </div>
+		<div id="posts"></div>
+		<div id="readMoreButton">
+			<button class="btn btn-default" id="readMore">Read More</button>
+		</div>
+		<p id="noMore">No more posts</p>
+	</div>
+	<br>
+	<br>
 
 <script>
   var numOfPost = 0;
@@ -218,6 +232,6 @@
       }
     });
   });
-    </script>
+  </script>
 </body>
 </html>

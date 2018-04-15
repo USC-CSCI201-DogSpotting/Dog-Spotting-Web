@@ -51,16 +51,19 @@ public class Like extends HttpServlet {
 
 			if(!isLike) { // add like
 				// check if like relationship exists
-				System.out.println("Add Like");
 				ps = conn.prepareStatement("SELECT likesID FROM Likes WHERE userID = ? AND postID = ?");
+				System.out.println("Add Like");
 				ps.setLong(1, userID);
 				ps.setLong(2, postID);
 				rs = ps.executeQuery();
+				System.out.println("Execute Query");
+				int likesID = 0;
 				if (rs.next()) { // re-validate the like
+					likesID = rs.getInt("likesID");
+					//System.out.println("LikesID: " + likesID);
 					ps.close();
 					ps = conn.prepareStatement("UPDATE Likes SET valid = 1 WHERE likesID = ?");
-					ps.setLong(1, rs.getInt("likesID"));
-					System.out.println("Likes: " + rs.getInt("likesID"));
+					ps.setLong(1, likesID);
 					ps.executeUpdate();
 					ps.close();
 				}else { // insert new like
