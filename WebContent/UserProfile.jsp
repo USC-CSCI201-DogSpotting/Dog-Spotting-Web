@@ -7,6 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet"
 	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <link rel="stylesheet" href="guestfile.css" />
 <script
 	src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script
@@ -157,6 +158,30 @@ function getUser(){
 		        		opts += "<h4 class='modal-title'>Past Posts</h4><div class='container post thumbnail'> "+item.description+"<a href='PostPage?postID=" + item.postID + "'><img src='" + item.imageURL + "'></a></div>";
 		                //$("#followers").append("<div class='container post thumbnail' style='padding-right: -110px'>" + item + "</div>");
 		        }); 
+		       
+		        	postsView(true, opts);
+		        	console.log("postButton done appending");
+		        // display one image
+		    	});
+		   });
+		  });
+		//var validChoice; 
+	 $(window).on('load', function() {
+			 var validChoice = true;
+			  // should there be a limit to the amount of users shown?
+			console.log("postButton working");
+		    $.get("Profile",  { username: "<%= request.getParameter("username") %>"}, function(responseJson) {
+		        	$("#posts").empty();
+		        	var par = JSON.parse(responseJson.ownPosts);
+		        //var par = $.parseJSON(responseJson.ownPosts);
+		        	opts= '';
+		        	console.log("postButton parsing");
+		        console.log("pastPosts: "  + par.description);
+		        	$.each(par, function(index, item) {
+		        		console.log("postButton creating tag");
+		        		console.log("descrip: " +item.description + "postID:" + item.postID + "postImageurl:" + item.imageURL);
+		        		opts += "<h4 class='modal-title'>Past Posts</h4><div class='container post thumbnail'> "+item.description+"<a href='PostPage?postID=" + item.postID + "'><img src='" + item.imageURL + "'></a></div>";
+		                //$("#followers").append("<div class='container post thumbnail' style='padding-right: -110px'>" + item + "</div>");
 		       
 		        	postsView(true, opts);
 		        	console.log("postButton done appending");

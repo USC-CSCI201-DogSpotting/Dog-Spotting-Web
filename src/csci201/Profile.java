@@ -9,7 +9,6 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,6 +45,8 @@ public class Profile extends HttpServlet {
 		List<Post> likePosts = new ArrayList<Post>(); // user's liked posts
 		List<String> followingUsernames = new ArrayList<String>(); // usernames that user follows
 		List<String> followerUsernames = new ArrayList<String>(); // usernames that follow the user
+		
+		int limit = 100;
 		System.out.println("username: " + username);
 		Connection conn = null;
 		PreparedStatement ps = null;
@@ -69,7 +70,11 @@ public class Profile extends HttpServlet {
 			}
 			System.out.println("userID: " + userID);
 			// get user's posts
-			ps = conn.prepareStatement("SELECT * FROM Post WHERE userID = ? LIMIT 100");
+			ps = conn.prepareStatement("SELECT u.username, u.picture, p.userID, p.postID, p.image, p.description, p.tag1, p.tag2, p.tag3, p.tag4, p.tag5 " +
+					"FROM Post p, User u " +
+					"WHERE p.userID = u.userID " +
+					"AND u.userID = ? " +
+					"LIMIT " + limit);
 			ps.setLong(1, userID);
 			rs = ps.executeQuery();
 			while (rs.next()) { // add in posts
@@ -84,17 +89,27 @@ public class Profile extends HttpServlet {
 				int postID = rs.getInt("postID");
 				List<Comment> comments = new ArrayList<Comment>();
 				ps2 = conn.prepareStatement("SELECT c.commentID, u.username, u.picture, c.content FROM Comment c, User u " + 
-
 						"WHERE postID=? AND c.userID = u.userID");
 				ps2.setLong(1, postID); // set first variable in prepared statement
+				System.out.println("postID: " + postID);
 				rs2 = ps2.executeQuery();
 				while(rs2.next()) {
+					System.out.println("CommenID!!!");
+					System.out.println("content: " + rs2.getString("content"));
+					System.out.println("commentID: " + rs2.getInt("commentID"));
+					System.out.println("username: " + rs2.getString("username"));
 					Comment tempComment = new Comment(rs2.getInt("commentID"), rs2.getString("username"), rs2.getString("content"));
+					System.out.println("here");
 					comments.add(tempComment);
+					System.out.println("here");
 				}
+				System.out.println("here");
 				Post tempPost = new Post(postID, rs.getString("image"), rs.getString("username"), rs.getString("picture"), rs.getString("description"), tags, comments);
 				ownPosts.add(tempPost);
 			}
+			ps.close();
+			rs.close();
+			ps2.close();
 
 			// get user's liked posts
 			ps = conn.prepareStatement("SELECT u.username, u.picture, p.userID, p.postID, p.image, p.description, p.tag1, p.tag2, p.tag3, p.tag4, p.tag5 " +
@@ -105,6 +120,12 @@ public class Profile extends HttpServlet {
 					"LIMIT 100");
 			ps.setLong(1, userID);
 			rs = ps.executeQuery();
+			ps2 = conn.prepareStatement("SELECT u.username, c.commentID, c.content FROM Comment c, User u " + 
+					"WHERE postID=? AND c.userID = u.userID");
+			ps3 = conn.prepareStatement("SELECT * FROM Likes WHERE userID = ? AND postID = ? AND valid = 1");
+			ps3.setInt(1, userID);
+			ps4 = conn.prepareStatement("Select * FROM Follow WHERE followerID = ? AND followingID = ? AND valid = 1");
+			ps4.setInt(1, userID);
 			while (rs.next()) { // add in posts
 				// load tags
 				List<String> tags = new ArrayList<String>();
@@ -116,8 +137,6 @@ public class Profile extends HttpServlet {
 				// load comments
 				int postID = rs.getInt("postID");
 				List<Comment> comments = new ArrayList<Comment>();
-				ps2 = conn.prepareStatement("SELECT u.username, c.content FROM Comment c, User u " + 
-						"WHERE postID=? AND c.userID = u.userID");
 				ps2.setLong(1, postID); // set first variable in prepared statement
 				rs2 = ps2.executeQuery();
 				while(rs2.next()) {
@@ -131,14 +150,12 @@ public class Profile extends HttpServlet {
 				if(rs3.next()) {
 					tempPost.setIsLike(true);
 				}
-				ps3.close();
 				int postUserID = rs.getInt("userID");
 				ps4.setInt(2, postUserID);
 				rs4 = ps4.executeQuery();
 				if(rs4.next()) {
 					tempPost.setIsFollow(true);
 				}
-				ps4.close();
 
 				likePosts.add(tempPost);
 			}
@@ -184,8 +201,29 @@ public class Profile extends HttpServlet {
 			} catch (SQLException sqle) {
 				System.out.println("sqle: " + sqle.getMessage());
 			}
+			try {
+				if (rs3 != null) {
+					rs3.close();
+				}
+				if (ps3 != null) {
+					ps3.close();
+				}
+			} catch (SQLException sqle) {
+				System.out.println("sqle: " + sqle.getMessage());
+			}
+			try {
+				if (rs4 != null) {
+					rs4.close();
+				}
+				if (ps4 != null) {
+					ps4.close();
+				}
+			} catch (SQLException sqle) {
+				System.out.println("sqle: " + sqle.getMessage());
+			}
 		}
 		/* database ends */
+		
 //		s.setAttribute("ownPosts",ownPosts);
 //		s.setAttribute("likePosts", likePosts);
 //		s.setAttribute("followingUsernames",followingUsernames);// = new ArrayList<String>(); // usernames that user follows
