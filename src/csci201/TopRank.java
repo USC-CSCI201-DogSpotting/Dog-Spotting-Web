@@ -33,8 +33,8 @@ public class TopRank extends HttpServlet {
 		/* database starts */
 		// variables
 		// for user
-		boolean isLoggedin = false;
-		String username = "a";
+		boolean isLoggedin = (boolean)request.getSession().getAttribute("loggedin");
+		String username = (String)request.getSession().getAttribute("currentusername");
 		int rankSelection = Integer.parseInt(request.getParameter("rank"));
 		int limit = Integer.parseInt(request.getParameter("limit"));
 		// 0: daily, 1: weekly, 2: monthly
@@ -88,7 +88,7 @@ public class TopRank extends HttpServlet {
 			if(isLoggedin) {
 				ps3 = conn.prepareStatement("SELECT * FROM Likes WHERE userID = ? AND postID = ? AND valid = 1");
 				ps3.setInt(1, userID);
-				ps4 = conn.prepareStatement("Select * FROM Follow WHERE followerID = ? AND followingID = ?");
+				ps4 = conn.prepareStatement("Select * FROM Follow WHERE followerID = ? AND followingID = ? AND valid = 1");
 				ps4.setInt(1, userID);
 			}
 			while (rs.next()) { // load ranked posts
@@ -152,6 +152,12 @@ public class TopRank extends HttpServlet {
 				if (ps2 != null) {
 					ps2.close();
 				}
+				if (ps3 != null) {
+					ps3.close();
+				}
+				if (ps4 != null) {
+					ps4.close();
+				}
 			} catch (SQLException sqle) {
 				System.out.println("sqle: " + sqle.getMessage());
 			}
@@ -181,8 +187,6 @@ public class TopRank extends HttpServlet {
 		/* output List<Post> posts */	
 		Gson gson = new Gson();
 		String json = gson.toJson(posts);
-//		System.out.println(limit + " " + posts.size());
-//		System.out.println(json);
 	    response.setContentType("application/json");
 	    response.setCharacterEncoding("UTF-8");
 	    response.getWriter().write(json);

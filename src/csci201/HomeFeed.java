@@ -36,9 +36,6 @@ public class HomeFeed extends HttpServlet {
 		String username = request.getParameter("username");
 		int limit = Integer.parseInt(request.getParameter("limit"));
 		List<Post> posts = new ArrayList<Post>();
-		
-		System.out.println("username "+ username);
-
 		Connection conn = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
@@ -169,8 +166,6 @@ public class HomeFeed extends HttpServlet {
 		/* output List<Post> posts */
 		Gson gson = new Gson();
 		String json = gson.toJson(posts);
-//		System.out.println(limit + " " + posts.size());
-//		System.out.println(json);
 	    response.setContentType("application/json");
 	    response.setCharacterEncoding("UTF-8");
 	    response.getWriter().write(json);
