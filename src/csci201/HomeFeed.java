@@ -69,7 +69,7 @@ public class HomeFeed extends HttpServlet {
 			ps.setLong(1, userID);
 			rs = ps.executeQuery();
 			// for each post
-			ps2 = conn.prepareStatement("SELECT c.commentID, u.username, c.content FROM Comment c, User u " +
+			ps2 = conn.prepareStatement("SELECT c.commentID, u.username, u.picture, c.content FROM Comment c, User u " +
 					"WHERE postID=? AND c.userID = u.userID");
 			ps3 = conn.prepareStatement("SELECT * FROM Likes WHERE userID = ? AND postID = ? AND valid = 1");
 			ps3.setInt(1, userID);
@@ -94,7 +94,7 @@ public class HomeFeed extends HttpServlet {
 					comments.add(tempComment);
 				}
 
-				Post tempPost = new Post(postID, rs.getString("image"), rs.getString("username"), rs.getString("description"), tags, comments);
+				Post tempPost = new Post(postID, rs.getString("image"), rs.getString("username"), rs.getString("picture"), rs.getString("description"), tags, comments);
 				// check like and comment if loggedin
 				ps3.setInt(2, postID);
 				rs3 = ps3.executeQuery();

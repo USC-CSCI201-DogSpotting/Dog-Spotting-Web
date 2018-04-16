@@ -82,7 +82,7 @@ public class CommentPost extends HttpServlet {
 			
 			// re-fetch post
 			ps = conn.prepareStatement(
-                    "SELECT u.username, p.postID, p.image, p.description, p.tag1, p.tag2, p.tag3, p.tag4, p.tag5 "
+                    "SELECT u.username, u.picture, p.postID, p.image, p.description, p.tag1, p.tag2, p.tag3, p.tag4, p.tag5 "
                             + " FROM User u, Post p" + " WHERE u.userID=p.userID AND postID=?");
 			ps.setLong(1, postID); // set first variable in prepared statement
 			rs = ps.executeQuery();
@@ -107,7 +107,7 @@ public class CommentPost extends HttpServlet {
 					comments.add(tempComment);
 				}
 				postUsername = rs.getString("username");
-				post = new Post(postID, rs.getString("image"), rs.getString("username"), rs.getString("description"), tags, comments);
+				post = new Post(postID, rs.getString("image"), rs.getString("username"), rs.getString("picture"), rs.getString("description"), tags, comments);
 			}
 			// push notification to the post user
 			NotificationSocket.addUserNotification(postUsername, username + " commented on your post!");

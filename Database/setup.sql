@@ -78,8 +78,6 @@ CREATE TABLE Likes (
 
 INSERT INTO Likes (userID, postID, valid) VALUES (1, 1, 1);
 
-SELECT u.username, p.postID, p.image, p.description, p.tag1, p.tag2, p.tag3, p.tag4, p.tag5 FROM User u, Post p, Likes l WHERE p.postID = l.postID AND u.userID = p.userID AND l.userID = 1 LIMIT 100;
-
 CREATE TABLE Comment (
 	commentID int(10) primary key not null auto_increment,
     userID int(10) not null,

@@ -69,7 +69,7 @@ public class Search extends HttpServlet {
 				rs.close();
 			}
 			// get search results
-			ps = conn.prepareStatement("SELECT u.username, p.userID, p.postID, p.image, p.description, p.tag1, p.tag2, p.tag3, p.tag4, p.tag5 " +
+			ps = conn.prepareStatement("SELECT u.picture, u.username, p.userID, p.postID, p.image, p.description, p.tag1, p.tag2, p.tag3, p.tag4, p.tag5 " +
 					"FROM Post p, User u " +
 					"WHERE p.userID = u.userID " +
 					"AND (p.tag1 = ? " +
@@ -110,7 +110,7 @@ public class Search extends HttpServlet {
 					Comment tempComment = new Comment(rs2.getInt("commentID"), rs2.getString("username"), rs2.getString("content"));
 					comments.add(tempComment);
 				}
-				Post tempPost = new Post(postID, rs.getString("image"), rs.getString("username"), rs.getString("description"), tags, comments);
+				Post tempPost = new Post(postID, rs.getString("image"), rs.getString("username"), rs.getString("picture"), rs.getString("description"), tags, comments);
 				// check like and comment if loggedin
 				if(isLoggedin) {
 					ps3.setInt(2, postID);

@@ -74,7 +74,7 @@ public class Profile extends HttpServlet {
 				// load comments
 				int postID = rs.getInt("postID");
 				List<Comment> comments = new ArrayList<Comment>();
-				ps2 = conn.prepareStatement("SELECT c.commentID, u.username, c.content FROM Comment c, User u " + 
+				ps2 = conn.prepareStatement("SELECT c.commentID, u.username, u.picture, c.content FROM Comment c, User u " + 
 						"WHERE postID=? AND c.userID = u.userID");
 				ps2.setLong(1, postID); // set first variable in prepared statement
 				rs2 = ps2.executeQuery();
@@ -82,14 +82,14 @@ public class Profile extends HttpServlet {
 					Comment tempComment = new Comment(rs2.getInt("commentID"), rs2.getString("username"), rs2.getString("content"));
 					comments.add(tempComment);
 				}
-				Post tempPost = new Post(postID, rs.getString("image"), rs.getString("username"), rs.getString("description"), tags, comments);
+				Post tempPost = new Post(postID, rs.getString("image"), rs.getString("username"), rs.getString("picture"), rs.getString("description"), tags, comments);
 				ownPosts.add(tempPost);
 			}
 			ps.close();
 			ps2.close();
 
 			// get user's liked posts
-			ps = conn.prepareStatement("SELECT u.username, p.userID, p.postID, p.image, p.description, p.tag1, p.tag2, p.tag3, p.tag4, p.tag5 " +
+			ps = conn.prepareStatement("SELECT u.username, u.picture, p.userID, p.postID, p.image, p.description, p.tag1, p.tag2, p.tag3, p.tag4, p.tag5 " +
 					"FROM User u, Post p, Likes l " +
 					"WHERE p.postID = l.postID " +
 					"AND u.userID = p.userID " +
@@ -120,7 +120,7 @@ public class Profile extends HttpServlet {
 					Comment tempComment = new Comment(rs2.getInt("commentID"), rs2.getString("username"), rs2.getString("content"));
 					comments.add(tempComment);
 				}
-				Post tempPost = new Post(postID, rs.getString("image"), rs.getString("username"), rs.getString("description"), tags, comments);
+				Post tempPost = new Post(postID, rs.getString("image"), rs.getString("username"), rs.getString("picture"), rs.getString("description"), tags, comments);
 				// check like and comment if loggedin
 				ps3.setInt(2, postID);
 				rs3 = ps3.executeQuery();

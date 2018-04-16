@@ -66,7 +66,7 @@ public class PostPage extends HttpServlet {
 			}
 			// get the post
 			ps = conn.prepareStatement(
-                    "SELECT u.username, u.userID, p.postID, p.image, p.description, p.tag1, p.tag2, p.tag3, p.tag4, p.tag5 "
+                    "SELECT u.username, u.picture, u.userID, p.postID, p.image, p.description, p.tag1, p.tag2, p.tag3, p.tag4, p.tag5 "
                             + " FROM User u, Post p" + " WHERE u.userID=p.userID AND postID=?");
 			ps.setLong(1, postID); // set first variable in prepared statement
 			rs = ps.executeQuery();
@@ -96,7 +96,7 @@ public class PostPage extends HttpServlet {
 					tempComment.getCommentOnThis();
 					comments.add(tempComment);
 				}
-				post = new Post(postID, rs.getString("image"), rs.getString("username"), rs.getString("description"), tags, comments);
+				post = new Post(postID, rs.getString("image"), rs.getString("username"), rs.getString("picture"), rs.getString("description"), tags, comments);
 				// check like and comment if loggedin
 				if(isLoggedin) {
 					ps3.setInt(2, postID);

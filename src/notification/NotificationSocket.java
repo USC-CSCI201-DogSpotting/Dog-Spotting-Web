@@ -67,6 +67,7 @@ public class NotificationSocket extends Thread {
 	public static Stack<String> getUserNotifications(String username) {
 		Stack<String> retVal = notifications.get(username);
 		notifications.remove(username);
+		broadcastNewNotification(username, 0);
 		return retVal;
 	}
 	
