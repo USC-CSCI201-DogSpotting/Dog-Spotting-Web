@@ -259,7 +259,7 @@
 																function(index,
 																		post) {
 																	curCount++;
-																	$("#posts").append("<div id='post' class='container post thumbnail'><span><img id=\"userprofpic\" src=\"https://pbs.twimg.com/profile_images/948761950363664385/Fpr2Oz35_400x400.jpg\"><a id=\"userusername\" href=\"#\">" + post.username + "</a></span><a href=\"#\"><img src=\"" +post.imageURL+"\"></a></div><br><br><br>")
+																	$("#posts").append("<div id='post' class='container post thumbnail'><span><img id=\"userprofpic\" src=\"" + post.userPicURL + "\"><a id=\"userusername\" href=\"#\">" + post.username + "</a></span><a href=\"#\"><img src=\"" +post.imageURL+"\"></a></div><br><br><br>")
 																});
 												// No more posts
 												if (curCount <= numOfPost

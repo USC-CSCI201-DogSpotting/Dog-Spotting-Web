@@ -33,7 +33,16 @@ public class TopRank extends HttpServlet {
 		/* database starts */
 		// variables
 		// for user
-		boolean isLoggedin = (boolean)request.getSession().getAttribute("loggedin");
+		if(request.getSession()==null) {
+			System.out.println("lol");
+		}
+		boolean isLoggedin = false;
+		if(request.getSession().getAttribute("loggedin")!=null) {
+			isLoggedin = (boolean)request.getSession().getAttribute("loggedin");
+		}else {
+			isLoggedin = false;
+			request.getSession().setAttribute("loggedin", false);
+		}
 		String username = (String)request.getSession().getAttribute("currentusername");
 		int rankSelection = Integer.parseInt(request.getParameter("rank"));
 		int limit = Integer.parseInt(request.getParameter("limit"));
@@ -108,7 +117,7 @@ public class TopRank extends HttpServlet {
 					Comment tempComment = new Comment(rs2.getInt("commentID"), rs2.getString("username"),  rs2.getString("content"));
 					comments.add(tempComment);
 				}
-				Post tempPost = new Post(postID, rs.getString("image"), rs.getString("username"), rs2.getString("picture"), rs.getString("description"), tags, comments);
+				Post tempPost = new Post(postID, rs.getString("image"), rs.getString("username"), rs.getString("picture"), rs.getString("description"), tags, comments);
 				// check like and comment if loggedin
 				if(isLoggedin) {
 					ps3.setInt(2, postID);

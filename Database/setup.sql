@@ -25,7 +25,7 @@ CREATE TABLE User (
 );
 
 INSERT INTO User (username, password, picture)
-	VALUES  ('a', 'a', 'a'),
+	VALUES  ('a', 'a', 'http://r.ddmcdn.com/w_830/s_f/o_1/cx_20/cy_1463/cw_2528/ch_1422/APL/uploads/2014/11/puppy-cam-veer-2893191.jpg'),
             ('b', 'b', 'b'),
             ('c', 'c', 'c');
 
