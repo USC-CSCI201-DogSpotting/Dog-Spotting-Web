@@ -55,7 +55,6 @@
         xhttp.open("POST", requeststr, false);
         xhttp.send();
         console.log(xhttp.responseText);
-
         if(xhttp.responseText.trim().length>0){
 			console.log('post failed');
 			document.getElementById("inputError").innerHTML = xhttp.responseText;
@@ -144,7 +143,6 @@
 var numOfPost = 0;
 var postEachPage = 20;
 var curCount = 0;
-
 $(document).ready(function() {
   $("#readMore").click();
 });

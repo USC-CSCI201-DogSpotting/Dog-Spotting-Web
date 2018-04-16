@@ -1,11 +1,15 @@
 package csci201;
 
 import java.io.IOException;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,6 +18,9 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import com.google.gson.Gson;
 
 /**
  * Servlet implementation class Profile
@@ -30,12 +37,16 @@ public class Profile extends HttpServlet {
 
 		/* database starts */
 		// variables
-		String username = "a";
+		System.out.println("profileserv");
+		HttpSession s =  request.getSession();
+		//String username = (String) s.getAttribute("currentusername");
 		List<Post> ownPosts = new ArrayList<Post>(); // user's own posts
+		//String username = (String) request.getParameter("username");
+		String username = (String) request.getSession().getAttribute("currentusername");
 		List<Post> likePosts = new ArrayList<Post>(); // user's liked posts
 		List<String> followingUsernames = new ArrayList<String>(); // usernames that user follows
 		List<String> followerUsernames = new ArrayList<String>(); // usernames that follow the user
-
+		System.out.println("username: " + username);
 		Connection conn = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
@@ -56,9 +67,7 @@ public class Profile extends HttpServlet {
 			while (rs.next()) {
 				userID = rs.getInt("userID");
 			}
-			ps.close();
-			rs.close();
-			
+			System.out.println("userID: " + userID);
 			// get user's posts
 			ps = conn.prepareStatement("SELECT * FROM Post WHERE userID = ? LIMIT 100");
 			ps.setLong(1, userID);
@@ -75,6 +84,7 @@ public class Profile extends HttpServlet {
 				int postID = rs.getInt("postID");
 				List<Comment> comments = new ArrayList<Comment>();
 				ps2 = conn.prepareStatement("SELECT c.commentID, u.username, u.picture, c.content FROM Comment c, User u " + 
+
 						"WHERE postID=? AND c.userID = u.userID");
 				ps2.setLong(1, postID); // set first variable in prepared statement
 				rs2 = ps2.executeQuery();
@@ -85,8 +95,6 @@ public class Profile extends HttpServlet {
 				Post tempPost = new Post(postID, rs.getString("image"), rs.getString("username"), rs.getString("picture"), rs.getString("description"), tags, comments);
 				ownPosts.add(tempPost);
 			}
-			ps.close();
-			ps2.close();
 
 			// get user's liked posts
 			ps = conn.prepareStatement("SELECT u.username, u.picture, p.userID, p.postID, p.image, p.description, p.tag1, p.tag2, p.tag3, p.tag4, p.tag5 " +
@@ -97,12 +105,6 @@ public class Profile extends HttpServlet {
 					"LIMIT 100");
 			ps.setLong(1, userID);
 			rs = ps.executeQuery();
-			ps2 = conn.prepareStatement("SELECT c.commentID, u.username, c.content FROM Comment c, User u " + 
-					"WHERE postID=? AND c.userID = u.userID");
-			ps3 = conn.prepareStatement("SELECT * FROM Likes WHERE userID = ? AND postID = ? AND valid = 1");
-			ps3.setInt(1, userID);
-			ps4 = conn.prepareStatement("Select * FROM Follow WHERE followerID = ? AND followingID = ?");
-			ps4.setInt(1, userID);
 			while (rs.next()) { // add in posts
 				// load tags
 				List<String> tags = new ArrayList<String>();
@@ -114,6 +116,8 @@ public class Profile extends HttpServlet {
 				// load comments
 				int postID = rs.getInt("postID");
 				List<Comment> comments = new ArrayList<Comment>();
+				ps2 = conn.prepareStatement("SELECT u.username, c.content FROM Comment c, User u " + 
+						"WHERE postID=? AND c.userID = u.userID");
 				ps2.setLong(1, postID); // set first variable in prepared statement
 				rs2 = ps2.executeQuery();
 				while(rs2.next()) {
@@ -135,6 +139,7 @@ public class Profile extends HttpServlet {
 					tempPost.setIsFollow(true);
 				}
 				ps4.close();
+
 				likePosts.add(tempPost);
 			}
 			// get followings
@@ -181,6 +186,41 @@ public class Profile extends HttpServlet {
 			}
 		}
 		/* database ends */
+//		s.setAttribute("ownPosts",ownPosts);
+//		s.setAttribute("likePosts", likePosts);
+//		s.setAttribute("followingUsernames",followingUsernames);// = new ArrayList<String>(); // usernames that user follows
+//		s.setAttribute("followerUsernames", followerUsernames);
+		
+//		request.setAttribute("ownPosts",ownPosts);
+//		request.setAttribute("likePosts", likePosts);
+//		request.setAttribute("followingUsernames",followingUsernames);// = new ArrayList<String>(); // usernames that user follows
+//		request.setAttribute("followerUsernames", followerUsernames);
+		System.out.println("size: " + ownPosts.size());
+		
+		Gson gson = new Gson();
+		String followerString = gson.toJson(followerUsernames);
+		String followingString = gson.toJson(followingUsernames);
+		String postsString = gson.toJson(ownPosts);
+		String likedString = gson.toJson(likePosts);
+		JSONObject jsonObject = new JSONObject();
+		
+		System.out.println("followerString: " + followerString + " followingString: "+ followingString + " postsString: "+ postsString+ " likedString: " + likedString);
+		try {
+			jsonObject.put("followerUsernames", followerString);
+			jsonObject.put("followingUsernames", followingString);
+			jsonObject.put("ownPosts", postsString);
+			jsonObject.put("likePosts", likedString);
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+//		System.out.println(limit + " " + posts.size());
+//		System.out.println(json);
+		//json += gson.toJson(followingUsernames);
+	    response.setContentType("application/json");
+	    response.setCharacterEncoding("UTF-8");
+	    response.getWriter().print(jsonObject);
+	   // response.getWriter().write(json);
 		
 		/* output List<Post> posts */
 	}

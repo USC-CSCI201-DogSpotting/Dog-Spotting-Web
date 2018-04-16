@@ -2,175 +2,471 @@
 <html lang="en">
 <head>
 
-  <title>Home Feed User</title>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-  <script>
-	window.onload = function(){
-		var loggedin = <%=request.getSession().getAttribute("loggedin")%>;
+<title>Home Feed User</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script
+	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+<script>
+var curruser;
+function setUser(str){
+	curruser = str;
+}
+function getUser(){
+	return curruser;
+}
+//var newu = changeUser(str);
+
+  function ImageExists(url){
+	    var image = new Image();
+	    image.src = url;
+	    if (!image.complete) {
+	    	console.log('bad image1')
+	        return false;
+	    }
+	    else if (image.height == 0) {
+	    	console.log('bad image2')
+	        return false;
+	    }
+
+	    return true;
+	}
+  function validateImage(){
+	  var exists = true; // ImageExists(document.getElementById("changeimage").value);
+	  $.get(document.getElementById("changeimage").value)
+	    .done(function() { 
+	        console.log('exists');
+	   // })
+	  //if(exists == true){
+		 console.log("settings button image");
+	        var requeststr = "UpdateProfilePic?";
+	        //requeststr += "username="
+	          //      + document.getElementById("username").value;
+	        requeststr += "&changeimage="
+	                + document.getElementById("changeimage").value;
+	     
+	        console.log(requeststr);
+	        var xhttp = new XMLHttpRequest();
+	        xhttp.open("POST", requeststr, false);
+	        xhttp.send();
+	        console.log(xhttp.responseText);
+	        if (xhttp.responseText.trim().length > 0) {
+	            console.log('changing failed')
+	            document.getElementById("image_err").innerHTML = xhttp.responseText;
+	        } else {
+	            console.log('changing image success')
+	            //window.location = "UserProfile.jsp"
+	           $("#settingsModal").modal('hide');
+	        }
+	  //} 
+	  })
+	  .fail(function() { 
+	        console.log('failed');
+	        console.log('image failed to load')
+	          //window.location = "UserProfile.jsp"
+			document.getElementById("image_err").innerHTML = "Error: could not find photo";
+	    })
+	}
+
+  function validateUsername(){
+		 console.log("settings button username");
+	        var requeststr = "UpdateUsername?";
+	        //requeststr += "username="
+	          //      + document.getElementById("username").value;
+	        requeststr += "&changeusername="
+	                + document.getElementById("changeusername").value;
+	     
+	        console.log(requeststr);
+	        var xhttp = new XMLHttpRequest();
+	        xhttp.open("POST", requeststr, false);
+	        xhttp.send();
+	        console.log(xhttp.responseText);
+	        if (xhttp.responseText.trim().length > 0) {
+	            console.log('changing failed')
+	            document.getElementById("username_err").innerHTML = xhttp.responseText;
+	        } else {
+	            console.log('changing username success')
+	            //window.location = "UserProfile.jsp"
+	            $("#settingsModal").modal('hide');
+	        }
+	}
+
+  function validatePassword(){
+		 console.log("settings button password");
+	        var requeststr = "UpdatePassword?";
+	        //requeststr += "username="
+	          //      + document.getElementById("username").value;
+	        requeststr += "&changepassword="
+	                + document.getElementById("changepassword").value;
+	        requeststr += "&retypepassword="
+                + document.getElementById("retypepassword").value;
+	     
+	        console.log(requeststr);
+	        var xhttp = new XMLHttpRequest();
+	        xhttp.open("POST", requeststr, false);
+	        xhttp.send();
+	        console.log(xhttp.responseText);
+	        if (xhttp.responseText.trim().length > 0) {
+	            console.log('changing failed')
+	            document.getElementById("password_err").innerHTML = xhttp.responseText;
+	        } else {
+	            console.log('changing password success')
+	            $("#settingsModal").modal('hide');
+	        }
+	}
+
+
+  
+  window.onload = function(){
+  		var loggedin = <%=request.getSession().getAttribute("loggedin")%>;	
   		console.log(loggedin);
   		if(loggedin===false){
   			console.log("loggedin");
   			window.location = "GuestPage.jsp";
+  			
   		}
-  	}
+	}
   	function logout(){
   		var xhttp = new XMLHttpRequest();
-  		xhttp.open("GET", "Logout?", false); //synchronous
+  		xhttp.open("GET", "Logout?", true); //synchronous
   		xhttp.send();
   		window.location.replace("GuestPage.jsp");	
   	}
-  	</script>
-  <style>
-  .list-group{
-    max-height: 300px;
-    overflow-y:scroll; 
-	}
-	</style>
+
+		//var validChoice; 
+	 $(document).ready(function() {
+		  $("#postsButton").on("click", function() {
+			 var validChoice = true;
+			  // should there be a limit to the amount of users shown?
+			console.log("postButton working");
+		    $.get("Profile",  { username: "<%= request.getParameter("username") %>"}, function(responseJson) {
+		        	$("#posts").empty();
+		        	var par = JSON.parse(responseJson.ownPosts);
+		        //var par = $.parseJSON(responseJson.ownPosts);
+		        	opts= '';
+		        	console.log("postButton parsing");
+		        console.log("pastPosts: "  + par.description);
+		        	$.each(par, function(index, item) {
+		        		console.log("postButton creating tag");
+		        		console.log("descrip: " +item.description + "postID:" + item.postID + "postImageurl:" + item.imageURL);
+		        		opts += "<h4 class='modal-title'>Past Posts</h4><div class='container post thumbnail'> "+item.description+"<a href='PostPage?postID=" + item.postID + "'><img src='" + item.imageURL + "'></a></div>";
+		                //$("#followers").append("<div class='container post thumbnail' style='padding-right: -110px'>" + item + "</div>");
+		        }); 
+		       
+		        	postsView(true, opts);
+		        	console.log("postButton done appending");
+		        // display one image
+		    	});
+		   });
+		  });
+	 
+	 $(document).ready(function() {
+		  $("#likedButton").on("click", function() {
+			  var validChoice = false;
+			$.get("Profile", { username: "<%= request.getParameter("username") %>"}, function(responseJson) {
+	        	$("#liked").empty();
+	        	var par = JSON.parse(responseJson.likePosts);
+	        //var par = $.parseJSON(responseJson.ownPosts);
+	        	opts= '';
+	        	console.log("likedButton parsing");
+	        console.log("likedPosts: "  + par.description);
+	        	$.each(par, function(index, item) {
+	        		console.log("likedButton creating tag");
+	        		console.log("descrip: " +item.description + "postID:" + item.postID + "postImageurl:" + item.imageURL);
+	        		opts += "<h4 class='modal-title'>Liked Posts</h4><div class='container post thumbnail'> "+item.description+"<a href='PostPage?postID=" + item.postID + "'><img src='" + item.imageURL + "'></a></div>";
+	                //$("#followers").append("<div class='container post thumbnail' style='padding-right: -110px'>" + item + "</div>");
+	        }); 
+	        //	$("#liked").empty().append(opts)
+	         postsView(false, opts);
+	        	console.log("likedButton done appending");
+	        	 // display one image
+	    	});
+	});
+});
+	 
+	function postsView(validChoice){
+		if(validChoice == true){
+			console.log("11true");
+		 	$("#posts").empty().append(opts)
+		}
+		if(validChoice == false){
+			console.log("false");
+		 	$("#posts").empty().append(opts)
+		}
+	} 
+	
+  //$(document).ready(function() {
+  //$("#followersButton").on("click", function() {
+	  $(document).on("click", "#followersButton", function() { 
+	  // should there be a limit to the amount of users shown?
+    $.get("Profile",  { username: "<%= request.getSession().getAttribute("currentusername") %>"}, function(responseJson) {
+        	$("#followers").empty();
+       // 	responseJson = responseJson.followerUsernames.toString();
+       	const str = JSON.stringify(responseJson.followerUsernames);
+       	console.log(str);
+     // "["bacon","letuce","tomatoes"]"
+
+     console.log(JSON.parse(str));
+       // var par = JSON.parse(str);
+        var par = JSON.parse(responseJson.followerUsernames);
+        
+        	console.log("followers: "+ par);
+        	opts= '';
+        	$.each(par, function(index, item) {
+        		//opts += "<button onclick='otherProfile("+item+")'>" + item + "<button>";
+        		//var str1 = item;
+        		console.log("usernameinfollowers: " + this);
+        		
+        		opts += "<button type=\'button\' onclick=\'otherProfile()\'>" + this + "</button>";
+        		setUser(item);
+                //$("#followers").append("<div class='container post thumbnail' style='padding-right: -110px'>" + item + "</div>");
+        }); 
+        	$("#followers").empty().append(opts)
+    	});
+   });
+  //});
+  
+  $(document).ready(function() {
+	  $("#followingButton").on("click", function() {
+		  // should there be a limit to the amount of users shown?
+	    $.post("Profile",  { username: "<%= request.getSession().getAttribute("currentusername") %>"}, function(responseJson) {
+	        	$("#following").empty();
+	        	var par = JSON.parse(responseJson.followingUsernames);
+	        	opts= '';
+	        	$.each(par, function(index, item) {
+	        		opts +="<div class='container post thumbnail' style='padding-right: -110px'>" + item + "</div>";
+	        }); 
+	        	$("#following").empty().append(opts)
+	    	});
+	   });
+	  });
+  function validateNewPost() {
+      console.log("here");
+      var requeststr = "NewPost?";
+      requeststr += "img="
+              + document.getElementById("img").value;
+      requeststr += "&description="
+              + document.getElementById("description").value;
+      requeststr += "&tag1="
+          + document.getElementById("tag1").value;
+      requeststr += "&tag2="
+          + document.getElementById("tag2").value;
+      requeststr += "&tag3="
+          + document.getElementById("tag3").value;
+      requeststr += "&tag4="
+          + document.getElementById("tag4").value;
+      requeststr += "&tag5="
+          + document.getElementById("tag5").value;
+      console.log(requeststr);
+      var xhttp = new XMLHttpRequest();
+      xhttp.open("POST", requeststr, false);
+      xhttp.send();
+      console.log(xhttp.responseText);
+
+      if(document.getElementById("img").value.trim().length == 0 || document.getElementById("description").value.trim().length == 0 ||
+      		(document.getElementById("tag1").value.trim().length == 0||document.getElementById("tag2").value.trim().length == 0||
+      				document.getElementById("tag3").value.trim().length == 0||document.getElementById("tag4").value.trim().length == 0||
+      				document.getElementById("tag5").value.trim().length == 0)){
+      		if(document.getElementById("img").value.trim().length == 0){
+     		 	document.getElementById("inputError").innerHTML = xhttp.responseText;
+     		 }
+      		if(document.getElementById("description").value.trim().length == 0){
+     		 	document.getElementById("inputError").innerHTML = xhttp.responseText;
+     		 }
+     		 if(document.getElementById("tag1").value.trim().length == 0||document.getElementById("tag2").value.trim().length == 0||
+				document.getElementById("tag3").value.trim().length == 0||document.getElementById("tag4").value.trim().length == 0||
+				document.getElementById("tag5").value.trim().length == 0){
+      			document.getElementById("inputError").innerHTML = xhttp.responseText;
+     		 }
+      }
+      else{
+      		document.getElementById("inputCorrect").innerHTML = xhttp.responseText;
+       	alert('Post Successful')
+      		window.location = "HomeFeed.jsp"
+      }
+  }
+  
+  function otherProfile(){ // make a XMLRequest to send the username of the otheruser
+	  //var str = item;
+	  console.log("other profile buton");
+      var requeststr = "OtherProfile?";
+      var str = getUser();
+      console.log("str: " +str);
+      //console.log("otherProfile: " + document.getElementById("otherusername").value);
+      requeststr += "otherusername="
+              + str;
+     
+      console.log(requeststr);
+      var xhttp = new XMLHttpRequest();
+      xhttp.open("POST", requeststr, true);
+      xhttp.send();
+      //window.location = "OtherProfile.jsp"
+      console.log(xhttp.responseText);
+  }
+
+  
+</script>
+
+<style>
+.list-group {
+	max-height: 300px;
+	overflow-y: scroll;
+}
+</style>
 </head>
 <body>
 
-<div class="container">
-  	<span class="nav"> <img src="none"></img> <text>DogSpotting</text>
-		<input type="text" id="search" placeholder="Search..">
-<button type="button" class="btn btn-default" data-toggle="modal" data-target="#myModal">+</button>
-<button type="button" class="btn btn-default">Top</button>
-<button type="button" class="btn btn-default">Username</button>
-<button type="button" class="btn btn-default" onclick="logout()">Log Out</button>
-	</span>
-	<br>
-	<span class="tab" id="userInfo">
-	<img src="none"></img>
-	<text>User</text>
-		<button class="tablinks" onclick="load('day')">Posts</button>
-		<button class="tablinks" onclick="load('month')">Liked</button>
-		<button type="button" class="tablinks" data-toggle="modal" data-target="#followersModal">Followers</button>
-		<button type="button" class="tablinks" data-toggle="modal" data-target="#followingModal">Following</button>
-		<button type="button" class="tablinks" data-toggle="modal" data-target="#settingsModal">Settings</button>
-	</span>
-  <!-- Trigger the modal with a button -->
+	<div class="container">
+		<span class="nav"> <img src="none"></img> <text>DogSpotting</text>
+			<input type="text" id="search" placeholder="Search..">
+			<button type="button" class="btn btn-default" data-toggle="modal"
+				data-target="#myModal">+</button>
+			<button type="button" class="btn btn-default">Top</button>
+			<button type="button" class="btn btn-default">Username</button>
+			<button type="button" class="btn btn-default" onclick="logout()">Log
+				Out</button>
+		</span> <br> <span class="tab" id="userInfo"> <img src="none"></img>
+			<text>User</text>
+			<button type="button" class="tablinks" id="postsButton">Posts</button>
+			<button type="button" class="tablinks" id="likedButton">Liked</button>
+			<button type="button" class="tablinks" data-toggle="modal"
+				data-target="#followersModal" id="followersButton">Followers</button>
+			<button type="button" class="tablinks" data-toggle="modal"
+				data-target="#followingModal" id="followingButton">Following</button>
+			<button type="button" class="tablinks" data-toggle="modal"
+				data-target="#settingsModal">Settings</button>
+		</span>
+	</div>
+	<!-- Trigger the modal with a button -->
 
-  <!-- Modal -->
-  <div class="modal fade" id="myModal" role="dialog">
-    <div class="modal-dialog">
-    
-      <!-- Modal content-->
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
-          <h4 class="modal-title">New Post</h4>
-        </div>
-        <div class="modal-body">
-       <form action="/action_page.php">
-  		<input type="file" name="pic" accept="image/*"><br>
-  		<input type="text" id="description">Description:</><br>
-  		<input type="text" id="tag1">Tag 1:</><br>
-  		<input type="text" id="tag2">Tag 2:</><br>
-  		<input type="text" id="tag3">Tag 3:</><br>
-  		<input type="text" id="tag4">Tag 4:</><br>
-  		<input type="text" id="tag5">Tag 5:</><br>
-  		<input type="submit">
-		</form>
-        </div>
-        <div class="modal-footer">
-          <button type="button" id="close" class="btn btn-default" data-dismiss="modal">Close</button>
-          <button type="button" id="post" class="btn btn-default" data-dismiss="modal">Post</button>
-        </div>
-      </div>
-      
-    </div>
-  </div>
-  
-  
-    <!-- Modal followers -->
-  <div class="modal fade" id="followersModal" role="dialog">
-    <div class="modal-dialog">
-    
-      <!-- Modal content-->
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
-          <h4 class="modal-title">Followers</h4>
-        </div>
-        <div class="modal-body">
-        <div class="list-group">
-        <button type="button" class="list-group-item list-group-item-action"><img src="none">Follower1</button>
-        <button type="button" class="list-group-item list-group-item-action"><img src="none">Follower2</button>
-        <button type="button" class="list-group-item list-group-item-action"><img src="none">Follower3</button>
-        <button type="button" class="list-group-item list-group-item-action"><img src="none">Follower4</button>
-        </div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" id="close" class="btn btn-default" data-dismiss="modal">Close</button>
-        </div>
-      </div>
-      
-    </div>
-  </div>
- 
-<!-- Modal following -->
-  <div class="modal fade" id="followingModal" role="dialog">
-    <div class="modal-dialog">
-    
-      <!-- Modal content-->
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
-          <h4 class="modal-title">Followers</h4>
-        </div>
-        <div class="modal-body">
-        <div class="list-group">
-        <button type="button" class="list-group-item list-group-item-action"><img src="none">Following1</button>
-        <button type="button" class="list-group-item list-group-item-action"><img src="none">Following2</button>
-        <button type="button" class="list-group-item list-group-item-action"><img src="none">Following3</button>
-        <button type="button" class="list-group-item list-group-item-action"><img src="none">Following4</button>
-        <button type="button" class="list-group-item list-group-item-action"><img src="none">Following1</button>
-        <button type="button" class="list-group-item list-group-item-action"><img src="none">Following2</button>
-        <button type="button" class="list-group-item list-group-item-action"><img src="none">Following3</button>
-        <button type="button" class="list-group-item list-group-item-action"><img src="none">Following4</button>
-        <button type="button" class="list-group-item list-group-item-action"><img src="none">Following1</button>
-        <button type="button" class="list-group-item list-group-item-action"><img src="none">Following2</button>
-        <button type="button" class="list-group-item list-group-item-action"><img src="none">Following3</button>
-        <button type="button" class="list-group-item list-group-item-action"><img src="none">Following4</button>
-        </div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" id="close" class="btn btn-default" data-dismiss="modal">Close</button>
-        </div>
-      </div>
-      
-    </div>
-  </div>
-  
-      <!-- Modal Settings -->
-  <div class="modal fade" id="settingsModal" role="dialog">
-    <div class="modal-dialog">
-    
-      <!-- Modal content-->
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
-          <h4 class="modal-title">Settings</h4>
-        </div>
-        <div class="modal-body">
-       <form action="/action_page.php">
-  		<input type="file" name="pic" accept="image/*"><br>
-  		<input type="text" id="description">Change Username:</><br>
-  		<input type="password" id="description">Change Password:</><br>
-  		<input type="password" id="description">Repeat Password:</><br>
-  		<input type="submit">
-		</form>
-        </div>
-        <div class="modal-footer">
-          <button type="button" id="save" class="btn btn-default" data-dismiss="modal">Save</button>
-        </div>
-      </div>
-      
-    </div>
-  </div>
+	<!-- Modal -->
+	<div class="modal fade" id="myModal" role="dialog">
+		<div class="modal-dialog">
 
+			<!-- Modal content-->
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<h4 class="modal-title">New Post</h4>
+				</div>
+				<div class="modal-body">
+					<form action="/action_page.php">
+						<input type="file" name="pic" accept="image/*"><br> <br>Image:<input
+							type="text" id="img" name="img"><br> <input
+							type="text" id="description" name="description">Description:</><br>
+						<input type="text" id="tag1" name="tag1">Tag 1:</><br>
+						<input type="text" id="tag2" name="tag2">Tag 2:</><br>
+						<input type="text" id="tag3" name="tag3">Tag 3:</><br>
+						<input type="text" id="tag4" name="tag4">Tag 4:</><br>
+						<input type="text" id="tag5" name="tag5">Tag 5:</><br>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" id="close" class="btn btn-default"
+						data-dismiss="modal">Close</button>
+					<button type="button" id="post" class="btn btn-default"
+						data-dismiss="modal" onclick="validateNewPost()">Post</button>
+				</div>
+			</div>
+
+		</div>
+	</div>
+
+
+	<!-- Modal followers -->
+	<div class="modal fade" id="followersModal" role="dialog">
+		<div class="modal-dialog">
+			<!-- Modal content-->
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					Followers
+				</div>
+				<div class="modal-body" >
+				<div class="list-group" id="followers"></div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" id="close" class="btn btn-default"
+						data-dismiss="modal">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Modal following -->
+	<div class="modal fade" id="followingModal" role="dialog">
+		<div class="modal-dialog">
+			<!-- Modal content-->
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					Following
+				</div>
+				<div class="modal-body">
+					<div class="list-group">
+						<button type="button"
+							class="list-group-item list-group-item-action" id="following"
+							onclick="otherProfile()">
+							<img>
+						</button>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" id="close" class="btn btn-default"
+						data-dismiss="modal">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Modal Settings -->
+	<div class="modal fade" id="settingsModal" role="dialog">
+		<div class="modal-dialog">
+			<!-- Modal content-->
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<h4 class="modal-title">Settings</h4>
+				</div>
+				<div id="changeform">
+					<div class="modal-body">
+						Image:<input type="text" id="changeimage" name="changeimage"></>
+						<button type="button" class="btn btn-default"
+							onclick="validateImage()">Save</button>
+						<br> <span id="image_err"
+							style="color: darkred; font-weight: bold"></span> <br>Change
+						Username:<input type="text" id="changeusername"
+							name="changeusername"></>
+						<button type="button" class="btn btn-default"
+							onclick="validateUsername()">Save</button>
+						<br> <span id="username_err"
+							style="color: darkred; font-weight: bold"></span> <br>Change
+						Password:<input type="password" id="changepassword"
+							name="changepassword"></> <br> Repeat Password:<input
+							type="password" id="retypepassword" name="retypepassword"></>
+						<button type="button" class="btn btn-default"
+							onclick="validatePassword()">Save</button>
+						<br> <span id="password_err"
+							style="color: darkred; font-weight: bold"></span>
+					</div>
+					<div class="modal-footer">
+						<button type="button" id="closelogin" class="btn btn-default"
+							data-dismiss="modal">Close</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="container" style="padding-top: 70px">
+		<div id="posts"></div>
+	</div>
+	<div class="container" style="padding-top: 70px">
+		<div id="liked"></div>
+	</div>
 </body>
 </html>

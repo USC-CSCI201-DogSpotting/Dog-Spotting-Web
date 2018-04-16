@@ -58,4 +58,3 @@ public class Post {
 		this.isLike = isLike;
 	}
 }
-

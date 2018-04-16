@@ -14,6 +14,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 /**
  * Servlet implementation class Login
@@ -34,12 +35,13 @@ public class Login extends HttpServlet {
 		// variables
 		String username = request.getParameter("username");
 		String password = request.getParameter("password");
-		System.out.println(username);
-		System.out.println(password);
+		System.out.println("login serv: " + username);
+		System.out.println("login serv: " + password);
 
 		boolean isValid = false;
 
 		Connection conn = null;
+		Statement st = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		int userID = 0;
@@ -64,6 +66,7 @@ public class Login extends HttpServlet {
 			Class.forName("com.mysql.jdbc.Driver");
 			conn = DriverManager
 					.getConnection("jdbc:mysql://localhost/DogSpotting?user=root&password=root&useSSL=false");
+			st = conn.createStatement();
 			ps = conn.prepareStatement("SELECT * FROM User WHERE username=?");
 			ps.setString(1, username); // set first variable in prepared statement
 			rs = ps.executeQuery();
@@ -90,6 +93,9 @@ public class Login extends HttpServlet {
 				if (rs != null) {
 					rs.close();
 				}
+				if (st != null) {
+					st.close();
+				}
 				if (ps != null) {
 					ps.close();
 				}
@@ -112,6 +118,7 @@ public class Login extends HttpServlet {
 		if (isValid) {
 			HttpSession s = request.getSession();
 			s.setAttribute("currentusername", username);
+			s.setAttribute("currentpassword", password);
 			s.setAttribute("loggedin", true);
 			// next = "/HomeFeed.jsp";
 			System.out.println("inside login success");
