@@ -14,7 +14,7 @@
 <script>
 	window.onload = function() {
 		var loggedin =
-			<%=request.getSession().getAttribute("loggedin")%>
+<%=request.getSession().getAttribute("loggedin")%>
 	;
 		console.log(loggedin);
 		if (loggedin === true) {
@@ -162,7 +162,8 @@
 		</div>
 	</div>
 	<div class="container" style="padding-top: 70px">
-		<div id="posts"></div>
+		<div id="posts">
+		</div>
 		<div id="readMoreButton">
 			<button class="btn btn-default" id="readMore">Read More</button>
 		</div>
@@ -233,5 +234,6 @@
     });
   });
   </script>
+
 </body>
 </html>
