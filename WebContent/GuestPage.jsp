@@ -14,7 +14,7 @@
 <script>
 	window.onload = function() {
 		var loggedin =
-			<%=request.getSession().getAttribute("loggedin")%>
+<%=request.getSession().getAttribute("loggedin")%>
 	;
 		console.log(loggedin);
 		if (loggedin === true) {
@@ -162,76 +162,103 @@
 		</div>
 	</div>
 	<div class="container" style="padding-top: 70px">
-		<div id="posts"></div>
+		<div id="posts">
+		</div>
 		<div id="readMoreButton">
 			<button class="btn btn-default" id="readMore">Read More</button>
 		</div>
 		<p id="noMore">No more posts</p>
 	</div>
 	<br>
-	<br>
+	<br>     
 
-<script>
-  var numOfPost = 0;
-  var postEachPage = 20;
-  var curCount = 0;
-  var rank = 0;
-  
-  // Load posts when entering this page
-  $(document).ready(function() {
-    $("#noMore").css("display", "none");
-    $("#readMore").click();
-  });
-  
-  // Change to Daily
-  $("#today").on("click", function() {
-    $("#readMoreButton").css("display", "block");
-    $("#noMore").css("display", "none");
-    rank = 0;
-    numOfPost = 0;
-    $("#readMore").click();
-  })
-  
-  $("#month").on("click", function() {
-    // Change to Monthly
-    $("#readMoreButton").css("display", "block");
-    $("#noMore").css("display", "none");
-    rank = 1;
-    numOfPost = 0;
-    $("#readMore").click();
-  })
-  
-  $("#year").on("click", function() {
-    // Change to Yearly
-    $("#readMoreButton").css("display", "block");
-    $("#noMore").css("display", "none");
-    rank = 2;
-    numOfPost = 0;
-    $("#readMore").click();
-  })
-  
-  $("#readMore").on("click", function() {
-    numOfPost += postEachPage; // Add max number of posts on this page
-    curCount = 0; // Count current number of posts
-    $.post("TopRank", { rank: rank, limit: numOfPost }, function(responseJson) {
-      $("#posts").empty();
-      // Add each post through the response Json string
-      $.each(responseJson, function(index, post) {
-        curCount++;
-        var html = "";
-        html += "<div class='container'>";
-        html += "<p>" + post.username + "</p>";
-        html += "<div class='container thumbnail'><a href='PostPage?postID=" + post.postID + "'><img src='" + post.imageURL + "'></a></div>";
-        html += "</div>";
-        $("#posts").append(html);
-      });
-      // No more posts
-      if (curCount <= numOfPost - postEachPage) {
-        $("#readMoreButton").css("display", "none");
-        $("#noMore").css("display", "block");
-      }
-    });
-  });
-  </script>
+	<script>
+		var numOfPost = 0;
+		var postEachPage = 20;
+		var curCount = 0;
+		var rank = 0;
+
+		// Load posts when entering this page
+		$(document).ready(function() {
+			$("#noMore").css("display", "none");
+			$("#readMore").click();
+		});
+
+		// Change to Daily
+		$("#today").on("click", function() {
+			$("#readMoreButton").css("display", "block");
+			$("#noMore").css("display", "none");
+			rank = 0;
+			numOfPost = 0;
+			$("#today").css({
+				"background-color" : "#D8BFD8"
+			});
+			$("#month").css({
+				"background-color" : "#D9D9F0"
+			});
+			$("#year").css({
+				"background-color" : "#D9D9F0"
+			});
+			$("#readMore").click();
+		})
+
+		$("#month").on("click", function() {
+			// Change to Monthly
+			$("#readMoreButton").css("display", "block");
+			$("#noMore").css("display", "none");
+			rank = 1;
+			numOfPost = 0;
+			$("#month").css({
+				"background-color" : "#D8BFD8"
+			});
+			$("#today").css({
+				"background-color" : "#D9D9F0"
+			});
+			$("#year").css({
+				"background-color" : "#D9D9F0"
+			});
+			$("#readMore").click();
+		})
+
+		$("#year").on("click", function() {
+			// Change to Yearly
+			$("#readMoreButton").css("display", "block");
+			$("#noMore").css("display", "none");
+			rank = 2;
+			numOfPost = 0;
+			$("#year").css({
+				"background-color" : "#D8BFD8"
+			});
+			$("#month").css({
+				"background-color" : "#D9D9F0"
+			});
+			$("#today").css({
+				"background-color" : "#D9D9F0"
+			});
+			$("#readMore").click();
+		})
+
+		$("#readMore").on("click", function() {
+			  numOfPost += postEachPage; // Add max number of posts on this page
+			  curCount = 0; // Count current number of posts
+			  $.post("TopRank", { rank : rank, limit : numOfPost }, function(responseJson) {
+				  $("#posts").empty();
+				  // Add each post through the response Json string
+				  $.each(responseJson, function(index, post) {
+					  curCount++;
+					  //html += "<div id='post' class='container'>";
+            //html += "<p>" + post.username + "</p>";
+            //html += "<div class='container thumbnail'><a href='PostPage?postID=" + post.postID + "'><img src='" + post.imageURL + "'></a></div>";
+            //html += "</div>";
+					  $("#posts").append("<div id='post' class='container post thumbnail'><span><img id=\"userprofpic\" src=\"https://pbs.twimg.com/profile_images/948761950363664385/Fpr2Oz35_400x400.jpg\"><a id=\"userusername\" href=\"#\">" + post.username + "</a></span><a href=\"#\"><img src=\"" +post.imageURL+"\"></a></div><br><br><br>");
+					}); 
+				  // No more posts
+					if (curCount <= numOfPost - postEachPage) {
+						  $("#readMoreButton").css("display", "none");
+						  $("#noMore").css("display", "block");
+					}
+			});
+		});
+	</script>
 </body>
 </html>

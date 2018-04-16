@@ -149,7 +149,7 @@ public class NewPost extends HttpServlet {
 				// insert new post
 				// System.out.println("test2");
 				ps = conn.prepareStatement(
-						"INSERT INTO Post (userID, image, description, tag1, tag2, tag3, tag4, tag5, dailylike, weeklylike, monthlylike) "
+						"INSERT INTO Post (userID, image, description, tag1, tag2, tag3, tag4, tag5, dailylike, monthlylike, yearlylike) "
 								+ "VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, 0, 0, 0)");
 				// System.out.println("test3");
 				ps.setLong(1, userID);
