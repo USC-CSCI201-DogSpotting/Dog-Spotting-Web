@@ -179,7 +179,7 @@
 	  $("#readMore").click();
   })
   
-  $("#week").on("click", function() {
+  $("#month").on("click", function() {
     rank = 1;
     numOfPost = 0;
     $("#month").css({
@@ -194,7 +194,7 @@
     $("#readMore").click();
   })
   
-  $("#month").on("click", function() {
+  $("#year").on("click", function() {
     rank = 2;
     numOfPost = 0;
 	$("#year").css({
@@ -226,7 +226,7 @@
         }
         html += "</div>"
         html += "<div class='container thumbnail'><a href='PostPage?postID=" + post.postID + "'><img src='" + post.imageURL + "'></a></div>";
-         html += "<button class='btn btn-primary' id='l" + post.postID + "'>" + (post.isLike ? "Unlike" : "Like") + "</button>" + (post.numOfLikes);
+        html += "<button class='btn btn-primary' id='l" + post.postID + "'>" + (post.isLike ? "Unlike" : "Like") + "</button>" + (post.numOfLikes);
         html += "</div>";
         $("#posts").append(html);
         var curID = "#f" + post.postID;

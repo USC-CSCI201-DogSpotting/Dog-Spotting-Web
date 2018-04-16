@@ -1,6 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ page import="csci201.Post"%>
+<%@ page import="csci201.Comment"%>
+<%@ page import="java.util.Stack"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -120,6 +122,8 @@
 <body>
 	<% 
 		  Post post = (Post)request.getAttribute("post");
+	    Stack<Comment> recursive = new Stack<Comment>();
+	    Stack<Integer> indent = new Stack<Integer>();
 		%>
 
 
@@ -244,16 +248,29 @@
 			<p><%= post.getUsername() %></p>
 			<br> <img src="<%= post.getImageURL() %>">
 			<p><%= post.getDescription() %></p>
-					<% for (int i = 0; i < post.getComments().size(); i++) { %>
-		<p><%= post.getComments().get(i).getUsername() %>:
-			<%= post.getComments().get(i).getContent() %></p>
-		<% } %>
-
-
-		<form method="POST" action="CommentPost">
-			<input type="text" placeholder="New Comment..." class="form-control"
-				name="comment"><br> <input type="hidden" name="postid"
-				value="<%= post.getPostID() %>">
+			<form method="POST" action="CommentPost">
+			   <!-- use stack to do recursion -->
+			
+					<% for (int i = 0; i < post.getComments().size(); i++) { 
+						 recursive.push(post.getComments().get(i));
+						 indent.push(0);
+					} %>
+					<% while (!recursive.empty()) { %>
+					<% Comment curComment = recursive.pop(); %>
+					<% int curInd = indent.pop(); %>
+					<% for (int i = 0; i < curComment.getComments().size(); i++) { 
+             recursive.push(curComment.getComments().get(i));
+             indent.push(curInd + 1);
+          } %>
+          <!-- Show each Comments -->
+					<p> <% for (int i = 0; i < curInd; i++) { %> &nbsp <% } %>  <!-- add indent -->
+					<%= curComment.getUsername() %>: <%= curComment.getContent() %>
+					<input name="reply" type="radio" id="c<%= curComment.getCommentID() %>" value="<%= curComment.getCommentID() %>" style="display: none">
+					<label for="c<%= curComment.getCommentID() %>">reply to</label></p>
+          <% } %>
+			<input type="text" placeholder="New Comment..." class="form-control" 
+			name="comment"><br> <input type="hidden" name="postid" value="<%= post.getPostID() %>">
+			<input name="reply" type="radio" id="replytopost" value="post" style="display: none" checked><label for="replytopost">reply to post</label>
 			<button type="submit">submit</button>
 		</form>
 		</div>

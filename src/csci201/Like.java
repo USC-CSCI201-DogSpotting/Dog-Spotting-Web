@@ -33,6 +33,7 @@ public class Like extends HttpServlet {
 		int postID = Integer.parseInt(request.getParameter("postID"));
 		String username = (String)request.getSession().getAttribute("currentusername");
 		boolean isLike = Boolean.parseBoolean(request.getParameter("isLike"));
+		System.out.println("isLike: " + isLike);
 
 		Connection conn = null;
 		PreparedStatement ps = null;
@@ -62,7 +63,7 @@ public class Like extends HttpServlet {
 				int likesID = 0;
 				if (rs.next()) { // re-validate the like
 					likesID = rs.getInt("likesID");
-
+					System.out.println("Update LikeID: " + likesID);
 					ps.close();
 					ps = conn.prepareStatement("UPDATE Likes SET valid = 1 WHERE likesID = ?");
 					ps.setLong(1, likesID);

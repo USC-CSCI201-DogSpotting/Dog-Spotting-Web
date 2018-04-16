@@ -37,11 +37,14 @@ public class CommentPost extends HttpServlet {
 		String username = (String) request.getSession().getAttribute("currentusername");
 		String content = request.getParameter("comment");
 		Post post = null;
+		String reply = request.getParameter("reply");
+		
 
-		int commentID = 1;
+		int commentID = 0;
 		boolean isOnPost = true; // change here!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-		if(!isOnPost) {
-			commentID = 3; // change here!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		if (!reply.equals("post")) {
+			isOnPost = false;
+			commentID = Integer.parseInt(reply);
 		}
 
 		Connection conn = null;
