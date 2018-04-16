@@ -7,7 +7,8 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
+import java.sql.Statement;
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -127,6 +128,7 @@ public class NewPost extends HttpServlet {
 			System.out.println(
 					"username: " + username + " img: " + imageURL + " descrip: " + description + " tag1: " + tag1);
 			Connection conn = null;
+			Statement st = null;
 			PreparedStatement ps = null;
 			ResultSet rs = null;
 			try {
@@ -145,7 +147,6 @@ public class NewPost extends HttpServlet {
 				while (rs.next()) { // get userID
 					userID = rs.getInt("userID");
 				}
-				ps.close();
 				// insert new post
 				// System.out.println("test2");
 				ps = conn.prepareStatement(
@@ -171,6 +172,9 @@ public class NewPost extends HttpServlet {
 				try {
 					if (rs != null) {
 						rs.close();
+					}
+					if (st != null) {
+						st.close();
 					}
 					if (ps != null) {
 						ps.close();

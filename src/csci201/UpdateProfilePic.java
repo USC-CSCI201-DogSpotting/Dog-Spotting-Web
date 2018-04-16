@@ -26,8 +26,8 @@ public class UpdateProfilePic extends HttpServlet {
 	protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		/* database starts */
 		// variables
-		String username = "a";
-		String newImgURL = "b";
+		String currUsername = (String) request.getSession().getAttribute("currentusername");
+		String newImgURL = request.getParameter("changeimage");
 
 		Connection conn = null;
 		PreparedStatement ps = null;
@@ -37,7 +37,7 @@ public class UpdateProfilePic extends HttpServlet {
 			conn = DriverManager.getConnection("jdbc:mysql://localhost/DogSpotting?user=root&password=root&useSSL=false");
 			// find userID
 			ps = conn.prepareStatement("SELECT userID FROM User WHERE username=?");
-			ps.setString(1, username);
+			ps.setString(1, currUsername);
 			rs = ps.executeQuery();
 			int userID = 0;
 			while (rs.next()) { // get userID
@@ -46,7 +46,7 @@ public class UpdateProfilePic extends HttpServlet {
 			ps.close();
 			rs.close();
 			
-			// update username
+			// update image
 			ps = conn.prepareStatement("UPDATE User SET picture = ? WHERE userID =?");
 			ps.setString(1, newImgURL);
 			ps.setInt(2, userID);

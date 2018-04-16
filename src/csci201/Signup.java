@@ -7,6 +7,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -42,6 +43,7 @@ public class Signup extends HttpServlet {
 		boolean isValid = true;
 
 		Connection conn = null;
+		Statement st = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		if (username == null || username.equals("") || password == null || password.equals("") || retypepassword == null || retypepassword.equals("") || imageUrl == null || imageUrl.equals("")) {
@@ -84,6 +86,7 @@ public class Signup extends HttpServlet {
 				Class.forName("com.mysql.jdbc.Driver");
 				conn = DriverManager
 						.getConnection("jdbc:mysql://localhost/DogSpotting?user=root&password=root&useSSL=false");
+				st = conn.createStatement();
 				ps = conn.prepareStatement("SELECT * FROM User WHERE username=?");
 				ps.setString(1, username); // set first variable in prepared statement
 				rs = ps.executeQuery();
@@ -91,7 +94,6 @@ public class Signup extends HttpServlet {
 					isValid = false;
 					System.out.println("username = " + username + " is already taken!");
 				}
-				ps.close();
 				if (isValid) {
 					ps = conn.prepareStatement("INSERT INTO User (username, password, picture) VALUES (?, ?, ?)");
 					ps.setString(1, username);
@@ -107,6 +109,9 @@ public class Signup extends HttpServlet {
 				try {
 					if (rs != null) {
 						rs.close();
+					}
+					if (st != null) {
+						st.close();
 					}
 					if (ps != null) {
 						ps.close();

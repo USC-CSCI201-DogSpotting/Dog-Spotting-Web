@@ -5,7 +5,6 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-  <link rel="stylesheet" href="guestfile.css" />
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
   	<script>
@@ -90,9 +89,9 @@
         </div>
       </form>
       <ul class="nav navbar-nav">
-      <li><a type="button" data-toggle="modal" data-target="#myModal">+</a></li>
+      <li><button type="button" class="btn btn-default" data-toggle="modal" data-target="#myModal">+</button></li>
       <li><a href="TopRanked.jsp" type="button">Top</a></li>
-      <li><a type="button" onclick="location.href='UserProfile.jsp'"><%=(String)session.getAttribute("currentusername")%></a></li>
+      <li><a type="button" onclick="location.href='UserProfile.jsp?username=<%=(String)session.getAttribute("currentusername")%>'"><%=(String)session.getAttribute("currentusername")%></a></li>
       <li><a type="button" onclick="logout()">Log Out</a></li>
       </ul>
     </div>
@@ -113,13 +112,13 @@
      <div id="postform">
         <div class="modal-body">
   		<input type="file" id="pic" name="pic" accept="image/*"><br>
-  		<input type="text" id="img" name="img">Image:<br>
-  		<input type="text" id="description" name="description">Description:</><br>
-  		<input type="text" id="tag1" name="tag1">Tag 1:</><br>
-  		<input type="text" id="tag2" name="tag2">Tag 2:</><br>
-  		<input type="text" id="tag3" name="tag3">Tag 3:</><br>
-  		<input type="text" id="tag4" name="tag4">Tag 4:</><br>
-  		<input type="text" id="tag5" name="tag5">Tag 5:</><br>
+  		<br>Image:<input type="text" id="img" name="img">Image:<br>
+  		<br>Description:<input type="text" id="description" name="description"></><br>
+  		<br>Tag 1:<input type="text" id="tag1" name="tag1"></><br>
+  		<br>Tag 2:<input type="text" id="tag2" name="tag2"></><br>
+  		<br>Tag 3:<input type="text" id="tag3" name="tag3"></><br>
+  		<br>Tag 4:<input type="text" id="tag4" name="tag4"></><br>
+  		<br>Tag 5:<input type="text" id="tag5" name="tag5"></><br>
   		<span id="inputError" style="color: darkred; font-weight: bold"></span>
   		<span id="inputCorrect" style="color: darkred; font-weight: bold"></span>
       </div>
@@ -132,46 +131,38 @@
   </div>
     </div>
 
-    <div class="container" style="padding-top: 70px">
+  <div class="container" style="padding-top: 70px">
   <div id="posts">
   </div>
   <div id="readMoreButton">
   <button class="btn btn-primary" id="readMore">Read More</button>
   </div>
-  <p id="noMore">No more posts</p>
   </div>
 
 <script>
   var numOfPost = 0;
   var postEachPage = 20;
   var curCount = 0;
-  var rank = 0;
-  
-  // Load posts when entering this page
+
   $(document).ready(function() {
-	  $("#noMore").css("display", "none");
     $("#readMore").click();
   });
-  
   $("#readMore").on("click", function() {
-    numOfPost += postEachPage; // Add max number of posts on this page
-    curCount = 0; // Count current number of posts
-    $.post("TopRank", { rank: rank, limit: numOfPost }, function(responseJson) {
+    numOfPost += postEachPage;
+    curCount = 0;
+    $.post("HomeFeed", { username: "<%= request.getSession().getAttribute("currentusername") %>", limit: numOfPost }, function(responseJson) {
       $("#posts").empty();
-      // Add each post through the response Json string
       $.each(responseJson, function(index, post) {
         curCount++;
         //MAKE POSTS HERE--update postpageservlet with post id
         $("#posts").append("<div class='container post thumbnail'><a href='PostPage?postID=" + post.postID + "'><img src='" + post.imageURL + "'></a></div>");
       });
-      // No more posts
       if (curCount <= numOfPost - postEachPage) {
-        $("#readMoreButton").css("display", "none");
-        $("#noMore").css("display", "block");
+        $("#readMoreButton").html("No more posts");
       }
     });
   });
-  
+
 </script>
 </body>
 </html>

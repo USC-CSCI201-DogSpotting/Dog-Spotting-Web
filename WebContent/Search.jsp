@@ -7,7 +7,6 @@
 <title>Dog Spotting</title>
 <link rel="stylesheet"
 	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-	<link rel="stylesheet" href="guestfile.css" />
 <script
 	src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script
@@ -16,10 +15,10 @@
 	window.onload = function(){
   		var loggedin = <%=request.getSession().getAttribute("loggedin")%>;
   		console.log(loggedin);
-  		if(loggedin===false || loggedin===null){
+  		if(loggedin===false){
   			console.log("loggedin");
   			//window.location = "GuestPage.jsp";
-  			document.getElementById("guestusernavbar").innerHTML = "<li><a href=\"#\" data-toggle=\"modal\" data-target=\"#myModalg\">Log In</a></li><li><a href=\"#\" data-toggle=\"modal\" data-target=\"#myModalg2\">Sign Up</a></li>";
+  			document.getElementById("guestusernavbar").innerHTML = "<li><a href=\"#\" data-toggle=\"modal\" data-target=\"#myModalg\">Log In</a></li><li><a href=\"#\" data-toggle=\"modal\" data-target=\"#myModalg2\">SignUp</a></li>";
   		}
   	}
   	function logout(){
@@ -84,7 +83,7 @@ String search = (String)request.getParameter("search");
 		<nav class="navbar navbar-inverse navbar-fixed-top">
 		<div class="container-fluid">
 			<div class="navbar-header">
-				<a class="navbar-brand" href="TopRanked.jsp">DogSpotting</a>
+				<a class="navbar-brand" href="#">DogSpotting</a>
 			</div>
 			<form method="GET" class="navbar-form navbar-left"
 				action="Search.jsp">
@@ -202,11 +201,9 @@ String search = (String)request.getParameter("search");
 	<div class="container" style="padding-top: 70px">
 		<div id="posts"></div>
 		<div id="readMoreButton">
-			<button class="btn btn-default" id="readMore">Read More</button>
+			<button class="btn btn-primary" id="readMore">Read More</button>
 		</div>
 	</div>
-	<br>
-	<br>
 
 	<script>
   var numOfPost = 0;
@@ -224,7 +221,7 @@ String search = (String)request.getParameter("search");
       $("#posts").empty();
       $.each(responseJson, function(index, post) {
         curCount++;
-        $("#posts").append("<div id='post' class='container post thumbnail'></span><a href='PostPage?postID=" + post.postID + "'><img id='dogpic' src='" + post.imageURL + "'></a></div><br><br><br>");
+        $("#posts").append("<div class='container post thumbnail'><a href='PostPage?postID=" + post.postID + "'><img src='" + post.imageURL + "'></a></div>");
       });
       if (curCount <= numOfPost - postEachPage) {
         $("#readMoreButton").html("No more posts");

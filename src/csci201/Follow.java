@@ -7,6 +7,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -48,8 +50,6 @@ public class Follow extends HttpServlet {
 			while (rs.next()) { // get userID
 				followingUserID = rs.getInt("userID");
 			}
-			ps.close();
-			rs.close();
 			
 			// find following userID
 			ps = conn.prepareStatement("SELECT userID FROM User WHERE username=?");
