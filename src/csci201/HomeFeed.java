@@ -60,7 +60,7 @@ public class HomeFeed extends HttpServlet {
 			rs.close();
 			
 			// get list of posts
-			ps = conn.prepareStatement("SELECT u.username, p.userID, p.postID, p.image, p.description, p.tag1, p.tag2, p.tag3, p.tag4, p.tag5 " +
+			ps = conn.prepareStatement("SELECT u.username, u.picture, p.userID, p.postID, p.image, p.description, p.tag1, p.tag2, p.tag3, p.tag4, p.tag5 " +
 					"FROM Post p, Follow f, User u " +
 					"WHERE p.userID = f.followingID " +
 					"AND p.userID = u.userID " +
@@ -112,7 +112,7 @@ public class HomeFeed extends HttpServlet {
 				posts.add(tempPost);
 			}
 		} catch (SQLException sqle) {
-			//sqle.printStackTrace();
+			sqle.printStackTrace();
 			System.out.println ("SQLException homefeed: " + sqle.getMessage());
 		} catch (ClassNotFoundException cnfe) {
 			System.out.println ("ClassNotFoundException: " + cnfe.getMessage());
