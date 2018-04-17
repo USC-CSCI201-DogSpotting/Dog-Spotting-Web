@@ -220,11 +220,11 @@
         like[index] = post.isLike;
         var html = "";
         html += "<div class='container'>";
-        html += "<span><p>" + post.username + "</p>";
+        html += "<div class='follow-btn'><p>" + post.username + "</p>";
         if (!(post.username === "<%= request.getSession().getAttribute("currentusername") %>")) {
-            html += "<button class='btn btn-default' id='f" + post.postID + "'>" + (post.isFollow ? "Unfollow" : "Follow") + "</button>";
+            html += "<button class='btn btn-primary' id='f" + post.postID + "'>" + (post.isFollow ? "Unfollow" : "Follow") + "</button>";
         }
-        html += "</span>"
+        html += "</div>"
         html += "<div class='container thumbnail'><a href='PostPage?postID=" + post.postID + "'><img src='" + post.imageURL + "'></a></div>";
          html += "<button class='btn btn-primary' id='l" + post.postID + "'>" + (post.isLike ? "Unlike" : "Like") + "</button>" + (post.numOfLikes);
         html += "</div>";
