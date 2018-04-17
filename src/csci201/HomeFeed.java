@@ -59,6 +59,7 @@ public class HomeFeed extends HttpServlet {
 					"FROM Post p, Follow f, User u " +
 					"WHERE p.userID = f.followingID " +
 					"AND p.userID = u.userID " +
+					"AND f.valid = 1 " + 
 					"AND f.followerID = ? " +
 					"LIMIT " + limit);
 			ps.setLong(1, userID);
