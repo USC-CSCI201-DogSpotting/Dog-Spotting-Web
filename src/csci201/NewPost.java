@@ -8,13 +8,14 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
+import database.Database;
 
 /**
  * Servlet implementation class NewPost
@@ -137,16 +138,7 @@ public class NewPost extends HttpServlet {
 						.getConnection("jdbc:mysql://localhost/DogSpotting?user=root&password=root&useSSL=false");
 				// find userID
 				// System.out.println("test0");
-				ps = conn.prepareStatement("SELECT userID FROM User WHERE username=?");
-				// ps.setString(1, username);
-				ps.setString(1, username);
-				// System.out.println("test0.1");
-				rs = ps.executeQuery();
-				int userID = 0;
-				// System.out.println("test1");
-				while (rs.next()) { // get userID
-					userID = rs.getInt("userID");
-				}
+				int userID = Database.getUser(username).getUserID();
 				// insert new post
 				// System.out.println("test2");
 				ps = conn.prepareStatement(
