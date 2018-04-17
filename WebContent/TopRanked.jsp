@@ -87,7 +87,7 @@
         </div>
       </form>
       <ul class="nav navbar-nav">
-      <li><button type="button" class="btn btn-default" data-toggle="modal" data-target="#myModal">+</button></li>
+      <li><a type="button" data-toggle="modal" data-target="#myModal">+</a></li>
       <li><a href="HomeFeed.jsp" type="button">Feed</a></li>
  <li><a type="button" onclick="location.href='UserProfile.jsp'"><%=(String)session.getAttribute("currentusername")%></a></li>
       <li><a type="button" onclick="logout()">Log Out</a></li>
@@ -220,11 +220,11 @@
         like[index] = post.isLike;
         var html = "";
         html += "<div class='container'>";
-        html += "<div class='follow-btn'><p>" + post.username + "</p>";
+        html += "<span><p>" + post.username + "</p>";
         if (!(post.username === "<%= request.getSession().getAttribute("currentusername") %>")) {
-            html += "<button class='btn btn-primary' id='f" + post.postID + "'>" + (post.isFollow ? "Unfollow" : "Follow") + "</button>";
+            html += "<button class='btn btn-default' id='f" + post.postID + "'>" + (post.isFollow ? "Unfollow" : "Follow") + "</button>";
         }
-        html += "</div>"
+        html += "</span>"
         html += "<div class='container thumbnail'><a href='PostPage?postID=" + post.postID + "'><img src='" + post.imageURL + "'></a></div>";
          html += "<button class='btn btn-primary' id='l" + post.postID + "'>" + (post.isLike ? "Unlike" : "Like") + "</button>" + (post.numOfLikes);
         html += "</div>";
