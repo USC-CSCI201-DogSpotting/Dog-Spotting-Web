@@ -221,6 +221,7 @@
         var html = "";
         html += "<div class='container'>";
         html += "<div class='follow-btn'><p>" + post.username + "</p>";
+
         if (!(post.username === "<%= request.getSession().getAttribute("currentusername") %>")) {
             html += "<button class='btn btn-primary' id='f" + post.postID + "'>" + (post.isFollow ? "Unfollow" : "Follow") + "</button>";
         }
@@ -257,9 +258,7 @@
       }
     });
   });
-  
-  
-  
+
 </script>
 </body>
 </html>

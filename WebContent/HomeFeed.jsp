@@ -196,8 +196,7 @@ $("#readMore").on("click", function() {
       if (curCount <= numOfPost - postEachPage) {
         $("#readMoreButton").html("No more posts");
       }
-    });
-  });
+});
   
 </script>
 </body>

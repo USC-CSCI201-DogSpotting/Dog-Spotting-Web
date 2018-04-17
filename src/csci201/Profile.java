@@ -39,15 +39,16 @@ public class Profile extends HttpServlet {
 		System.out.println("profileserv");
 		HttpSession s =  request.getSession();
 		//String username = (String) s.getAttribute("currentusername");
-		List<Post> ownPosts = new ArrayList<Post>(); // user's own posts
-		//String username = (String) request.getParameter("username");
+		
+		String username1 = (String) request.getParameter("username");
 		String username = (String) request.getSession().getAttribute("currentusername");
+		List<Post> ownPosts = new ArrayList<Post>(); // user's own posts
 		List<Post> likePosts = new ArrayList<Post>(); // user's liked posts
 		List<String> followingUsernames = new ArrayList<String>(); // usernames that user follows
 		List<String> followerUsernames = new ArrayList<String>(); // usernames that follow the user
 		
 		int limit = 100;
-		System.out.println("username: " + username);
+		System.out.println("username: " + username + " from the passed argutment: " + username1);
 		Connection conn = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;

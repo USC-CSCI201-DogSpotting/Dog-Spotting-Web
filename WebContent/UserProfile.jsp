@@ -242,16 +242,31 @@ function getUser(){
         
         	console.log("followers: "+ par);
         	opts= '';
+        	var inputElement;
         	$.each(par, function(index, item) {
         		//opts += "<button onclick='otherProfile("+item+")'>" + item + "<button>";
-        		//var str1 = item;
+        		//var str1 = String(item);
         		console.log("usernameinfollowers: " + this);
+        		//inputElement1 = document.createTextNode(item);
+        		inputElement2 = document.createElement("BR");
+        		inputElement = document.createElement('button');
+        		inputElement.innerHTML = item;
         		
-        		opts += "<button type=\'button\' onclick=\'otherProfile()\'>" + this + "</button>";
-        		setUser(item);
+        	//	inputElement.type = "button";
+        		inputElement.addEventListener('click', function(){
+				otherProfile(item);
+				//opts += "<a type=\'button\' onclick=\'location.href='UserProfile.jsp'\'>"+str + "</a>";
+        		});
+        		//$("#followers").empty().append(inputElement)
+        		document.getElementById("followers").appendChild(inputElement);
+        		//document.getElementById("followers").appendChild(inputElement1);
+        		document.getElementById("followers").appendChild(inputElement2);
+        		//inputElement.submit();
+        		//document.getElementById("followers").appendChild(opts);
+        		//opts += "<button type=\'button\' onclick=\'otherProfile(\'"+str1+"\');\'>" + this + "</button>";
+        		//setUser(item);
                 //$("#followers").append("<div class='container post thumbnail' style='padding-right: -110px'>" + item + "</div>");
-        }); 
-        	$("#followers").empty().append(opts)
+        });    
     	});
    });
   //});
@@ -318,11 +333,8 @@ function getUser(){
   
   function otherProfile(){ // make a XMLRequest to send the username of the otheruser
 	  //var str = item;
-	  console.log("other profile buton");
-      var requeststr = "OtherProfile?";
-      var str = getUser();
-      console.log("str: " +str);
-      //console.log("otherProfile: " + document.getElementById("otherusername").value);
+	  console.log("str: " +str);
+	  var requeststr = "ValidateUsername?";
       requeststr += "otherusername="
               + str;
      
@@ -332,8 +344,20 @@ function getUser(){
       xhttp.send();
       //window.location = "OtherProfile.jsp"
       console.log(xhttp.responseText);
+	  //HttpSession session  = request.getSession();
+	  //session.setAttribute("otherusername",str);
+	  window.location = "OtherProfile.jsp?otherusername="+str;
+  	  console.log("other profile buton: " + str);
+      /*var requeststr = "OtherProfile?";
+      requeststr += "otherusername1="
+              + str;
+     
+      console.log(requeststr);
+      var xhttp = new XMLHttpRequest();
+      xhttp.open("POST", requeststr, true);
+      xhttp.send();
+      console.log(xhttp.responseText);*/
   }
-
   
 </script>
 
@@ -351,19 +375,19 @@ function getUser(){
 			<input type="text" id="search" placeholder="Search..">
 			<button type="button" class="btn btn-default" data-toggle="modal"
 				data-target="#myModal">+</button>
-			<button type="button" class="btn btn-default">Top</button>
-			<button type="button" class="btn btn-default">Username</button>
+			<a type="button" class="btn btn-default" onclick="location.href='TopRanked.jsp'">Top</a>
+			<!--  <button type="button" class="btn btn-default">Username</button>-->
 			<button type="button" class="btn btn-default" onclick="logout()">Log
 				Out</button>
 		</span> <br> <span class="tab" id="userInfo"> <img src="none"></img>
-			<text>User</text>
-			<button type="button" class="tablinks" id="postsButton">Posts</button>
-			<button type="button" class="tablinks" id="likedButton">Liked</button>
-			<button type="button" class="tablinks" data-toggle="modal"
+			<text><%=(String)session.getAttribute("currentusername") %></text>
+			<button type="button" class="btn btn-default" class="tablinks" id="postsButton">Posts</button>
+			<button type="button" class="btn btn-default" class="tablinks" id="likedButton">Liked</button>
+			<button type="button" class="btn btn-default" class="tablinks" data-toggle="modal"
 				data-target="#followersModal" id="followersButton">Followers</button>
-			<button type="button" class="tablinks" data-toggle="modal"
+			<button type="button" class="btn btn-default" class="tablinks" data-toggle="modal"
 				data-target="#followingModal" id="followingButton">Following</button>
-			<button type="button" class="tablinks" data-toggle="modal"
+			<button type="button" class="btn btn-default" class="tablinks" data-toggle="modal"
 				data-target="#settingsModal">Settings</button>
 		</span>
 	</div>
@@ -381,14 +405,14 @@ function getUser(){
 				</div>
 				<div class="modal-body">
 					<form action="/action_page.php">
-						<input type="file" name="pic" accept="image/*"><br> <br>Image:<input
-							type="text" id="img" name="img"><br> <input
-							type="text" id="description" name="description">Description:</><br>
-						<input type="text" id="tag1" name="tag1">Tag 1:</><br>
-						<input type="text" id="tag2" name="tag2">Tag 2:</><br>
-						<input type="text" id="tag3" name="tag3">Tag 3:</><br>
-						<input type="text" id="tag4" name="tag4">Tag 4:</><br>
-						<input type="text" id="tag5" name="tag5">Tag 5:</><br>
+						<!-- <input type="file" name="pic" accept="image/*"><br> -->
+						Image URL: <input type="text" id="img" name="img"><br> 
+						Caption:<input type="text" id="description" name="description"></><br>
+						Tag 1:<input type="text" id="tag1" name="tag1"></><br>
+						Tag 2:<input type="text" id="tag2" name="tag2"></><br>
+						Tag 3:<input type="text" id="tag3" name="tag3"></><br>
+						Tag 4:<input type="text" id="tag4" name="tag4"></><br>
+						Tag 5:<input type="text" id="tag5" name="tag5"></><br>
 					</form>
 				</div>
 				<div class="modal-footer">

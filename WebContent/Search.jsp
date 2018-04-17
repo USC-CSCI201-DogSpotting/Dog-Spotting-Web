@@ -145,7 +145,11 @@ String search = (String)request.getParameter("search");
 				<li><a type="button"
 						data-toggle="modal" data-target="#myModal">+</a></li>
 				<li><a href="TopRanked.jsp" type="button">Top</a></li>
+<<<<<<< HEAD
 				<li><a type="button"><%=request.getSession().getAttribute("currentusername")%></a></li>
+=======
+				<li><a type="button" onclick="location.href='UserProfile.jsp'"><%=request.getSession().getAttribute("currentusername")%></a></li>
+>>>>>>> profile
 				<li><a type="button" onclick="logout()">Log Out</a></li>
 			</ul>
 	      <div id="notifyNum"> </div>
@@ -308,7 +312,6 @@ String search = (String)request.getParameter("search");
 	      }
 	    });
 	  });
-  
 </script>
 </body>
 
