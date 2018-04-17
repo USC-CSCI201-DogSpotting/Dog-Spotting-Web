@@ -64,28 +64,23 @@ body {
 }
 
 #userprofilestuff button:active {
-	background-color: #d80600;
+	background-color: #D8BFD8;
 }
 
 #like button {
 	right: 0;
-	border-radius: 20px;
 	padding: 10px;
 	border: none;
-	background-color: #D8BFD8;
-	font-size: 10px;
-	margin:5px;
+	border-radius: 0px;
+	background-color: #FDA796;
+	font-size: 12px;
+	width: 100%;
 	
 }
 
-#follow button {
-	text-align: right;
-	border-radius: 20px;
-	padding: 10px;
-	border: none;
-	background-color: #D8BFD8;
-		font-size: 10px;
-		margin-left:5px;
+#like button:active {
+	background-color: #e27251;
+	
 }
 
 #userusername {
@@ -144,8 +139,8 @@ body {
 }
 
 #post {
-	width: 50%;
-	height: 50%;
+	width: 75%;
+	height: 75%;
 	border: none;
 	text-align: left;
 }

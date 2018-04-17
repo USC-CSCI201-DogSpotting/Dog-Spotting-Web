@@ -278,17 +278,17 @@ String search = (String)request.getParameter("search");
 	        	
 	        	
 	        }else{
-	        html += "<div id='post' class='container thumbnail'>";
-	        html += "<span id='follow'>" + "<img id='userprofpic' src='"+ post.userPicURL +"'><text id='userusername'>"+ post.username +"</text>";
-	        if (!(post.username === "<%= request.getSession().getAttribute("currentusername") %>")) {
-	            html += "<button class='btn btn-default float-right' id='f" + post.postID + "'>" + (post.isFollow ? "Unfollow" : "Follow") + "</button>";
-	        }
-	        html += "</span>"
-	        html += "<a href='PostPage?postID=" + post.postID + "'><img src='" + post.imageURL + "'></a>";
-	        html += "<br><span id='like'>";
-	        html += "<button class='btn btn-default' id='l" + post.postID + "'>" + (post.isLike ? "Unlike" : "Like") + " " + (post.numOfLikes) + "</button>";
-	        html += "</span>";
-	        html += "</div>";
+	            html += "<div id='post' class='container thumbnail'>";
+	            html += "<span>" + "<img id='userprofpic' src='"+ post.userPicURL +"'><text id='userusername'>"+ post.username +"</text>";
+	            html += "</span>"
+	            html += "<a href='PostPage?postID=" + post.postID + "'><img src='" + post.imageURL + "'></a>";
+	            html += "<div id='like' class=\"btn-group btn-group-justified\" role=\"group\" aria-label=\"...\">";
+	            html += "<div class=\"btn-group\" role=\"group\"><button class='btn btn-default' id='l" + post.postID + "'>" + (post.isLike ? "Unlike" : "Like") + " " + (post.numOfLikes) + "</button></div>";
+	            if (!(post.username === "<%= request.getSession().getAttribute("currentusername") %>")) {
+	                html += "<div class=\"btn-group\" role=\"group\"><button class='btn btn-default float-right' id='f" + post.postID + "'>" + (post.isFollow ? "Unfollow" : "Follow") + "</button></div>";
+	            }
+	            html += "</div>";
+	            html += "</div>";
 	        }
 	        $("#posts").append(html);
 	        var curID = "#f" + post.postID;
