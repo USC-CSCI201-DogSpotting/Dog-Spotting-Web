@@ -129,7 +129,7 @@ CREATE TABLE YearlyRank (
 INSERT INTO DailyRank (postID)
 	VALUES  (1);
     
-INSERT INTO MOnthlyRank (postID)
+INSERT INTO MonthlyRank (postID)
 	VALUES  (2);
 
 INSERT INTO YearlyRank (postID)
