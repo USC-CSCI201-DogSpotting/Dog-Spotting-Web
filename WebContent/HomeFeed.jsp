@@ -145,11 +145,9 @@ var postEachPage = 20;
 var curCount = 0;
 var follow = Array();
 var like = Array();
-
 $(document).ready(function() {
   $("#readMore").click();
 });
-
 $("#readMore").on("click", function() {
     numOfPost += postEachPage;
     curCount = 0;
@@ -161,8 +159,8 @@ $("#readMore").on("click", function() {
         like[index] = post.isLike;
         var html = "";
         html += "<div class='container'>";
-        html += "<div class='follow-btn'><p>" + post.username + "</p>";
-        if (!(post.username === "<%= request.getSession().getAttribute("currentusername") %>")) {
+        html += "<div class='follow-btn'><p>" + post.user.username + "</p>";
+        if (!(post.user.username === "<%= request.getSession().getAttribute("currentusername") %>")) {
             html += "<button class='btn btn-primary' id='f" + post.postID + "'>" + (post.isFollow ? "Unfollow" : "Follow") + "</button>";
         }
         html += "</div>"
@@ -172,7 +170,7 @@ $("#readMore").on("click", function() {
         $("#posts").append(html);
         var curID = "#f" + post.postID;
         $(document).on("click", curID, function() {
-            $.post("Follow", {username: post.username, isFollow: follow[index]});
+            $.post("Follow", {username: post.user.username, isFollow: follow[index]});
             if (follow[index]) {
               follow[index] = false;
               this.innerText = "Follow";
@@ -196,7 +194,8 @@ $("#readMore").on("click", function() {
       if (curCount <= numOfPost - postEachPage) {
         $("#readMoreButton").html("No more posts");
       }
-});
+    });
+  });
   
 </script>
 </body>

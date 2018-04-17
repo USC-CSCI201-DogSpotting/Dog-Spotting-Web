@@ -238,7 +238,7 @@ window.onload = function(){
 				  // Add each post through the response Json string
 				  $.each( responseJson, function(index, post) {
 					  curCount++;
-					  $("#posts").append("<div id='post' class='container post thumbnail'><span><img id=\"userprofpic\" src=\"" + post.userPicURL + "\"><a id=\"userusername\" href=\"#\">" + post.username + "</a></span><a href=\"#\"><img src=\"" +post.imageURL+"\"></a></div><br><br><br>")
+					  $("#posts").append("<div id='post' class='container post thumbnail'><span><img id=\"userprofpic\" src=\"" + post.user.userPicURL + "\"><a id=\"userusername\" href=\"#\">" + post.user.username + "</a></span><a href=\"#\"><img src=\"" +post.imageURL+"\"></a></div><br><br><br>")
 					});  
 				  // No more posts
 					if (curCount <= numOfPost - postEachPage) {

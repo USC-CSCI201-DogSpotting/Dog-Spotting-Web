@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import database.Database;
 import notification.NotificationSocket;
 
 /**
@@ -56,14 +57,7 @@ public class CommentPost extends HttpServlet {
 			Class.forName("com.mysql.jdbc.Driver");
 			conn = DriverManager.getConnection("jdbc:mysql://localhost/DogSpotting?user=root&password=root&useSSL=false");
 			// find userID
-			ps = conn.prepareStatement("SELECT userID FROM User WHERE username=?");
-			ps.setString(1, username); // set first variable in prepared statement
-			rs = ps.executeQuery();
-			int userID = 0;
-			while (rs.next()) { // get userID
-				userID = rs.getInt("userID");
-			}
-			ps.close();
+			int userID = Database.getUser(username).getUserID();
 			// insert new comment
 			if(isOnPost) {
 				ps = conn.prepareStatement("INSERT INTO Comment (userID, postID, content) VALUES (?, ?, ?)");
@@ -72,7 +66,6 @@ public class CommentPost extends HttpServlet {
 				ps.setString(3, content);
 				ps.executeUpdate();
 				ps.close();
-				rs.close();
 			}else {
 				ps = conn.prepareStatement("INSERT INTO Comment (userID, refcommentID, content) VALUES (?, ?, ?)");
 				ps.setLong(1, userID);
@@ -80,12 +73,11 @@ public class CommentPost extends HttpServlet {
 				ps.setString(3, content);
 				ps.executeUpdate();
 				ps.close();
-				rs.close();
 			}
 			
 			// re-fetch post
 			ps = conn.prepareStatement(
-                    "SELECT u.username, u.picture, p.postID, p.image, p.description, p.tag1, p.tag2, p.tag3, p.tag4, p.tag5 "
+                    "SELECT * "
                             + " FROM User u, Post p" + " WHERE u.userID=p.userID AND postID=?");
 			ps.setLong(1, postID); // set first variable in prepared statement
 			rs = ps.executeQuery();
@@ -110,7 +102,7 @@ public class CommentPost extends HttpServlet {
 					comments.add(tempComment);
 				}
 				postUsername = rs.getString("username");
-				post = new Post(postID, rs.getString("image"), rs.getString("username"), rs.getString("picture"), rs.getString("description"), tags, comments);
+				post = new Post(postID, rs.getInt("lifelike"), rs.getString("image"), rs.getString("username"), rs.getString("picture"), rs.getString("description"), tags, comments);
 			}
 			// push notification to the post user
 			NotificationSocket.addUserNotification(postUsername, username + " commented on your post!");

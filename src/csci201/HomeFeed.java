@@ -17,6 +17,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.google.gson.Gson;
 
+import database.Database;
+
 /**
  * Servlet implementation class HomeFeed
  */
@@ -49,18 +51,11 @@ public class HomeFeed extends HttpServlet {
 			// get userID
 			Class.forName("com.mysql.jdbc.Driver");
 			conn = DriverManager.getConnection("jdbc:mysql://localhost/DogSpotting?user=root&password=root&useSSL=false");
-			ps = conn.prepareStatement("SELECT userID FROM User WHERE username=?");
-			ps.setString(1, username); // set first variable in prepared statement
-			rs = ps.executeQuery();
-			int userID = 0;
-			while (rs.next()) { // get userID
-				userID = rs.getInt("userID");
-			}
-			ps.close();
-			rs.close();
+			// get userID
+			int userID = Database.getUser(username).getUserID();
 			
 			// get list of posts
-			ps = conn.prepareStatement("SELECT u.username, u.picture, p.userID, p.postID, p.image, p.description, p.tag1, p.tag2, p.tag3, p.tag4, p.tag5 " +
+			ps = conn.prepareStatement("SELECT * " +
 					"FROM Post p, Follow f, User u " +
 					"WHERE p.userID = f.followingID " +
 					"AND p.userID = u.userID " +
@@ -75,6 +70,7 @@ public class HomeFeed extends HttpServlet {
 			ps3.setInt(1, userID);
 			ps4 = conn.prepareStatement("Select * FROM Follow WHERE followerID = ? AND followingID = ?");
 			ps4.setInt(1, userID);
+			System.out.println("here!");
 			while (rs.next()) { // add in posts
 				// load tags
 				List<String> tags = new ArrayList<String>();
@@ -94,7 +90,7 @@ public class HomeFeed extends HttpServlet {
 					comments.add(tempComment);
 				}
 
-				Post tempPost = new Post(postID, rs.getString("image"), rs.getString("username"), rs.getString("picture"), rs.getString("description"), tags, comments);
+				Post tempPost = new Post(postID, rs.getInt("lifelike"), rs.getString("image"), rs.getString("username"), rs.getString("picture"), rs.getString("description"), tags, comments);
 				// check like and comment if loggedin
 				ps3.setInt(2, postID);
 				rs3 = ps3.executeQuery();

@@ -26,8 +26,8 @@ CREATE TABLE User (
 
 INSERT INTO User (username, password, picture)
 	VALUES  ('a', 'a', 'http://r.ddmcdn.com/w_830/s_f/o_1/cx_20/cy_1463/cw_2528/ch_1422/APL/uploads/2014/11/puppy-cam-veer-2893191.jpg'),
-            ('b', 'b', 'b'),
-            ('c', 'c', 'c');
+            ('b', 'b', 'http://pupjoyblog.com/wp-content/uploads/2017/06/Cute-dog-listening-to-music-1_1.jpg'),
+            ('c', 'c', 'http://www.dogbazar.org/wp-content/uploads/2014/09/british-bull-dog-puppies.jpg');
 
 CREATE TABLE Follow (
 	followID int(20) primary key not null auto_increment,
@@ -56,16 +56,17 @@ CREATE TABLE Post (
     tag3 varchar(10),
     tag4 varchar(10),
     tag5 varchar(10),
+    lifelike int(10) not null,
     dailylike int(10) not null,
     monthlylike int(10) not null,
     yearlylike int(10) not null,
     FOREIGN KEY fk1(userID) REFERENCES User(userID)
 );
 
-INSERT INTO Post (userID, image, description, tag1, tag2, dailylike, monthlylike, yearlylike)
-	VALUES  (1, 'https://images.pexels.com/photos/460823/pexels-photo-460823.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940', 'a', 'a', NULL, 1, 1, 1);
-INSERT INTO Post (userID, image, description, tag1, tag2, dailylike, monthlylike, yearlylike)
-	VALUES  (2, 'https://images.pexels.com/photos/356378/pexels-photo-356378.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940', 'a', 'a', NULL, 1, 1, 1);
+INSERT INTO Post (userID, image, description, tag1, tag2, lifelike, dailylike, monthlylike, yearlylike)
+	VALUES  (1, 'https://images.pexels.com/photos/460823/pexels-photo-460823.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940', 'a', 'a', NULL, 1, 1, 1, 1);
+INSERT INTO Post (userID, image, description, tag1, tag2, lifelike, dailylike, monthlylike, yearlylike)
+	VALUES  (2, 'https://images.pexels.com/photos/356378/pexels-photo-356378.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940', 'a', 'a', NULL, 1, 1, 1, 1);
 
 CREATE TABLE Likes (
 	likesID int(10) primary key not null auto_increment,

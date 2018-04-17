@@ -17,6 +17,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.google.gson.Gson;
 
+import database.Database;
+import database.RankUpdate;
+
 /**
  * Servlet implementation class TopRank
  */
@@ -68,28 +71,15 @@ public class TopRank extends HttpServlet {
 			// get userID if loggedin
 			int userID = 0;
 			if(isLoggedin) {
-				Class.forName("com.mysql.jdbc.Driver");
-				conn = DriverManager.getConnection("jdbc:mysql://localhost/DogSpotting?user=root&password=root&useSSL=false");
-				ps = conn.prepareStatement("SELECT userID FROM User WHERE username=?");
-				ps.setString(1, username); // set first variable in prepared statement
-				rs = ps.executeQuery();
-				while (rs.next()) { // get userID
-					userID = rs.getInt("userID");
-				}
-				ps.close();
-				rs.close();
+				userID = Database.getUser(username).getUserID();
 			}
 			// get respective lists
-			if(rankSelection == 0) {
-				ps = conn.prepareStatement("SELECT * FROM DailyRank r, Post p, User u " + 
-						"WHERE r.postID = p.postID AND p.userID = u.userID " + " LIMIT " + limit);
-			}else if(rankSelection == 1) {
-				ps = conn.prepareStatement("SELECT * FROM MonthlyRank r, Post p, User u " +
-						"WHERE r.postID = p.postID AND p.userID = u.userID " + " LIMIT " + limit);
-			}else{
-				ps = conn.prepareStatement("SELECT * FROM YearlyRank r, Post p, User u " +
-						"WHERE r.postID = p.postID AND p.userID = u.userID " + " LIMIT " + limit);
-			}
+			String[] rankOption = {"dailylike", "monthlylike", "yearlylike"};
+			ps = conn.prepareStatement("SELECT * FROM Post p, User u " + 
+					"WHERE p.userID = u.userID " + 
+					"ORDER BY " + rankOption[rankSelection] + " DESC, " +
+					"timestamp " +
+					"LIMIT " + limit);
 			rs = ps.executeQuery();
 			// for each post
 			ps2 = conn.prepareStatement("SELECT c.commentID, u.username, u.picture, c.content FROM Comment c, User u " + 
@@ -117,7 +107,7 @@ public class TopRank extends HttpServlet {
 					Comment tempComment = new Comment(rs2.getInt("commentID"), rs2.getString("username"),  rs2.getString("content"));
 					comments.add(tempComment);
 				}
-				Post tempPost = new Post(postID, rs.getString("image"), rs.getString("username"), rs.getString("picture"), rs.getString("description"), tags, comments);
+				Post tempPost = new Post(postID, rs.getInt("lifelike"), rs.getString("image"), rs.getString("username"), rs.getString("picture"), rs.getString("description"), tags, comments);
 				// check like and comment if loggedin
 				if(isLoggedin) {
 					ps3.setInt(2, postID);
@@ -132,7 +122,6 @@ public class TopRank extends HttpServlet {
 					if(rs4.next()) {
 						tempPost.setIsFollow(true);
 					}
-
 				}
 				posts.add(tempPost);
 			}
@@ -142,14 +131,14 @@ public class TopRank extends HttpServlet {
 			System.out.println ("ClassNotFoundException: " + cnfe.getMessage());
 		} finally {
 			try {
+				if (conn != null) {
+					conn.close();
+				}
 				if (rs != null) {
 					rs.close();
 				}
 				if (ps != null) {
 					ps.close();
-				}
-				if (conn != null) {
-					conn.close();
 				}
 			} catch (SQLException sqle) {
 				System.out.println("sqle: " + sqle.getMessage());

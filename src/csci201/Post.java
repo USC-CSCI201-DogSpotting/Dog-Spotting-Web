@@ -5,19 +5,18 @@ import java.util.List;
 public class Post {
 	int postID;
 	String imageURL;
-	String username;
-	String userPicURL;
+	User user;
 	String description;
 	List<String> tags;
 	List<Comment> comments;
 	int numOfLikes;
 	Boolean isFollow;
 	Boolean isLike;
-	public Post(int postID, String imageURL, String username, String userPicURL, String description, List<String> tags, List<Comment> comments) {
+	public Post(int postID,int numOfLikes, String imageURL, String username, String userPicURL, String description, List<String> tags, List<Comment> comments) {
 		this.postID = postID;
+		this.numOfLikes = numOfLikes;
 		this.imageURL = imageURL;
-		this.userPicURL = userPicURL;
-		this.username = username;
+		this.user = new User(username, userPicURL);
 		this.description = description;
 		this.tags = tags;
 		this.comments = comments;
@@ -31,10 +30,10 @@ public class Post {
 		return imageURL;
 	}
 	public String getUsername() {
-		return username;
+		return user.getUsername();
 	}
 	public String getUserPicURL() {
-		return userPicURL;
+		return user.getUserPicURL();
 	}
 	public String getDescription() {
 		return description;

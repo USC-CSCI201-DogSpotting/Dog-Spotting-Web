@@ -145,11 +145,7 @@ String search = (String)request.getParameter("search");
 				<li><a type="button"
 						data-toggle="modal" data-target="#myModal">+</a></li>
 				<li><a href="TopRanked.jsp" type="button">Top</a></li>
-<<<<<<< HEAD
-				<li><a type="button"><%=request.getSession().getAttribute("currentusername")%></a></li>
-=======
 				<li><a type="button" onclick="location.href='UserProfile.jsp'"><%=request.getSession().getAttribute("currentusername")%></a></li>
->>>>>>> profile
 				<li><a type="button" onclick="logout()">Log Out</a></li>
 			</ul>
 	      <div id="notifyNum"> </div>
@@ -275,8 +271,8 @@ String search = (String)request.getParameter("search");
 	        like[index] = post.isLike;
 	        var html = "";
 	        html += "<div class='container'>";
-	        html += "<div class='follow-btn'><p>" + post.username + "</p>";
-	        if (!(post.username === "<%= request.getSession().getAttribute("currentusername") %>")) {
+	        html += "<div class='follow-btn'><p>" + post.user.username + "</p>";
+	        if (!(post.user.username === "<%= request.getSession().getAttribute("currentusername") %>")) {
 	            html += "<button class='btn btn-primary' id='f" + post.postID + "'>" + (post.isFollow ? "Unfollow" : "Follow") + "</button>";
 	        }
 	        html += "</div>"
@@ -286,7 +282,7 @@ String search = (String)request.getParameter("search");
 	        $("#posts").append(html);
 	        var curID = "#f" + post.postID;
 	        $(document).on("click", curID, function() {
-	            $.post("Follow", {username: post.username, isFollow: follow[index]});
+	            $.post("Follow", {username: post.user.username, isFollow: follow[index]});
 	            if (follow[index]) {
 	              follow[index] = false;
 	              this.innerText = "Follow";

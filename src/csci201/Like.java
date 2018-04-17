@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import database.RankUpdate;
 import notification.NotificationSocket;
 
 /**
@@ -82,6 +83,7 @@ public class Like extends HttpServlet {
 							"SET dailylike = dailylike + 1, " +
 							"monthlylike = monthlylike + 1, " +
 							"yearlylike = yearlylike + 1 " +
+							"lifelike = lifelike + 1" + 
 							"WHERE postID = ?");
 					ps.setInt(1, postID);
 					ps.executeUpdate();
@@ -96,11 +98,20 @@ public class Like extends HttpServlet {
 					postUsername = rs.getString("username");
 				}
 				NotificationSocket.addUserNotification(postUsername, username + " liked your post!");
-			}else { // invalidate like
+			}else { 
+				// invalidate like
 				ps.close();
 				ps = conn.prepareStatement("UPDATE Likes SET valid = 0 WHERE userID = ? AND postID = ?");
 				ps.setLong(1, userID);
 				ps.setLong(2, postID);
+				ps.executeUpdate();
+				ps.close();
+				// decrease lifetime like
+				ps = conn.prepareStatement(
+						"UPDATE Post " +
+						"SET lifelike = lifelike - 1 " +
+						"WHERE postID = ?");
+				ps.setInt(1, postID);
 				ps.executeUpdate();
 				ps.close();
 			}

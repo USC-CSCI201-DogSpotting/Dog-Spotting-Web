@@ -15,7 +15,7 @@ import javax.websocket.server.ServerEndpoint;
 @ServerEndpoint(value = "/ws")
 public class NotificationSocket extends Thread {
 	private static Map<String, Vector<Session>> sessions = new HashMap<String ,Vector<Session>> ();
-	private static Map<String, Stack<String>> notifications = new HashMap<String, Stack<String>>();
+	private static Map<String, Stack<Notification>> notifications = new HashMap<String, Stack<Notification>>();
 
 	private String username;
 	@OnOpen
@@ -41,7 +41,7 @@ public class NotificationSocket extends Thread {
 			System.out.println("Created session vector for '" + username + "' with session ID " + session.getId());
 		}
 		// set num of notifications existed
-		Stack<String> userNotifications = notifications.get(username);
+		Stack<Notification> userNotifications = notifications.get(username);
 		try {
 			if(userNotifications != null) {
 				session.getBasicRemote().sendText("" + userNotifications.size());
@@ -64,21 +64,23 @@ public class NotificationSocket extends Thread {
 		}
 	}
 	
-	public static Stack<String> getUserNotifications(String username) {
-		Stack<String> retVal = notifications.get(username);
+	public static Stack<Notification> getUserNotifications(String username) {
+		Stack<Notification> retVal = notifications.get(username);
 		notifications.remove(username);
 		broadcastNewNotification(username, 0);
 		return retVal;
 	}
 	
-	public static void addUserNotification(String username, String notification) {
-		Stack<String> userNotifications = notifications.get(username);
+	public static void addUserNotification(String username, String message) {
+		Stack<Notification> userNotifications = notifications.get(username);
 		if(userNotifications != null) { // notifications for the user existed
 			System.out.println("Username existed.");
+			Notification notification = new Notification(username, message);
 			userNotifications.add(notification);
 			System.out.println("Added notification stack for '" + username + "' with message: " + notification);
 		}else { // create notification stack if not existed for the user
-			userNotifications = new Stack<String>();
+			userNotifications = new Stack<Notification>();
+			Notification notification = new Notification(username, message);
 			userNotifications.add(notification);
 			notifications.put(username, userNotifications);
 			System.out.println("Created notification stack for '" + username + "' with message: " + notification);
