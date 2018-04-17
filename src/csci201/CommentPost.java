@@ -6,15 +6,17 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import notification.NotificationSocket;
 
 /**
  * Servlet implementation class CommentPost
@@ -31,16 +33,23 @@ public class CommentPost extends HttpServlet {
 		
 		/* database starts */
 		// variables
-		int postID = 1;
-		String username = "a";
-		String content = "a";
-		Post post;
+		int postID = Integer.parseInt(request.getParameter("postid"));
+		String username = (String) request.getSession().getAttribute("currentusername");
+		String content = request.getParameter("comment");
+		Post post = null;
+		String reply = request.getParameter("reply");
+		
+
+		int commentID = 0;
+		boolean isOnPost = true; // change here!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		if (!reply.equals("post")) {
+			isOnPost = false;
+			commentID = Integer.parseInt(reply);
+		}
 
 		Connection conn = null;
-		Statement st = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
-		Statement st2 = null;
 		PreparedStatement ps2 = null;
 		ResultSet rs2 = null;
 		try {
@@ -54,19 +63,33 @@ public class CommentPost extends HttpServlet {
 			while (rs.next()) { // get userID
 				userID = rs.getInt("userID");
 			}
+			ps.close();
 			// insert new comment
-			ps = conn.prepareStatement("INSERT INTO Comment (userID, postID, content) VALUES (?, ?, ?)");
-			ps.setLong(1, userID);
-			ps.setLong(2, postID);
-			ps.setString(3, content);
-			ps.executeUpdate();
+			if(isOnPost) {
+				ps = conn.prepareStatement("INSERT INTO Comment (userID, postID, content) VALUES (?, ?, ?)");
+				ps.setLong(1, userID);
+				ps.setLong(2, postID);
+				ps.setString(3, content);
+				ps.executeUpdate();
+				ps.close();
+				rs.close();
+			}else {
+				ps = conn.prepareStatement("INSERT INTO Comment (userID, refcommentID, content) VALUES (?, ?, ?)");
+				ps.setLong(1, userID);
+				ps.setLong(2, commentID);
+				ps.setString(3, content);
+				ps.executeUpdate();
+				ps.close();
+				rs.close();
+			}
 			
 			// re-fetch post
-			st = conn.createStatement();
-			ps = conn.prepareStatement("SELECT * FROM Post WHERE postID=?");
+			ps = conn.prepareStatement(
+                    "SELECT u.username, u.picture, p.postID, p.image, p.description, p.tag1, p.tag2, p.tag3, p.tag4, p.tag5 "
+                            + " FROM User u, Post p" + " WHERE u.userID=p.userID AND postID=?");
 			ps.setLong(1, postID); // set first variable in prepared statement
 			rs = ps.executeQuery();
-			// check if user exists and check password
+			String postUsername = "";
 			while (rs.next()) {
 				// load tags
 				List<String> tags = new ArrayList<String>();
@@ -77,17 +100,20 @@ public class CommentPost extends HttpServlet {
 				if(rs.getString("tag5") != null) { tags.add(rs.getString("tag5")); }
 				// load comments
 				List<Comment> comments = new ArrayList<Comment>();
-				st2 = conn.createStatement();
-				ps2 = conn.prepareStatement("SELECT u.username, c.content FROM Comment c, User u " + 
-						"WHERE postID=? AND c.userID = u.userID");
+				ps2 = conn.prepareStatement("SELECT c.commentID, u.username, c.content FROM Comment c, User u " + 
+						"WHERE postID=? AND c.userID = u.userID ORDER BY commentID ASC");
 				ps2.setLong(1, postID); // set first variable in prepared statement
 				rs2 = ps2.executeQuery();
 				while(rs2.next()) {
-					Comment tempComment = new Comment(rs2.getString("username"), rs2.getString("content"));
+					Comment tempComment = new Comment(rs2.getInt("commentID"), rs2.getString("username"), rs2.getString("content"));
+					tempComment.getCommentOnThis();
 					comments.add(tempComment);
 				}
-				post = new Post(postID, rs.getString("image"), rs.getString("username"), rs.getString("description"), tags, comments);
+				postUsername = rs.getString("username");
+				post = new Post(postID, rs.getString("image"), rs.getString("username"), rs.getString("picture"), rs.getString("description"), tags, comments);
 			}
+			// push notification to the post user
+			NotificationSocket.addUserNotification(postUsername, username + " commented on your post!");
 		} catch (SQLException sqle) {
 			System.out.println ("SQLException: " + sqle.getMessage());
 		} catch (ClassNotFoundException cnfe) {
@@ -96,9 +122,6 @@ public class CommentPost extends HttpServlet {
 			try {
 				if (rs != null) {
 					rs.close();
-				}
-				if (st != null) {
-					st.close();
 				}
 				if (ps != null) {
 					ps.close();
@@ -113,6 +136,11 @@ public class CommentPost extends HttpServlet {
 		/* database ends */
 		
 		/* output Post post */
+		
+		String pageToForward = "/IndividualPost.jsp";
+		request.setAttribute("post", post);
+		RequestDispatcher dispatch = getServletContext().getRequestDispatcher(pageToForward);
+		dispatch.forward(request, response);
 	}
 
 }

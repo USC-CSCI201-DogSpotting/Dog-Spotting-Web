@@ -143,6 +143,7 @@
 var numOfPost = 0;
 var postEachPage = 20;
 var curCount = 0;
+<<<<<<< HEAD
 $(document).ready(function() {
   $("#readMore").click();
 });
@@ -154,12 +155,72 @@ $("#readMore").on("click", function() {
     $.each(responseJson, function(index, post) {
       curCount++;
       $("#posts").append("<br><div id='post' class='container post thumbnail'><a href='PostPage?postID=" + post.postID + "'><img src='" + post.imageURL + "'></a></div><br><br><br>");
+=======
+var follow = Array();
+var like = Array();
+
+$(document).ready(function() {
+  $("#readMore").click();
+});
+
+$("#readMore").on("click", function() {
+    numOfPost += postEachPage;
+    curCount = 0;
+    $.post("HomeFeed", { username: "<%= request.getSession().getAttribute("currentusername") %>", limit: numOfPost }, function(responseJson) {
+      $("#posts").empty();
+      $.each(responseJson, function(index, post) {
+        curCount++;
+        follow[index] = post.isFollow;
+        like[index] = post.isLike;
+        var html = "";
+        html += "<div id='post' class='container thumbnail'>";
+        html += "<span>" + "<img id='userprofpic' src='"+ post.userPicURL +"'><text id='userusername'>"+ post.username +"</text>";
+        html += "</span>"
+        html += "<a href='PostPage?postID=" + post.postID + "'><img src='" + post.imageURL + "'></a>";
+        html += "<div id='like' class=\"btn-group btn-group-justified\" role=\"group\" aria-label=\"...\">";
+        html += "<div class=\"btn-group\" role=\"group\"><button class='btn btn-default' id='l" + post.postID + "'>" + (post.isLike ? "Unlike" : "Like") + " " + (post.numOfLikes) + "</button></div>";
+        if (!(post.username === "<%= request.getSession().getAttribute("currentusername") %>")) {
+            html += "<div class=\"btn-group\" role=\"group\"><button class='btn btn-default float-right' id='f" + post.postID + "'>" + (post.isFollow ? "Unfollow" : "Follow") + "</button></div>";
+        }
+        html += "</div>";
+        html += "</div>";
+        $("#posts").append(html);
+        var curID = "#f" + post.postID;
+        $(document).on("click", curID, function() {
+            $.post("Follow", {username: post.username, isFollow: follow[index]});
+            if (follow[index]) {
+              follow[index] = false;
+              this.innerText = "Follow";
+            } else {
+               follow[index] = true;
+               this.innerText = "Unfollow";
+            }
+        });
+        curID = "#l" + post.postID;
+        $(document).on("click", curID, function() {
+            $.post("Like", {postID: post.postID, isLike: like[index]});
+            if (like[index]) {
+              like[index] = false;
+              this.innerText = "Like";
+            } else {
+               like[index] = true;
+               this.innerText = "Unlike";
+            }
+        });
+      });
+      if (curCount <= numOfPost - postEachPage) {
+        $("#readMoreButton").html("No more posts");
+      }
+>>>>>>> frontend
     });
     if (curCount <= numOfPost - postEachPage) {
       $("#readMoreButton").html("No more posts");
     }
   });
+<<<<<<< HEAD
 });
+=======
+>>>>>>> frontend
   
 </script>
 </body>

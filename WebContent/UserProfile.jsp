@@ -7,7 +7,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet"
 	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<<<<<<< HEAD
   <link rel="stylesheet" href="guestfile.css" />
+=======
+<link rel="stylesheet" href="guestfile.css" />
+>>>>>>> frontend
 <script
 	src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script
@@ -134,7 +138,7 @@ function getUser(){
 	}
   	function logout(){
   		var xhttp = new XMLHttpRequest();
-  		xhttp.open("GET", "Logout?", true); //synchronous
+  		xhttp.open("GET", "Logout?", false); //synchronous
   		xhttp.send();
   		window.location.replace("GuestPage.jsp");	
   	}
@@ -145,7 +149,7 @@ function getUser(){
 			 var validChoice = true;
 			  // should there be a limit to the amount of users shown?
 			console.log("postButton working");
-		    $.get("Profile",  { username: "<%= request.getParameter("username") %>"}, function(responseJson) {
+		    $.get("Profile",  { username: "<%=request.getParameter("username")%>"}, function(responseJson) {
 		        	$("#posts").empty();
 		        	var par = JSON.parse(responseJson.ownPosts);
 		        //var par = $.parseJSON(responseJson.ownPosts);
@@ -170,7 +174,11 @@ function getUser(){
 			 var validChoice = true;
 			  // should there be a limit to the amount of users shown?
 			console.log("postButton working");
+<<<<<<< HEAD
 		    $.get("Profile",  { username: "<%= request.getParameter("username") %>"}, function(responseJson) {
+=======
+		    $.get("Profile",  { username: "<%=request.getParameter("username")%>"}, function(responseJson) {
+>>>>>>> frontend
 		        	$("#posts").empty();
 		        	var par = JSON.parse(responseJson.ownPosts);
 		        //var par = $.parseJSON(responseJson.ownPosts);
@@ -193,7 +201,7 @@ function getUser(){
 	 $(document).ready(function() {
 		  $("#likedButton").on("click", function() {
 			  var validChoice = false;
-			$.get("Profile", { username: "<%= request.getParameter("username") %>"}, function(responseJson) {
+			$.get("Profile", { username: "<%=request.getParameter("username")%>"}, function(responseJson) {
 	        	$("#liked").empty();
 	        	var par = JSON.parse(responseJson.likePosts);
 	        //var par = $.parseJSON(responseJson.ownPosts);
@@ -229,7 +237,7 @@ function getUser(){
   //$("#followersButton").on("click", function() {
 	  $(document).on("click", "#followersButton", function() { 
 	  // should there be a limit to the amount of users shown?
-    $.get("Profile",  { username: "<%= request.getSession().getAttribute("currentusername") %>"}, function(responseJson) {
+    $.get("Profile",  { username: "<%=request.getSession().getAttribute("currentusername")%>"}, function(responseJson) {
         	$("#followers").empty();
        // 	responseJson = responseJson.followerUsernames.toString();
        	const str = JSON.stringify(responseJson.followerUsernames);
@@ -250,9 +258,15 @@ function getUser(){
         		//inputElement1 = document.createTextNode(item);
         		inputElement2 = document.createElement("BR");
         		inputElement = document.createElement('button');
+<<<<<<< HEAD
         		inputElement.innerHTML = item;
         		
         	//	inputElement.type = "button";
+=======
+        		//inputElement.innerHTML.class = "btn btn-default";
+        		inputElement.innerHTML = item;
+     
+>>>>>>> frontend
         		inputElement.addEventListener('click', function(){
 				otherProfile(item);
 				//opts += "<a type=\'button\' onclick=\'location.href='UserProfile.jsp'\'>"+str + "</a>";
@@ -274,40 +288,49 @@ function getUser(){
   $(document).ready(function() {
 	  $("#followingButton").on("click", function() {
 		  // should there be a limit to the amount of users shown?
-	    $.post("Profile",  { username: "<%= request.getSession().getAttribute("currentusername") %>"}, function(responseJson) {
-	        	$("#following").empty();
-	        	var par = JSON.parse(responseJson.followingUsernames);
-	        	opts= '';
-	        	$.each(par, function(index, item) {
-	        		opts +="<div class='container post thumbnail' style='padding-right: -110px'>" + item + "</div>";
-	        }); 
-	        	$("#following").empty().append(opts)
-	    	});
-	   });
-	  });
-  function validateNewPost() {
-      console.log("here");
-      var requeststr = "NewPost?";
-      requeststr += "img="
-              + document.getElementById("img").value;
-      requeststr += "&description="
-              + document.getElementById("description").value;
-      requeststr += "&tag1="
-          + document.getElementById("tag1").value;
-      requeststr += "&tag2="
-          + document.getElementById("tag2").value;
-      requeststr += "&tag3="
-          + document.getElementById("tag3").value;
-      requeststr += "&tag4="
-          + document.getElementById("tag4").value;
-      requeststr += "&tag5="
-          + document.getElementById("tag5").value;
-      console.log(requeststr);
-      var xhttp = new XMLHttpRequest();
-      xhttp.open("POST", requeststr, false);
-      xhttp.send();
-      console.log(xhttp.responseText);
+	    $.post("Profile",  { username: "<%=request.getSession().getAttribute("currentusername")%>"},
+															function(
+																	responseJson) {
+																$("#following")
+																		.empty();
+																var par = JSON
+																		.parse(responseJson.followingUsernames);
+																opts = '';
+																$
+																		.each(
+																				par,
+																				function(
+																						index,
+																						item) {
+																					opts += "<div class='container post thumbnail' style='padding-right: -110px'>"
+																							+ item
+																							+ "</div>";
+																				});
+																$("#following")
+																		.empty()
+																		.append(
+																				opts)
+															});
+										});
+					});
+	function validateNewPost() {
+		console.log("here");
+		var requeststr = "NewPost?";
+		requeststr += "img=" + document.getElementById("img").value;
+		requeststr += "&description="
+				+ document.getElementById("description").value;
+		requeststr += "&tag1=" + document.getElementById("tag1").value;
+		requeststr += "&tag2=" + document.getElementById("tag2").value;
+		requeststr += "&tag3=" + document.getElementById("tag3").value;
+		requeststr += "&tag4=" + document.getElementById("tag4").value;
+		requeststr += "&tag5=" + document.getElementById("tag5").value;
+		console.log(requeststr);
+		var xhttp = new XMLHttpRequest();
+		xhttp.open("POST", requeststr, false);
+		xhttp.send();
+		console.log(xhttp.responseText);
 
+<<<<<<< HEAD
       if(document.getElementById("img").value.trim().length == 0 || document.getElementById("description").value.trim().length == 0 ||
       		(document.getElementById("tag1").value.trim().length == 0||document.getElementById("tag2").value.trim().length == 0||
       				document.getElementById("tag3").value.trim().length == 0||document.getElementById("tag4").value.trim().length == 0||
@@ -358,6 +381,60 @@ function getUser(){
       console.log(xhttp.responseText);*/
   }
   
+=======
+		if (document.getElementById("img").value.trim().length == 0
+				|| document.getElementById("description").value.trim().length == 0
+				|| (document.getElementById("tag1").value.trim().length == 0
+						|| document.getElementById("tag2").value.trim().length == 0
+						|| document.getElementById("tag3").value.trim().length == 0
+						|| document.getElementById("tag4").value.trim().length == 0 || document
+						.getElementById("tag5").value.trim().length == 0)) {
+			if (document.getElementById("img").value.trim().length == 0) {
+				document.getElementById("inputError").innerHTML = xhttp.responseText;
+			}
+			if (document.getElementById("description").value.trim().length == 0) {
+				document.getElementById("inputError").innerHTML = xhttp.responseText;
+			}
+			if (document.getElementById("tag1").value.trim().length == 0
+					|| document.getElementById("tag2").value.trim().length == 0
+					|| document.getElementById("tag3").value.trim().length == 0
+					|| document.getElementById("tag4").value.trim().length == 0
+					|| document.getElementById("tag5").value.trim().length == 0) {
+				document.getElementById("inputError").innerHTML = xhttp.responseText;
+			}
+		} else {
+			document.getElementById("inputCorrect").innerHTML = xhttp.responseText;
+			alert('Post Successful')
+			window.location = "HomeFeed.jsp"
+		}
+	}
+
+	function otherProfile(str) { // make a XMLRequest to send the username of the otheruser
+		//var str = item;
+		console.log("str: " + str);
+		var requeststr = "ValidateUsername?";
+		requeststr += "otherusername=" + str;
+
+		console.log(requeststr);
+		var xhttp = new XMLHttpRequest();
+		xhttp.open("POST", requeststr, true);
+		xhttp.send();
+		console.log(xhttp.responseText);
+		//HttpSession session  = request.getSession();
+		//session.setAttribute("otherusername",str);
+		window.location = "OtherProfile.jsp?otherusername=" + str;
+		console.log("other profile buton: " + str);
+		/*var requeststr = "OtherProfile?";
+		requeststr += "otherusername1="
+		        + str;
+		
+		console.log(requeststr);
+		var xhttp = new XMLHttpRequest();
+		xhttp.open("POST", requeststr, true);
+		xhttp.send();
+		console.log(xhttp.responseText);*/
+	}
+>>>>>>> frontend
 </script>
 
 <style>
@@ -370,6 +447,7 @@ function getUser(){
 <body>
 
 	<div class="container">
+<<<<<<< HEAD
 		<span class="nav"> <img src="none"></img> <text>DogSpotting</text>
 			<input type="text" id="search" placeholder="Search..">
 			<button type="button" class="btn btn-default" data-toggle="modal"
@@ -389,7 +467,69 @@ function getUser(){
 			<button type="button" class="btn btn-default" class="tablinks" data-toggle="modal"
 				data-target="#settingsModal">Settings</button>
 		</span>
+=======
+		<nav class="navbar navbar-inverse navbar-fixed-top">
+			<div class="container-fluid">
+				<div class="navbar-header">
+					<a class="navbar-brand" href="TopRanked.jsp">DogSpotting</a>
+				</div>
+				<form method="GET" class="navbar-form navbar-left"
+					action="Search.jsp">
+					<div class="input-group">
+						<input type="text" id="search" class="form-control"
+							placeholder="Search" name="search">
+						<div class="input-group-btn">
+							<button class="btn btn-default" type="submit">
+								<i class="glyphicon glyphicon-search"></i>
+							</button>
+						</div>
+					</div>
+				</form>
+				<ul class="nav navbar-nav">
+					<li><a type="button" data-toggle="modal"
+						data-target="#myModal">+</a></li>
+					<li><a href="TopRanked.jsp" type="button">Top</a></li>
+					<li><a type="button" onclick="location.href='UserProfile.jsp'"><%=(String) session.getAttribute("currentusername")%></a></li>
+					<li><a type="button" onclick="logout()">Log Out</a></li>
+				</ul>
+				<div id="notifyNum"></div>
+			</div>
+			<div id="userprofilestuff" class="btn-group btn-group-justified"
+				role="group" aria-label="...">
+				<div class="btn-group" role="group">
+					<button type="button" class="btn btn-default" id="postButton"><%=(String) session.getAttribute("currentusername")%></button>
+				</div>
+				<div class="btn-group" role="group">
+					<button type="button" class="btn btn-default" id="postButton">Posts</button>
+				</div>
+				<div class="btn-group" role="group">
+					<button type="button" class="btn btn-default" id="postButton">Posts</button>
+				</div>
+				<div class="btn-group" role="group">
+					<button type="button" class="btn btn-default" id="likedButton">Liked</button>
+				</div>
+				<div class="btn-group" role="group">
+					<button type="button" class="btn btn-default" data-toggle="modal"
+						data-target="#followersModal" id="followersButton">Followers</button>
+				</div>
+				<div class="btn-group" role="group">
+					<button type="button" class="btn btn-default" data-toggle="modal"
+						data-target="#followingModal" id="followingButton">Following</button>
+				</div>
+				<div class="btn-group" role="group">
+					<button type="button" class="btn btn-default" data-toggle="modal"
+						data-target="#settingsModal">Settings</button>
+				</div>
+			</div>
+		</nav>
+>>>>>>> frontend
 	</div>
+	<br>
+	<br>
+
+
+
+
 	<!-- Trigger the modal with a button -->
 
 	<!-- Modal -->
@@ -405,7 +545,11 @@ function getUser(){
 				<div class="modal-body">
 					<form action="/action_page.php">
 						<!-- <input type="file" name="pic" accept="image/*"><br> -->
+<<<<<<< HEAD
 						Image URL: <input type="text" id="img" name="img"><br> 
+=======
+						Image URL: <input type="text" id="img" name="img"><br>
+>>>>>>> frontend
 						Caption:<input type="text" id="description" name="description"></><br>
 						Tag 1:<input type="text" id="tag1" name="tag1"></><br>
 						Tag 2:<input type="text" id="tag2" name="tag2"></><br>
@@ -435,8 +579,8 @@ function getUser(){
 					<button type="button" class="close" data-dismiss="modal">&times;</button>
 					Followers
 				</div>
-				<div class="modal-body" >
-				<div class="list-group" id="followers"></div>
+				<div class="modal-body">
+					<div class="list-group" id="followers"></div>
 				</div>
 				<div class="modal-footer">
 					<button type="button" id="close" class="btn btn-default"

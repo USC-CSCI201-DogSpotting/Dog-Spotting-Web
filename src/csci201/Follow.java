@@ -16,6 +16,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import notification.NotificationSocket;
+
 /**
  * Servlet implementation class Follow
  */
@@ -31,9 +33,9 @@ public class Follow extends HttpServlet {
 		
 		/* database starts */
 		// variables
-		String followingUsername = "a"; // username of the user being followed
-		String followerUsername = "a"; // username of the user following the other
-		boolean isFollow = true;
+		String followingUsername = request.getParameter("username"); // username of the user being followed
+		String followerUsername = (String)request.getSession().getAttribute("currentusername"); // username of the user following the other
+		boolean isFollow = Boolean.parseBoolean(request.getParameter("isFollow"));
 
 		Connection conn = null;
 		Statement st = null;
@@ -60,16 +62,17 @@ public class Follow extends HttpServlet {
 				followerUserID = rs.getInt("userID");
 			}
 			
-			if(isFollow) { // add follow
+			if(!isFollow) { // add follow
 				// check if follow relationship exists
+				System.out.println("follower: " + followerUserID + " following: " + followingUserID);
 				ps = conn.prepareStatement("SELECT followID FROM Follow WHERE followingID = ? AND followerID = ?");
 				ps.setLong(1, followingUserID);
 				ps.setLong(2, followerUserID);
 				rs = ps.executeQuery();
-				int followID = 0;
 				if (rs.next()) { // re-validate the follow
 					ps = conn.prepareStatement("UPDATE Follow SET valid = 1 WHERE followID = ?");
-					ps.setLong(1, followID);
+					System.out.println("followID: " + rs.getInt("followID"));
+					ps.setLong(1, rs.getInt("followID"));
 					ps.executeUpdate();
 				}else { // insert new follow
 					ps = conn.prepareStatement("INSERT INTO Follow (followingID, followerID, valid) VALUES (?, ?, 1)");
@@ -77,6 +80,8 @@ public class Follow extends HttpServlet {
 					ps.setLong(2, followerUserID);
 					ps.executeUpdate();
 				}
+				// notify for the follow action
+				NotificationSocket.addUserNotification(followingUsername, followerUsername + " has followed you!");
 			}else { // invalidate follow
 				ps = conn.prepareStatement("UPDATE Follow SET valid = 0 WHERE followingID = ? AND followerID = ?");
 				ps.setLong(1, followingUserID);

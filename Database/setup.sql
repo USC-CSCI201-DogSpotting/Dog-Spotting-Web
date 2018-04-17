@@ -25,7 +25,7 @@ CREATE TABLE User (
 );
 
 INSERT INTO User (username, password, picture)
-	VALUES  ('a', 'a', 'a'),
+	VALUES  ('a', 'a', 'http://r.ddmcdn.com/w_830/s_f/o_1/cx_20/cy_1463/cw_2528/ch_1422/APL/uploads/2014/11/puppy-cam-veer-2893191.jpg'),
             ('b', 'b', 'b'),
             ('c', 'c', 'c');
 
@@ -77,8 +77,6 @@ CREATE TABLE Likes (
 );
 
 INSERT INTO Likes (userID, postID, valid) VALUES (1, 1, 1);
-
-SELECT u.username, p.postID, p.image, p.description, p.tag1, p.tag2, p.tag3, p.tag4, p.tag5 FROM User u, Post p, Likes l WHERE p.postID = l.postID AND u.userID = p.userID AND l.userID = 1 LIMIT 100;
 
 CREATE TABLE Comment (
 	commentID int(10) primary key not null auto_increment,

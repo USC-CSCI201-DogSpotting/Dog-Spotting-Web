@@ -87,7 +87,7 @@
         </div>
       </form>
       <ul class="nav navbar-nav">
-      <li><button type="button" class="btn btn-default" data-toggle="modal" data-target="#myModal">+</button></li>
+      <li><a type="button" data-toggle="modal" data-target="#myModal">+</a></li>
       <li><a href="HomeFeed.jsp" type="button">Feed</a></li>
  <li><a type="button" onclick="location.href='UserProfile.jsp'"><%=(String)session.getAttribute("currentusername")%></a></li>
       <li><a type="button" onclick="logout()">Log Out</a></li>
@@ -107,6 +107,7 @@
 		</div>
 	</div>
   </nav>
+  </div>
   	<br>
 	<br>
 
@@ -179,7 +180,7 @@
 	  $("#readMore").click();
   })
   
-  $("#week").on("click", function() {
+  $("#month").on("click", function() {
     rank = 1;
     numOfPost = 0;
     $("#month").css({
@@ -194,7 +195,7 @@
     $("#readMore").click();
   })
   
-  $("#month").on("click", function() {
+  $("#year").on("click", function() {
     rank = 2;
     numOfPost = 0;
 	$("#year").css({
@@ -219,6 +220,7 @@
         follow[index] = post.isFollow;
         like[index] = post.isLike;
         var html = "";
+<<<<<<< HEAD
         html += "<div class='container'>";
         html += "<div class='follow-btn'><p><button type='button' id='user1'>" + post.username + "</button></p>";
         if (!(post.username === "<%= request.getSession().getAttribute("currentusername") %>")) {
@@ -236,6 +238,19 @@
 			//break;
 			//opts += "<a type=\'button\' onclick=\'location.href='UserProfile.jsp'\'>"+str + "</a>";
     		});
+=======
+        html += "<div id='post' class='container thumbnail'>";
+        html += "<span>" + "<img id='userprofpic' src='"+ post.userPicURL +"'><text id='userusername'>"+ post.username +"</text>";
+        html += "</span>"
+        html += "<a href='PostPage?postID=" + post.postID + "'><img src='" + post.imageURL + "'></a>";
+        html += "<div id='like' class=\"btn-group btn-group-justified\" role=\"group\" aria-label=\"...\">";
+        html += "<div class=\"btn-group\" role=\"group\"><button class='btn btn-default' id='l" + post.postID + "'>" + (post.isLike ? "Unlike" : "Like") + " " + (post.numOfLikes) + "</button></div>";
+        if (!(post.username === "<%= request.getSession().getAttribute("currentusername") %>")) {
+            html += "<div class=\"btn-group\" role=\"group\"><button class='btn btn-default float-right' id='f" + post.postID + "'>" + (post.isFollow ? "Unfollow" : "Follow") + "</button></div>";
+        }
+        html += "</div>";
+        html += "</div>";
+>>>>>>> frontend
         $("#posts").append(html);
         var curID = "#f" + post.postID;
         $(document).on("click", curID, function() {
@@ -266,6 +281,7 @@
     });
   });
   
+<<<<<<< HEAD
   function userProfile(str){
 	  console.log("str:" + str);
 	  var requeststr = "ValidateUsername?";
@@ -282,6 +298,9 @@
 	  window.location = "OtherProfile.jsp?otherusername="+str;
   	  console.log("other profile buton: " + str);
   }
+=======
+  
+>>>>>>> frontend
   
 </script>
 </body>

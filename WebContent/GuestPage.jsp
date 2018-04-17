@@ -6,6 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet"
 	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <link rel="stylesheet" href="guestfile.css" />
 <script
 	src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script
@@ -155,32 +156,97 @@ window.onload = function(){
 		</div>
 	</div>
 	<div class="container" style="padding-top: 70px">
-		<div id="posts"></div>
+		<div id="posts">
+		</div>
 		<div id="readMoreButton">
-			<button class="btn btn-primary" id="readMore">Read More</button>
+			<button class="btn btn-default" id="readMore">Read More</button>
 		</div>
 	</div>
+	<br>
+	<br>
 	<script>
-    var numOfPost = 0;
-    var postEachPage = 1;
-    var curCount = 0;
-    $(document).ready(function() {
-      $("#readMore").click();
-    });
-    $("#readMore").on("click", function() {
-        numOfPost += postEachPage;
-        curCount = 0;
-        $.post("TopRank", { rank : 0, limit : numOfPost }, function(responseJson) {
-          $("#posts").empty();
-          $.each(responseJson, function(index, post) {
-            curCount++;
-            $("#posts").append("<div class='container post thumbnail'><span><img id='userpic' src='none'>"+post.username+"</span><br><a href='PostPage?postID=" + post.postID + "'><img id='postimage' src='" + post.imageURL + "'></a></div>");
-          });
-          if (curCount <= numOfPost - postEachPage) {
-            $("#readMoreButton").html("No more posts");
-          }
-        });
-      });
-    </script>
+ 		var numOfPost = 0;
+		var postEachPage = 20;
+		var curCount = 0;
+		var rank = 0;
+
+		// Load posts when entering this page
+		$(document).ready(function() {
+			$("#noMore").css("display", "none");
+			$("#readMore").click();
+		});
+
+		// Change to Daily
+		$("#today").on("click", function() {
+			$("#readMoreButton").css("display", "block");
+			$("#noMore").css("display", "none");
+			rank = 0;
+			numOfPost = 0;
+			$("#today").css({
+				"background-color" : "#D8BFD8"
+			});
+			$("#month").css({
+				"background-color" : "#D9D9F0"
+			});
+			$("#year").css({
+				"background-color" : "#D9D9F0"
+			});
+			$("#readMore").click();
+		})
+
+		$("#month").on("click", function() {
+			// Change to Monthly
+			$("#readMoreButton").css("display", "block");
+			$("#noMore").css("display", "none");
+			rank = 1;
+			numOfPost = 0;
+			$("#month").css({
+				"background-color" : "#D8BFD8"
+			});
+			$("#today").css({
+				"background-color" : "#D9D9F0"
+			});
+			$("#year").css({
+				"background-color" : "#D9D9F0"
+			});
+			$("#readMore").click();
+		})
+
+		$("#year").on("click", function() {
+			// Change to Yearly
+			$("#readMoreButton").css("display", "block");
+			$("#noMore").css("display", "none");
+			rank = 2;
+			numOfPost = 0;
+			$("#year").css({
+				"background-color" : "#D8BFD8"
+			});
+			$("#month").css({
+				"background-color" : "#D9D9F0"
+			});
+			$("#today").css({
+				"background-color" : "#D9D9F0"
+			});
+			$("#readMore").click();
+		})
+
+		$("#readMore").on( "click", function() {
+			  numOfPost += postEachPage; // Add max number of posts on this page
+			  curCount = 0; // Count current number of posts
+			  $.post("TopRank", { rank : rank, limit : numOfPost }, function(responseJson) {
+				  $("#posts").empty(); 
+				  // Add each post through the response Json string
+				  $.each( responseJson, function(index, post) {
+					  curCount++;
+					  $("#posts").append("<div id='post' class='container post thumbnail'><span><img id=\"userprofpic\" src=\"" + post.userPicURL + "\"><text id=\"userusername\" href=\"#\">" + post.username + "</text></span><a href=\"#\"><img src=\"" +post.imageURL+"\"></a></div><br><br><br>")
+					});  
+				  // No more posts
+					if (curCount <= numOfPost - postEachPage) {
+						$("#readMoreButton").css("display", "none");
+						$("#noMore").css("display", "block");
+					}
+			});
+		}); 
+  </script>
 </body>
 </html>
