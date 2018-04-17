@@ -9,7 +9,6 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,25 +39,29 @@ public class Profile extends HttpServlet {
 		System.out.println("profileserv");
 		HttpSession s =  request.getSession();
 		//String username = (String) s.getAttribute("currentusername");
-		List<Post> ownPosts = new ArrayList<Post>(); // user's own posts
-		//String username = (String) request.getParameter("username");
+		
+		String username1 = (String) request.getParameter("username");
 		String username = (String) request.getSession().getAttribute("currentusername");
+		List<Post> ownPosts = new ArrayList<Post>(); // user's own posts
 		List<Post> likePosts = new ArrayList<Post>(); // user's liked posts
 		List<String> followingUsernames = new ArrayList<String>(); // usernames that user follows
 		List<String> followerUsernames = new ArrayList<String>(); // usernames that follow the user
-		System.out.println("username: " + username);
+		
+		int limit = 100;
+		System.out.println("username: " + username + " from the passed argutment: " + username1);
 		Connection conn = null;
-		Statement st = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
-		Statement st2 = null;
 		PreparedStatement ps2 = null;
 		ResultSet rs2 = null;
+		PreparedStatement ps3 = null;
+		ResultSet rs3 = null;
+		PreparedStatement ps4 = null;
+		ResultSet rs4 = null;
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
 			conn = DriverManager.getConnection("jdbc:mysql://localhost/DogSpotting?user=root&password=root&useSSL=false");
 			// get userID
-			st = conn.createStatement();
 			ps = conn.prepareStatement("SELECT userID FROM User WHERE username=?");
 			ps.setString(1, username);
 			rs = ps.executeQuery();
@@ -68,7 +71,11 @@ public class Profile extends HttpServlet {
 			}
 			System.out.println("userID: " + userID);
 			// get user's posts
-			ps = conn.prepareStatement("SELECT * FROM Post WHERE userID = ? LIMIT 100");
+			ps = conn.prepareStatement("SELECT u.username, u.picture, p.userID, p.postID, p.image, p.description, p.tag1, p.tag2, p.tag3, p.tag4, p.tag5 " +
+					"FROM Post p, User u " +
+					"WHERE p.userID = u.userID " +
+					"AND u.userID = ? " +
+					"LIMIT " + limit);
 			ps.setLong(1, userID);
 			rs = ps.executeQuery();
 			while (rs.next()) { // add in posts
@@ -82,22 +89,31 @@ public class Profile extends HttpServlet {
 				// load comments
 				int postID = rs.getInt("postID");
 				List<Comment> comments = new ArrayList<Comment>();
-				st2 = conn.createStatement();
-				ps2 = conn.prepareStatement("SELECT u.username, c.content FROM Comment c, User u " + 
+				ps2 = conn.prepareStatement("SELECT c.commentID, u.username, u.picture, c.content FROM Comment c, User u " + 
 						"WHERE postID=? AND c.userID = u.userID");
 				ps2.setLong(1, postID); // set first variable in prepared statement
+				System.out.println("postID: " + postID);
 				rs2 = ps2.executeQuery();
 				while(rs2.next()) {
-					Comment tempComment = new Comment(rs2.getString("username"), rs2.getString("content"));
+					System.out.println("CommenID!!!");
+					System.out.println("content: " + rs2.getString("content"));
+					System.out.println("commentID: " + rs2.getInt("commentID"));
+					System.out.println("username: " + rs2.getString("username"));
+					Comment tempComment = new Comment(rs2.getInt("commentID"), rs2.getString("username"), rs2.getString("content"));
+					System.out.println("here");
 					comments.add(tempComment);
+					System.out.println("here");
 				}
-				Post tempPost = new Post(postID, rs.getString("image"), username, rs.getString("description"), tags, comments);
-				System.out.println("ID: " + postID);
+				System.out.println("here");
+				Post tempPost = new Post(postID, rs.getString("image"), rs.getString("username"), rs.getString("picture"), rs.getString("description"), tags, comments);
 				ownPosts.add(tempPost);
 			}
+			ps.close();
+			rs.close();
+			ps2.close();
 
 			// get user's liked posts
-			ps = conn.prepareStatement("SELECT u.username, p.postID, p.image, p.description, p.tag1, p.tag2, p.tag3, p.tag4, p.tag5 " +
+			ps = conn.prepareStatement("SELECT u.username, u.picture, p.userID, p.postID, p.image, p.description, p.tag1, p.tag2, p.tag3, p.tag4, p.tag5 " +
 					"FROM User u, Post p, Likes l " +
 					"WHERE p.postID = l.postID " +
 					"AND u.userID = p.userID " +
@@ -105,6 +121,12 @@ public class Profile extends HttpServlet {
 					"LIMIT 100");
 			ps.setLong(1, userID);
 			rs = ps.executeQuery();
+			ps2 = conn.prepareStatement("SELECT u.username, c.commentID, c.content FROM Comment c, User u " + 
+					"WHERE postID=? AND c.userID = u.userID");
+			ps3 = conn.prepareStatement("SELECT * FROM Likes WHERE userID = ? AND postID = ? AND valid = 1");
+			ps3.setInt(1, userID);
+			ps4 = conn.prepareStatement("Select * FROM Follow WHERE followerID = ? AND followingID = ? AND valid = 1");
+			ps4.setInt(1, userID);
 			while (rs.next()) { // add in posts
 				// load tags
 				List<String> tags = new ArrayList<String>();
@@ -116,16 +138,26 @@ public class Profile extends HttpServlet {
 				// load comments
 				int postID = rs.getInt("postID");
 				List<Comment> comments = new ArrayList<Comment>();
-				st2 = conn.createStatement();
-				ps2 = conn.prepareStatement("SELECT u.username, c.content FROM Comment c, User u " + 
-						"WHERE postID=? AND c.userID = u.userID");
 				ps2.setLong(1, postID); // set first variable in prepared statement
 				rs2 = ps2.executeQuery();
 				while(rs2.next()) {
-					Comment tempComment = new Comment(rs2.getString("username"), rs2.getString("content"));
+					Comment tempComment = new Comment(rs2.getInt("commentID"), rs2.getString("username"), rs2.getString("content"));
 					comments.add(tempComment);
 				}
-				Post tempPost = new Post(postID, rs.getString("image"), rs.getString("username"), rs.getString("description"), tags, comments);
+				Post tempPost = new Post(postID, rs.getString("image"), rs.getString("username"), rs.getString("picture"), rs.getString("description"), tags, comments);
+				// check like and comment if loggedin
+				ps3.setInt(2, postID);
+				rs3 = ps3.executeQuery();
+				if(rs3.next()) {
+					tempPost.setIsLike(true);
+				}
+				int postUserID = rs.getInt("userID");
+				ps4.setInt(2, postUserID);
+				rs4 = ps4.executeQuery();
+				if(rs4.next()) {
+					tempPost.setIsFollow(true);
+				}
+
 				likePosts.add(tempPost);
 			}
 			// get followings
@@ -151,9 +183,6 @@ public class Profile extends HttpServlet {
 				if (rs != null) {
 					rs.close();
 				}
-				if (st != null) {
-					st.close();
-				}
 				if (ps != null) {
 					ps.close();
 				}
@@ -167,17 +196,35 @@ public class Profile extends HttpServlet {
 				if (rs2 != null) {
 					rs2.close();
 				}
-				if (st2 != null) {
-					st2.close();
-				}
 				if (ps2 != null) {
 					ps2.close();
 				}
 			} catch (SQLException sqle) {
 				System.out.println("sqle: " + sqle.getMessage());
 			}
+			try {
+				if (rs3 != null) {
+					rs3.close();
+				}
+				if (ps3 != null) {
+					ps3.close();
+				}
+			} catch (SQLException sqle) {
+				System.out.println("sqle: " + sqle.getMessage());
+			}
+			try {
+				if (rs4 != null) {
+					rs4.close();
+				}
+				if (ps4 != null) {
+					ps4.close();
+				}
+			} catch (SQLException sqle) {
+				System.out.println("sqle: " + sqle.getMessage());
+			}
 		}
 		/* database ends */
+		
 //		s.setAttribute("ownPosts",ownPosts);
 //		s.setAttribute("likePosts", likePosts);
 //		s.setAttribute("followingUsernames",followingUsernames);// = new ArrayList<String>(); // usernames that user follows

@@ -5,6 +5,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <link rel="stylesheet" href="guestfile.css" />
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <script>
@@ -14,14 +15,56 @@
   		if(loggedin===false){
   			console.log("loggedin");
   			window.location = "GuestPage.jsp";
+  		}else{
+  	  		// socket
+  	  		var socketUsername = '<%=(String)request.getSession().getAttribute("currentusername")%>';
+  	  		socket = new WebSocket("ws://localhost:8080/DogSpotting/ws");
+  	  		socket.onopen = function(event){
+  	  			socket.send(socketUsername);
+  	  		}
+  			socket.onmessage = function(event){
+  				document.getElementById("notifyNum").innerHTML += event.data + "<br />";
+  			}
   		}
-  	}
+	}
   	function logout(){
   		var xhttp = new XMLHttpRequest();
-  		xhttp.open("GET", "Logout?", true); //synchronous
+  		xhttp.open("GET", "Logout?", false); //synchronous
   		xhttp.send();
   		window.location.replace("GuestPage.jsp");	
   	}
+    function validate() {
+        console.log("here");
+        var requeststr = "NewPost?";
+        requeststr += "img="
+                + document.getElementById("img").value;
+        requeststr += "&description="
+                + document.getElementById("description").value;
+        requeststr += "&tag1="
+            + document.getElementById("tag1").value;
+        requeststr += "&tag2="
+            + document.getElementById("tag2").value;
+        requeststr += "&tag3="
+            + document.getElementById("tag3").value;
+        requeststr += "&tag4="
+            + document.getElementById("tag4").value;
+        requeststr += "&tag5="
+            + document.getElementById("tag5").value;
+        console.log(requeststr);
+        var xhttp = new XMLHttpRequest();
+        xhttp.open("POST", requeststr, false);
+        xhttp.send();
+        console.log(xhttp.responseText);
+
+        if(xhttp.responseText.trim().length>0){
+			console.log('post failed');
+			document.getElementById("inputError").innerHTML = xhttp.responseText;
+        }
+        else{
+        		console.log('post success');
+         	$('#myModal').modal('hide');
+        }
+    }
   	</script>
 </head>
 <body>
@@ -30,7 +73,7 @@
   	<nav class="navbar navbar-inverse navbar-fixed-top">
     <div class="container-fluid">
       <div class="navbar-header">
-        <a class="navbar-brand" href="#">DogSpotting</a>
+        <a class="navbar-brand" href="TopRanked.jsp">DogSpotting</a>
       </div>
       <form method="GET" class="navbar-form navbar-left" action="Search.jsp">
         <div class="input-group">
@@ -46,9 +89,10 @@
       <ul class="nav navbar-nav">
       <li><button type="button" class="btn btn-default" data-toggle="modal" data-target="#myModal">+</button></li>
       <li><a href="HomeFeed.jsp" type="button">Feed</a></li>
-      <li><a type="button">Username</a></li>
+ <li><a type="button" onclick="location.href='UserProfile.jsp'"><%=(String)session.getAttribute("currentusername")%></a></li>
       <li><a type="button" onclick="logout()">Log Out</a></li>
       </ul>
+      <div id="notifyNum"> </div>
     </div>
 			<div class="btn-group btn-group-justified" role="group"
 		aria-label="...">
@@ -71,47 +115,50 @@
   <!-- Modal -->
   <div class="modal fade" id="myModal" role="dialog">
     <div class="modal-dialog">
-    
+
       <!-- Modal content-->
-      <div class="modal-content">
-        <div class="modal-header">
+   <div class="modal-content">
+     <div class="modal-header">
           <button type="button" class="close" data-dismiss="modal">&times;</button>
-          <h4 class="modal-title">New Post</h4>
-        </div>
+          <h1 class="modal-title">New Post</h1>
+    </div>
+     <div id="postform">
         <div class="modal-body">
-       <form action="/action_page.php">
-  		<input type="file" name="pic" accept="image/*"><br>
-  		<input type="text" id="description">Description:</><br>
-  		<input type="text" id="tag1">Tag 1:</><br>
-  		<input type="text" id="tag2">Tag 2:</><br>
-  		<input type="text" id="tag3">Tag 3:</><br>
-  		<input type="text" id="tag4">Tag 4:</><br>
-  		<input type="text" id="tag5">Tag 5:</><br>
-  		<input type="submit">
-		</form>
-        </div>
-        <div class="modal-footer">
-          <button type="button" id="close" class="btn btn-default" data-dismiss="modal">Close</button>
-          <button type="button" id="post" class="btn btn-default" data-dismiss="modal">Post</button>
-        </div>
+  		Image URL:<input type="url" id="img" name="img"><br>
+  		Caption:<input type="text" id="description" name="description"><br>
+  		Tag 1:<input type="text" id="tag1" name="tag1"><br>
+  		Tag 2:<input type="text" id="tag2" name="tag2"><br>
+  		Tag 3:<input type="text" id="tag3" name="tag3"><br>
+  		Tag 4:<input type="text" id="tag4" name="tag4"><br>
+  		Tag 5:<input type="text" id="tag5" name="tag5"><br>
+  		<span id="inputError" style="color: darkred; font-weight: bold"></span>
       </div>
-      
+      </div>
+      <div class="modal-footer">
+          <button type="button" id="closebutton" class="btn btn-default" data-dismiss="modal">Close</button>
+          <button type="button" id="postbutton" class="btn btn-default" onclick="validate()">Post</button>
+      </div>
     </div>
   </div>
+    </div>
   
   <div class="container" style="padding-top: 70px">
   <div id="posts">
   </div>
   <div id="readMoreButton">
-  <button class="btn btn-primary" id="readMore">Read More</button>
+  <button class="btn btn-default" id="readMore">Read More</button>
   </div>
   </div>
+  <br>
+  <br>
 
 <script>
   var numOfPost = 0;
   var postEachPage = 20;
   var curCount = 0;
-  var rank = 0;
+  var rank = 0; // type of rank
+  var follow = Array();
+  var like = Array();
   
   $(document).ready(function() {
     $("#readMore").click();
@@ -120,18 +167,45 @@
   $("#today").on("click", function() {
 	  rank = 0;
 	  numOfPost = 0;
+		$("#today").css({
+			"background-color" : "#D8BFD8"
+		});
+		$("#month").css({
+			"background-color" : "#D9D9F0"
+		});
+		$("#year").css({
+			"background-color" : "#D9D9F0"
+		});
 	  $("#readMore").click();
   })
   
   $("#week").on("click", function() {
     rank = 1;
     numOfPost = 0;
+    $("#month").css({
+		"background-color" : "#D8BFD8"
+	});
+	$("#today").css({
+		"background-color" : "#D9D9F0"
+	});
+	$("#year").css({
+		"background-color" : "#D9D9F0"
+	});
     $("#readMore").click();
   })
   
   $("#month").on("click", function() {
     rank = 2;
     numOfPost = 0;
+	$("#year").css({
+		"background-color" : "#D8BFD8"
+	});
+	$("#month").css({
+		"background-color" : "#D9D9F0"
+	});
+	$("#today").css({
+		"background-color" : "#D9D9F0"
+	});
     $("#readMore").click();
   })
   
@@ -142,13 +216,72 @@
       $("#posts").empty();
       $.each(responseJson, function(index, post) {
         curCount++;
-        $("#posts").append("<div class='container post thumbnail'><a href='PostPage?postID=" + post.postID + "'><img src='" + post.imageURL + "'></a></div>");
+        follow[index] = post.isFollow;
+        like[index] = post.isLike;
+        var html = "";
+        html += "<div class='container'>";
+        html += "<div class='follow-btn'><p><button type='button' id='user1'>" + post.username + "</button></p>";
+        if (!(post.username === "<%= request.getSession().getAttribute("currentusername") %>")) {
+            html += "<button class='btn btn-primary' id='f" + post.postID + "'>" + (post.isFollow ? "Unfollow" : "Follow") + "</button>";
+        }
+        html += "</div>"
+        html += "<div class='container thumbnail'><a href='PostPage?postID=" + post.postID + "'><img src='" + post.imageURL + "'></a></div>";
+         html += "<button class='btn btn-primary' id='l" + post.postID + "'>" + (post.isLike ? "Unlike" : "Like") + "</button>" + (post.numOfLikes);
+        html += "</div>";
+        //var try;
+       // try = html;
+        window.addEventListener('click', function(){
+        	console.log("username: " + post.username);
+			userProfile(post.username);
+			//break;
+			//opts += "<a type=\'button\' onclick=\'location.href='UserProfile.jsp'\'>"+str + "</a>";
+    		});
+        $("#posts").append(html);
+        var curID = "#f" + post.postID;
+        $(document).on("click", curID, function() {
+            $.post("Follow", {username: post.username, isFollow: follow[index]});
+            if (follow[index]) {
+              follow[index] = false;
+              this.innerText = "Follow";
+            } else {
+            	 follow[index] = true;
+            	 this.innerText = "Unfollow";
+            }
+        });
+        curID = "#l" + post.postID;
+        $(document).on("click", curID, function() {
+            $.post("Like", {postID: post.postID, isLike: like[index]});
+            if (like[index]) {
+              like[index] = false;
+              this.innerText = "Like";
+            } else {
+               like[index] = true;
+               this.innerText = "Unlike";
+            }
+        });
       });
       if (curCount <= numOfPost - postEachPage) {
         $("#readMoreButton").html("No more posts");
       }
     });
   });
+  
+  function userProfile(str){
+	  console.log("str:" + str);
+	  var requeststr = "ValidateUsername?";
+      requeststr += "otherusername="
+              + str;
+     
+      console.log(requeststr);
+      var xhttp = new XMLHttpRequest();
+      xhttp.open("POST", requeststr, true);
+      xhttp.send();
+      console.log(xhttp.responseText);
+	  //HttpSession session  = request.getSession();
+	  //session.setAttribute("otherusername",str);
+	  window.location = "OtherProfile.jsp?otherusername="+str;
+  	  console.log("other profile buton: " + str);
+  }
   
 </script>
 </body>
