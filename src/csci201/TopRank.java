@@ -125,14 +125,12 @@ public class TopRank extends HttpServlet {
 					if(rs3.next()) {
 						tempPost.setIsLike(true);
 					}
-
 					int postUserID = rs.getInt("userID");
 					ps4.setInt(2, postUserID);
 					rs4 = ps4.executeQuery();
 					if(rs4.next()) {
 						tempPost.setIsFollow(true);
 					}
-
 				}
 				posts.add(tempPost);
 			}
