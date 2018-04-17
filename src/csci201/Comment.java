@@ -19,6 +19,9 @@ public class Comment {
 		this.content = content;
 		comments = new ArrayList<Comment>();
 	}
+	public int getCommentID() {
+		return commentID;
+	}
 	public String getUsername() {
 		return username;
 	}
