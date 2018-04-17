@@ -107,6 +107,7 @@
 		</div>
 	</div>
   </nav>
+  </div>
   	<br>
 	<br>
 
@@ -219,14 +220,16 @@
         follow[index] = post.isFollow;
         like[index] = post.isLike;
         var html = "";
-        html += "<div class='container'>";
-        html += "<div class='follow-btn'><p>" + post.username + "</p>";
+        html += "<div id='post' class='container thumbnail'>";
+        html += "<span id='follow'>" + "<img id='userprofpic' src='"+ post.userPicURL +"'><text id='userusername'>"+ post.username +"</text>";
         if (!(post.username === "<%= request.getSession().getAttribute("currentusername") %>")) {
-            html += "<button class='btn btn-primary' id='f" + post.postID + "'>" + (post.isFollow ? "Unfollow" : "Follow") + "</button>";
+            html += "<button class='btn btn-default float-right' id='f" + post.postID + "'>" + (post.isFollow ? "Unfollow" : "Follow") + "</button>";
         }
-        html += "</div>"
-        html += "<div class='container thumbnail'><a href='PostPage?postID=" + post.postID + "'><img src='" + post.imageURL + "'></a></div>";
-        html += "<button class='btn btn-primary' id='l" + post.postID + "'>" + (post.isLike ? "Unlike" : "Like") + "</button>" + (post.numOfLikes);
+        html += "</span>"
+        html += "<a href='PostPage?postID=" + post.postID + "'><img src='" + post.imageURL + "'></a>";
+        html += "<br><span id='like'>";
+        html += "<button class='btn btn-default' id='l" + post.postID + "'>" + (post.isLike ? "Unlike" : "Like") + " " + (post.numOfLikes) + "</button>";
+        html += "</span>";
         html += "</div>";
         $("#posts").append(html);
         var curID = "#f" + post.postID;

@@ -11,71 +11,109 @@ body {
 	border-radius: 100px;
 }
 
-.navbar{
+.navbar {
 	background-color: #CCE4DF;
 	text-align: center;
-		padding: 0;
-border: none;
+	padding: 0;
+	border: none;
 }
 
 #today {
 	border-radius: 0px;
 	padding: 0;
-border: none;
+	border: none;
 	background-color: #D8BFD8;
 }
 
-#year{
+#year {
 	border-radius: 0px;
 	padding: 0;
-border: none;
+	border: none;
 	background-color: #D9D9F0;
 }
 
-#month{
+#month {
 	border-radius: 0px;
 	padding: 0;
-border: none;
+	border: none;
 	background-color: #D9D9F0;
 }
 
-
-#buttons{
+#buttons {
 	position: center;
 	margin-top: 35px;
 }
+
 #buttons .button {
 	background-color: #272727; /* Green */
-    border: none;
-    color: white;
-    padding: 7px 18px;
-    margin-bottom: 10px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
+	border: none;
+	color: white;
+	padding: 7px 18px;
+	margin-bottom: 10px;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	font-size: 16px;
+}
+
+#userprofilestuff button {
+	border-radius: 0px;
+	padding: 0;
+	border: none;
+	background-color: #D8BFD8;
+}
+
+#userprofilestuff button:active {
+	background-color: #d80600;
+}
+
+#like button {
+	right: 0;
+	border-radius: 20px;
+	padding: 10px;
+	border: none;
+	background-color: #D8BFD8;
+	font-size: 10px;
+	margin:5px;
+	
+}
+
+#follow button {
+	text-align: right;
+	border-radius: 20px;
+	padding: 10px;
+	border: none;
+	background-color: #D8BFD8;
+		font-size: 10px;
+		margin-left:5px;
+}
+
+#userusername {
+	padding: 100px;
+	font-size: 100px;
 }
 
 .search input {
-  width: 380px;
-  height: 32px;
-  background: #fcfcfc;
-  border: none;
-  position: center;
-  margin-right: 50px;
-  font-weight: bold;
-  font-size: 15px;
-  text-indent: 10px;
+	width: 380px;
+	height: 32px;
+	background: #fcfcfc;
+	border: none;
+	position: center;
+	margin-right: 50px;
+	font-weight: bold;
+	font-size: 15px;
+	text-indent: 10px;
 }
-.search .fa-search { 
-  position: absolute;
-  margin-top: 0px;
-  margin-left: -50px;
+
+.search .fa-search {
+	position: absolute;
+	margin-top: 0px;
+	margin-left: -50px;
 	padding: 9px;
 	padding-left: 20px;
 }
 /* When the screen is less than 600px wide, stack the links and the search field vertically instead of horizontally */
-#table{
+#table {
 	position: center;
 	margin-left: auto;
 	margin-right: auto;
@@ -83,44 +121,52 @@ border: none;
 	width: 430px;
 	padding-top: 5px;
 }
-#radio2 #radio4{
+
+#radio2 #radio4 {
+	
 }
-#userinfo{
+
+#userinfo {
 	width: 50%;
 	text-align: left;
 }
-#profpic{
+
+#profpic {
 	height: 20px;
 	width: 20px;
 	border-radius: 10px;
 }
 
-#readMore{
-    cursor:pointer;
-    border: none;
-    border-radius: 20px;
+#readMore {
+	cursor: pointer;
+	border: none;
+	border-radius: 20px;
 }
 
-#post{
+#post {
 	width: 50%;
 	height: 50%;
 	border: none;
 	text-align: left;
 }
-#dogpic{
+
+#dogpic {
 	border: none;
 }
-#userprofpic{
-		height: 40px;
+
+#userprofpic {
+	height: 40px;
 	width: 40px;
-	border:none;
+	border: none;
 	border-radius: 20px;
 	margin: 10px;
 }
-#userusername{
+
+#userusername {
 	padding: 10px;
 	font-size: 20px;
 }
+
 h1 {
 	color: #000000;
 	font-size: 60px;
