@@ -16,6 +16,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import database.Database;
+
 /**
  * Servlet implementation class PostPage
  */
@@ -53,21 +55,13 @@ public class PostPage extends HttpServlet {
 			// get userID if loggedin
 			int userID = 0;
 			if(isLoggedin) {
-				Class.forName("com.mysql.jdbc.Driver");
-				conn = DriverManager.getConnection("jdbc:mysql://localhost/DogSpotting?user=root&password=root&useSSL=false");
-				ps = conn.prepareStatement("SELECT userID FROM User WHERE username=?");
-				ps.setString(1, username); // set first variable in prepared statement
-				rs = ps.executeQuery();
-				while (rs.next()) { // get userID
-					userID = rs.getInt("userID");
-				}
-				ps.close();
-				rs.close();
+				userID = Database.getUser(username).getUserID();
 			}
 			// get the post
 			ps = conn.prepareStatement(
-                    "SELECT u.username, u.picture, u.userID, p.postID, p.image, p.description, p.tag1, p.tag2, p.tag3, p.tag4, p.tag5 "
-                            + " FROM User u, Post p" + " WHERE u.userID=p.userID AND postID=?");
+                    "SELECT * " + 
+                    " FROM User u, Post p" + 
+					" WHERE u.userID=p.userID AND postID=?");
 			ps.setLong(1, postID); // set first variable in prepared statement
 			rs = ps.executeQuery();
 			// for each post
@@ -96,7 +90,8 @@ public class PostPage extends HttpServlet {
 					tempComment.getCommentOnThis();
 					comments.add(tempComment);
 				}
-				post = new Post(postID, rs.getString("image"), rs.getString("username"), rs.getString("picture"), rs.getString("description"), tags, comments);
+				post = new Post(postID, rs.getInt("lifelike"), rs.getString("image"), 
+						rs.getString("username"), rs.getString("picture"), rs.getString("description"), tags, comments);
 				// check like and comment if loggedin
 				if(isLoggedin) {
 					ps3.setInt(2, postID);

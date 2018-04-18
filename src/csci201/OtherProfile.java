@@ -22,6 +22,8 @@ import org.json.JSONObject;
 
 import com.google.gson.Gson;
 
+import database.Database;
+
 @WebServlet("/OtherProfile")
 public class OtherProfile extends HttpServlet {
 	private static final long serialVersionUID = 1L;
@@ -58,16 +60,9 @@ public class OtherProfile extends HttpServlet {
 			Class.forName("com.mysql.jdbc.Driver");
 			conn = DriverManager.getConnection("jdbc:mysql://localhost/DogSpotting?user=root&password=root&useSSL=false");
 			// get userID
-			ps = conn.prepareStatement("SELECT userID FROM User WHERE username=?");
-			ps.setString(1, username);
-			rs = ps.executeQuery();
-			int userID = 0;
-			while (rs.next()) {
-				userID = rs.getInt("userID");
-			}
-			System.out.println("userID: " + userID);
+			int userID = Database.getUser(username).getUserID();
 			// get user's posts
-			ps = conn.prepareStatement("SELECT u.username, u.picture, p.userID, p.postID, p.image, p.description, p.tag1, p.tag2, p.tag3, p.tag4, p.tag5 " +
+			ps = conn.prepareStatement("SELECT * " +
 					"FROM Post p, User u " +
 					"WHERE p.userID = u.userID " +
 					"AND u.userID = ? " +
@@ -101,16 +96,17 @@ public class OtherProfile extends HttpServlet {
 					System.out.println("here");
 				}
 				System.out.println("here");
-				Post tempPost = new Post(postID, rs.getString("image"), rs.getString("username"), rs.getString("picture"), rs.getString("description"), tags, comments);
+				Post tempPost = new Post(postID, rs.getInt("lifelike"), rs.getString("image"), 
+						rs.getString("username"), rs.getString("picture"), rs.getString("description"), tags, comments);
 				ownPosts.add(tempPost);
 			}
 			ps.close();
 			rs.close();
-			//ps2.close();
-			//rs2.close();
+			ps2.close();
+			rs2.close();
 
 			// get user's liked posts
-			ps = conn.prepareStatement("SELECT u.username, u.picture, p.userID, p.postID, p.image, p.description, p.tag1, p.tag2, p.tag3, p.tag4, p.tag5 " +
+			ps = conn.prepareStatement("SELECT * " +
 					"FROM User u, Post p, Likes l " +
 					"WHERE p.postID = l.postID " +
 					"AND u.userID = p.userID " +
@@ -141,7 +137,8 @@ public class OtherProfile extends HttpServlet {
 					Comment tempComment = new Comment(rs2.getInt("commentID"), rs2.getString("username"), rs2.getString("content"));
 					comments.add(tempComment);
 				}
-				Post tempPost = new Post(postID, rs.getString("image"), rs.getString("username"), rs.getString("picture"), rs.getString("description"), tags, comments);
+				Post tempPost = new Post(postID, rs.getInt("lifelike"), rs.getString("image"), 
+						rs.getString("username"), rs.getString("picture"), rs.getString("description"), tags, comments);
 				// check like and comment if loggedin
 				ps3.setInt(2, postID);
 				rs3 = ps3.executeQuery();
@@ -240,7 +237,8 @@ public class OtherProfile extends HttpServlet {
 		String likedString = gson.toJson(likePosts);
 		JSONObject jsonObject = new JSONObject();
 		
-		System.out.println("followerString: " + followerString + " followingString: "+ followingString + " postsString: "+ postsString+ " likedString: " + likedString);
+		System.out.println("followerString: " + followerString + " followingString: "+ followingString + 
+				" postsString: "+ postsString+ " likedString: " + likedString);
 		try {
 			jsonObject.put("followerUsernames", followerString);
 			jsonObject.put("followingUsernames", followingString);

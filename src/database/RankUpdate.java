@@ -1,4 +1,4 @@
-package csci201;
+package database;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -66,68 +66,16 @@ public class RankUpdate {
 		System.out.println("Updated Ranks");
 	}
 	
-	private void renewRank(Connection conn, int tableNum) {
+	private void renewRank(Connection conn, int periodNum) {
 		// determine table name
-		String tableName = "";
-		String postField = "";
-		if(tableNum == 0) {
-			tableName = "DailyRank";
-			postField = "dailylike";
-		}else if(tableNum == 1) {
-			tableName = "MonthlyRank";
-			postField = "monthlylike";
-		}else {
-			tableName = "YearlyRank";
-			postField = "yearlylike";
-		}
-		System.out.println("Updating " + tableName);
-		// update table
+		String[] rankOption = {"dailylike", "monthlylike", "yearlylike"};
+		System.out.println("Updating " + rankOption[periodNum]);
+		// update post table
 		PreparedStatement ps = null;
 		ResultSet rs = null;
-		PreparedStatement ps2 = null;
-		ResultSet rs2 = null;
 		try {
 			// getting the new rank
-			ps = conn.prepareStatement("SELECT postID FROM Post ORDER BY ? DESC LIMIT 100");
-			ps.setString(1, postField);
-			rs = ps.executeQuery();
-			// updating existing
-			// get current number
-			String query = "SELECT COUNT(*) FROM " + tableName;
-			ps2 = conn.prepareStatement(query);
-			rs2 = ps2.executeQuery();
-			int currRankNum = 0;
-			while(rs2.next()) {
-				currRankNum = rs2.getInt(1);
-				System.out.println(currRankNum);
-			}
-			ps2.close();
-			// update existing
-			query = "UPDATE " + tableName + " SET postID = ? WHERE rankID = ?";
-			ps2 = conn.prepareStatement(query);
-			for(int i = 1; i <= currRankNum; i++) {
-				rs.next();
-				int tempPostID = rs.getInt(1);
-				ps2.setInt(1, tempPostID);
-				ps2.setInt(2, i);
-				ps2.executeUpdate();
-			}
-			ps2.close();
-			// insert if more than existing rows
-			query = "INSERT INTO " + tableName + " (postID) VALUES (?)";
-			ps2 = conn.prepareStatement(query);
-			while(rs.next()) {
-				System.out.println("here");
-				int tempPostID = rs.getInt(1);
-				System.out.println(tempPostID);
-				ps2.setInt(1, tempPostID);
-				ps2.executeUpdate();
-			}
-			ps2.close();
-			ps.close();
-			// zero the post table
-			query = "UPDATE Post SET " + postField + " = 0";
-			ps = conn.prepareStatement(query);
+			ps = conn.prepareStatement("UPDATE Post SET " + rankOption[periodNum] + " = 0");
 			ps.executeUpdate();
 		} catch (SQLException sqle) {
 			System.out.println("SQLException in renewRank: " + sqle.getMessage());
@@ -138,12 +86,6 @@ public class RankUpdate {
 				}
 				if(rs != null) {
 					rs.close();
-				}
-				if(ps2 != null) {
-					ps2.close();
-				}
-				if(rs2 != null) {
-					rs2.close();
 				}
 			} catch(SQLException sqle) {
 				System.out.println("SQLException in closing in renewRank: " + sqle.getMessage());

@@ -22,7 +22,7 @@ public class GetNotifications extends HttpServlet {
 	protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		/* get notifications */
 		String username = "a";
-		Stack<String> userNotifications = NotificationSocket.getUserNotifications(username);
+		Stack<Notification> userNotifications = NotificationSocket.getUserNotifications(username);
 	}
 
 }

@@ -31,7 +31,7 @@
   		var xhttp = new XMLHttpRequest();
   		xhttp.open("GET", "Logout?", false); //synchronous
   		xhttp.send();
-  		window.location.replace("GuestPage.jsp");	
+  		window.location.replace("GuestPage.jsp");
   	}
     function validate() {
         console.log("here");
@@ -143,6 +143,7 @@
 var numOfPost = 0;
 var postEachPage = 20;
 var curCount = 0;
+/*<<<<<<< HEAD
 <<<<<<< HEAD
 $(document).ready(function() {
   $("#readMore").click();
@@ -156,13 +157,13 @@ $("#readMore").on("click", function() {
       curCount++;
       $("#posts").append("<br><div id='post' class='container post thumbnail'><a href='PostPage?postID=" + post.postID + "'><img src='" + post.imageURL + "'></a></div><br><br><br>");
 =======
+=======
+>>>>>>> origin/deployment5*/
 var follow = Array();
 var like = Array();
-
 $(document).ready(function() {
   $("#readMore").click();
 });
-
 $("#readMore").on("click", function() {
     numOfPost += postEachPage;
     curCount = 0;
@@ -173,6 +174,7 @@ $("#readMore").on("click", function() {
         follow[index] = post.isFollow;
         like[index] = post.isLike;
         var html = "";
+//<<<<<<< HEAD
         html += "<div id='post' class='container thumbnail'>";
         html += "<span>" + "<img id='userprofpic' src='"+ post.userPicURL +"'><text id='userusername'>"+ post.username +"</text>";
         html += "</span>"
@@ -181,13 +183,19 @@ $("#readMore").on("click", function() {
         html += "<div class=\"btn-group\" role=\"group\"><button class='btn btn-default' id='l" + post.postID + "'>" + (post.isLike ? "Unlike" : "Like") + " " + (post.numOfLikes) + "</button></div>";
         if (!(post.username === "<%= request.getSession().getAttribute("currentusername") %>")) {
             html += "<div class=\"btn-group\" role=\"group\"><button class='btn btn-default float-right' id='f" + post.postID + "'>" + (post.isFollow ? "Unfollow" : "Follow") + "</button></div>";
+/*=======
+        html += "<div class='container'>";
+        html += "<div class='follow-btn'><p>" + post.user.username + "</p>";
+        if (!(post.user.username === "<%= request.getSession().getAttribute("currentusername") %>")) {
+            html += "<button class='btn btn-primary' id='f" + post.postID + "'>" + (post.isFollow ? "Unfollow" : "Follow") + "</button>";
+>>>>>>> origin/deployment5*/
         }
         html += "</div>";
         html += "</div>";
         $("#posts").append(html);
         var curID = "#f" + post.postID;
         $(document).on("click", curID, function() {
-            $.post("Follow", {username: post.username, isFollow: follow[index]});
+            $.post("Follow", {username: post.user.username, isFollow: follow[index]});
             if (follow[index]) {
               follow[index] = false;
               this.innerText = "Follow";
@@ -211,17 +219,10 @@ $("#readMore").on("click", function() {
       if (curCount <= numOfPost - postEachPage) {
         $("#readMoreButton").html("No more posts");
       }
->>>>>>> frontend
     });
-    if (curCount <= numOfPost - postEachPage) {
-      $("#readMoreButton").html("No more posts");
-    }
   });
-<<<<<<< HEAD
 });
-=======
->>>>>>> frontend
-  
+
 </script>
 </body>
 </html>

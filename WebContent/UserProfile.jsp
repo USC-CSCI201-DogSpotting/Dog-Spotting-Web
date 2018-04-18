@@ -7,11 +7,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet"
 	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-<<<<<<< HEAD
+
   <link rel="stylesheet" href="guestfile.css" />
-=======
-<link rel="stylesheet" href="guestfile.css" />
->>>>>>> frontend
 <script
 	src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script
@@ -44,7 +41,7 @@ function getUser(){
   function validateImage(){
 	  var exists = true; // ImageExists(document.getElementById("changeimage").value);
 	  $.get(document.getElementById("changeimage").value)
-	    .done(function() { 
+	    .done(function() {
 	        console.log('exists');
 	   // })
 	  //if(exists == true){
@@ -54,7 +51,7 @@ function getUser(){
 	          //      + document.getElementById("username").value;
 	        requeststr += "&changeimage="
 	                + document.getElementById("changeimage").value;
-	     
+
 	        console.log(requeststr);
 	        var xhttp = new XMLHttpRequest();
 	        xhttp.open("POST", requeststr, false);
@@ -68,9 +65,9 @@ function getUser(){
 	            //window.location = "UserProfile.jsp"
 	           $("#settingsModal").modal('hide');
 	        }
-	  //} 
+	  //}
 	  })
-	  .fail(function() { 
+	  .fail(function() {
 	        console.log('failed');
 	        console.log('image failed to load')
 	          //window.location = "UserProfile.jsp"
@@ -85,7 +82,7 @@ function getUser(){
 	          //      + document.getElementById("username").value;
 	        requeststr += "&changeusername="
 	                + document.getElementById("changeusername").value;
-	     
+
 	        console.log(requeststr);
 	        var xhttp = new XMLHttpRequest();
 	        xhttp.open("POST", requeststr, false);
@@ -110,7 +107,7 @@ function getUser(){
 	                + document.getElementById("changepassword").value;
 	        requeststr += "&retypepassword="
                 + document.getElementById("retypepassword").value;
-	     
+
 	        console.log(requeststr);
 	        var xhttp = new XMLHttpRequest();
 	        xhttp.open("POST", requeststr, false);
@@ -126,24 +123,24 @@ function getUser(){
 	}
 
 
-  
+
   window.onload = function(){
-  		var loggedin = <%=request.getSession().getAttribute("loggedin")%>;	
+  		var loggedin = <%=request.getSession().getAttribute("loggedin")%>;
   		console.log(loggedin);
   		if(loggedin===false){
   			console.log("loggedin");
   			window.location = "GuestPage.jsp";
-  			
+
   		}
 	}
   	function logout(){
   		var xhttp = new XMLHttpRequest();
   		xhttp.open("GET", "Logout?", false); //synchronous
   		xhttp.send();
-  		window.location.replace("GuestPage.jsp");	
+  		window.location.replace("GuestPage.jsp");
   	}
 
-		//var validChoice; 
+		//var validChoice;
 	 $(document).ready(function() {
 		  $("#postsButton").on("click", function() {
 			 var validChoice = true;
@@ -161,24 +158,21 @@ function getUser(){
 		        		console.log("descrip: " +item.description + "postID:" + item.postID + "postImageurl:" + item.imageURL);
 		        		opts += "<h4 class='modal-title'>Past Posts</h4><div class='container post thumbnail'> "+item.description+"<a href='PostPage?postID=" + item.postID + "'><img src='" + item.imageURL + "'></a></div>";
 		                //$("#followers").append("<div class='container post thumbnail' style='padding-right: -110px'>" + item + "</div>");
-		        }); 
-		       
+		        });
+
 		        	postsView(true, opts);
 		        	console.log("postButton done appending");
 		        // display one image
 		    	});
 		   });
 		  });
-		//var validChoice; 
+		//var validChoice;
 	 $(window).on('load', function() {
 			 var validChoice = true;
 			  // should there be a limit to the amount of users shown?
 			console.log("postButton working");
-<<<<<<< HEAD
 		    $.get("Profile",  { username: "<%= request.getParameter("username") %>"}, function(responseJson) {
-=======
-		    $.get("Profile",  { username: "<%=request.getParameter("username")%>"}, function(responseJson) {
->>>>>>> frontend
+
 		        	$("#posts").empty();
 		        	var par = JSON.parse(responseJson.ownPosts);
 		        //var par = $.parseJSON(responseJson.ownPosts);
@@ -190,14 +184,14 @@ function getUser(){
 		        		console.log("descrip: " +item.description + "postID:" + item.postID + "postImageurl:" + item.imageURL);
 		        		opts += "<h4 class='modal-title'>Past Posts</h4><div class='container post thumbnail'> "+item.description+"<a href='PostPage?postID=" + item.postID + "'><img src='" + item.imageURL + "'></a></div>";
 		                //$("#followers").append("<div class='container post thumbnail' style='padding-right: -110px'>" + item + "</div>");
-		       
+
 		        	postsView(true, opts);
 		        	console.log("postButton done appending");
 		        // display one image
 		    	});
 		   });
 		  });
-	 
+
 	 $(document).ready(function() {
 		  $("#likedButton").on("click", function() {
 			  var validChoice = false;
@@ -213,7 +207,7 @@ function getUser(){
 	        		console.log("descrip: " +item.description + "postID:" + item.postID + "postImageurl:" + item.imageURL);
 	        		opts += "<h4 class='modal-title'>Liked Posts</h4><div class='container post thumbnail'> "+item.description+"<a href='PostPage?postID=" + item.postID + "'><img src='" + item.imageURL + "'></a></div>";
 	                //$("#followers").append("<div class='container post thumbnail' style='padding-right: -110px'>" + item + "</div>");
-	        }); 
+	        });
 	        //	$("#liked").empty().append(opts)
 	         postsView(false, opts);
 	        	console.log("likedButton done appending");
@@ -221,7 +215,7 @@ function getUser(){
 	    	});
 	});
 });
-	 
+
 	function postsView(validChoice){
 		if(validChoice == true){
 			console.log("11true");
@@ -231,11 +225,11 @@ function getUser(){
 			console.log("false");
 		 	$("#posts").empty().append(opts)
 		}
-	} 
-	
+	}
+
   //$(document).ready(function() {
   //$("#followersButton").on("click", function() {
-	  $(document).on("click", "#followersButton", function() { 
+	  $(document).on("click", "#followersButton", function() {
 	  // should there be a limit to the amount of users shown?
     $.get("Profile",  { username: "<%=request.getSession().getAttribute("currentusername")%>"}, function(responseJson) {
         	$("#followers").empty();
@@ -247,7 +241,7 @@ function getUser(){
      console.log(JSON.parse(str));
        // var par = JSON.parse(str);
         var par = JSON.parse(responseJson.followerUsernames);
-        
+
         	console.log("followers: "+ par);
         	opts= '';
         	var inputElement;
@@ -258,15 +252,7 @@ function getUser(){
         		//inputElement1 = document.createTextNode(item);
         		inputElement2 = document.createElement("BR");
         		inputElement = document.createElement('button');
-<<<<<<< HEAD
         		inputElement.innerHTML = item;
-        		
-        	//	inputElement.type = "button";
-=======
-        		//inputElement.innerHTML.class = "btn btn-default";
-        		inputElement.innerHTML = item;
-     
->>>>>>> frontend
         		inputElement.addEventListener('click', function(){
 				otherProfile(item);
 				//opts += "<a type=\'button\' onclick=\'location.href='UserProfile.jsp'\'>"+str + "</a>";
@@ -280,11 +266,11 @@ function getUser(){
         		//opts += "<button type=\'button\' onclick=\'otherProfile(\'"+str1+"\');\'>" + this + "</button>";
         		//setUser(item);
                 //$("#followers").append("<div class='container post thumbnail' style='padding-right: -110px'>" + item + "</div>");
-        });    
+        });
     	});
    });
   //});
-  
+
   $(document).ready(function() {
 	  $("#followingButton").on("click", function() {
 		  // should there be a limit to the amount of users shown?
@@ -353,14 +339,14 @@ function getUser(){
       		window.location = "HomeFeed.jsp"
       }
   }
-  
+
   function otherProfile(str){ // make a XMLRequest to send the username of the otheruser
 	  //var str = item;
 	  console.log("str: " +str);
 	  var requeststr = "ValidateUsername?";
       requeststr += "otherusername="
               + str;
-     
+
       console.log(requeststr);
       var xhttp = new XMLHttpRequest();
       xhttp.open("POST", requeststr, true);
@@ -373,14 +359,14 @@ function getUser(){
       /*var requeststr = "OtherProfile?";
       requeststr += "otherusername1="
               + str;
-     
+
       console.log(requeststr);
       var xhttp = new XMLHttpRequest();
       xhttp.open("POST", requeststr, true);
       xhttp.send();
       console.log(xhttp.responseText);*/
   }
-  
+
 =======
 		if (document.getElementById("img").value.trim().length == 0
 				|| document.getElementById("description").value.trim().length == 0
@@ -427,7 +413,7 @@ function getUser(){
 		/*var requeststr = "OtherProfile?";
 		requeststr += "otherusername1="
 		        + str;
-		
+
 		console.log(requeststr);
 		var xhttp = new XMLHttpRequest();
 		xhttp.open("POST", requeststr, true);
@@ -546,7 +532,7 @@ function getUser(){
 					<form action="/action_page.php">
 						<!-- <input type="file" name="pic" accept="image/*"><br> -->
 <<<<<<< HEAD
-						Image URL: <input type="text" id="img" name="img"><br> 
+						Image URL: <input type="text" id="img" name="img"><br>
 =======
 						Image URL: <input type="text" id="img" name="img"><br>
 >>>>>>> frontend

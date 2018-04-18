@@ -1,0 +1,170 @@
+body {
+	font-family: 'Courier';
+	font-size: 15px;
+	background: linear-gradient(#6dd5ed, #2193b0);
+	background-image: url("pawprint3.gif");
+	background-repeat: repeat;
+	text-align: center;
+}
+
+.btn {
+	border-radius: 100px;
+}
+
+.navbar {
+	background-color: #CCE4DF;
+	text-align: center;
+	padding: 0;
+	border: none;
+}
+
+#today {
+	border-radius: 0px;
+	padding: 0;
+	border: none;
+	background-color: #D8BFD8;
+}
+
+#year {
+	border-radius: 0px;
+	padding: 0;
+	border: none;
+	background-color: #D9D9F0;
+}
+
+#month {
+	border-radius: 0px;
+	padding: 0;
+	border: none;
+	background-color: #D9D9F0;
+}
+
+#buttons {
+	position: center;
+	margin-top: 35px;
+}
+
+#buttons .button {
+	background-color: #272727; /* Green */
+	border: none;
+	color: white;
+	padding: 7px 18px;
+	margin-bottom: 10px;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	font-size: 16px;
+}
+
+#userprofilestuff button {
+	border-radius: 0px;
+	padding: 0;
+	border: none;
+	background-color: #D8BFD8;
+}
+
+#userprofilestuff button:active {
+	background-color: #D8BFD8;
+}
+
+#like button {
+	right: 0;
+	padding: 10px;
+	border: none;
+	border-radius: 0px;
+	background-color: #FDA796;
+	font-size: 12px;
+	width: 100%;
+	
+}
+
+#like button:active {
+	background-color: #e27251;
+	
+}
+
+#userusername {
+	padding: 100px;
+	font-size: 100px;
+}
+
+.search input {
+	width: 380px;
+	height: 32px;
+	background: #fcfcfc;
+	border: none;
+	position: center;
+	margin-right: 50px;
+	font-weight: bold;
+	font-size: 15px;
+	text-indent: 10px;
+}
+
+.search .fa-search {
+	position: absolute;
+	margin-top: 0px;
+	margin-left: -50px;
+	padding: 9px;
+	padding-left: 20px;
+}
+/* When the screen is less than 600px wide, stack the links and the search field vertically instead of horizontally */
+#table {
+	position: center;
+	margin-left: auto;
+	margin-right: auto;
+	text-align: left;
+	width: 430px;
+	padding-top: 5px;
+}
+
+#radio2 #radio4 {
+	
+}
+
+#userinfo {
+	width: 50%;
+	text-align: left;
+}
+
+#profpic {
+	height: 20px;
+	width: 20px;
+	border-radius: 10px;
+}
+
+#readMore {
+	cursor: pointer;
+	border: none;
+	border-radius: 20px;
+}
+
+#post {
+	width: 75%;
+	height: 75%;
+	border: none;
+	text-align: left;
+}
+
+#dogpic {
+	border: none;
+}
+
+#userprofpic {
+	height: 40px;
+	width: 40px;
+	border: none;
+	border-radius: 20px;
+	margin: 10px;
+}
+
+#userusername {
+	padding: 10px;
+	font-size: 20px;
+}
+
+h1 {
+	color: #000000;
+	font-size: 60px;
+	margin-top: 74px;
+	margin-bottom: 1px;
+}

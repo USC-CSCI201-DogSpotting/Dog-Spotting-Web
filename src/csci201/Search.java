@@ -17,6 +17,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.google.gson.Gson;
 
+import database.Database;
+
 /**
  * Servlet implementation class Search
  */
@@ -57,19 +59,10 @@ public class Search extends HttpServlet {
 			// get userID if loggedin
 			int userID = 0;
 			if(isLoggedin) {
-				Class.forName("com.mysql.jdbc.Driver");
-				conn = DriverManager.getConnection("jdbc:mysql://localhost/DogSpotting?user=root&password=root&useSSL=false");
-				ps = conn.prepareStatement("SELECT userID FROM User WHERE username=?");
-				ps.setString(1, username); // set first variable in prepared statement
-				rs = ps.executeQuery();
-				while (rs.next()) { // get userID
-					userID = rs.getInt("userID");
-				}
-				ps.close();
-				rs.close();
+				userID = Database.getUser(username).getUserID();
 			}
 			// get search results
-			ps = conn.prepareStatement("SELECT u.picture, u.username, p.userID, p.postID, p.image, p.description, p.tag1, p.tag2, p.tag3, p.tag4, p.tag5 " +
+			ps = conn.prepareStatement("SELECT * " +
 					"FROM Post p, User u " +
 					"WHERE p.userID = u.userID " +
 					"AND (p.tag1 = ? " +
@@ -110,7 +103,7 @@ public class Search extends HttpServlet {
 					Comment tempComment = new Comment(rs2.getInt("commentID"), rs2.getString("username"), rs2.getString("content"));
 					comments.add(tempComment);
 				}
-				Post tempPost = new Post(postID, rs.getString("image"), rs.getString("username"), rs.getString("picture"), rs.getString("description"), tags, comments);
+				Post tempPost = new Post(postID, rs.getInt("lifelike"), rs.getString("image"), rs.getString("username"), rs.getString("picture"), rs.getString("description"), tags, comments);
 				// check like and comment if loggedin
 				if(isLoggedin) {
 					ps3.setInt(2, postID);

@@ -38,7 +38,7 @@
   		var xhttp = new XMLHttpRequest();
   		xhttp.open("GET", "Logout?", false); //synchronous
   		xhttp.send();
-  		window.location.replace("GuestPage.jsp");	
+  		window.location.replace("GuestPage.jsp");
   	}
     function validate() {
         console.log("here");
@@ -145,11 +145,9 @@ String search = (String)request.getParameter("search");
 				<li><a type="button"
 						data-toggle="modal" data-target="#myModal">+</a></li>
 				<li><a href="TopRanked.jsp" type="button">Top</a></li>
-<<<<<<< HEAD
+
 				<li><a type="button" onclick="location.href='UserProfile.jsp'"><%=request.getSession().getAttribute("currentusername")%></a></li>
-=======
-				<li><a type="button"><%=request.getSession().getAttribute("currentusername")%></a></li>
->>>>>>> frontend
+
 				<li><a type="button" onclick="logout()">Log Out</a></li>
 			</ul>
 	      <div id="notifyNum"> </div>
@@ -187,7 +185,7 @@ String search = (String)request.getParameter("search");
     </div>
   </div>
     </div>
-	
+
 	<!-- Modal guest sign up-->
 	<div class="modal fade" id="myModalg2" role="dialog">
 		<div class="modal-dialog">
@@ -238,11 +236,11 @@ String search = (String)request.getParameter("search");
 			</div>
 		</div>
 	</div>
-	
-	
-	
-	
-	
+
+
+
+
+
 
 	<div class="container" style="padding-top: 70px">
 		<div id="posts"></div>
@@ -259,12 +257,13 @@ String search = (String)request.getParameter("search");
   var curCount = 0;
   var follow = Array();
   var like = Array();
-  
+
   $(document).ready(function() {
     $("#readMore").click();
-  }); 
+  });
 
   $("#readMore").on("click", function() {
+<<<<<<< HEAD
 <<<<<<< HEAD
     numOfPost += postEachPage;
     curCount = 0;
@@ -281,6 +280,8 @@ String search = (String)request.getParameter("search");
     });
   });
 =======
+=======
+>>>>>>> origin/deployment5
 	    numOfPost += postEachPage;
 	    curCount = 0;
 	    $.post("Search", { search: "<%= search %>", limit: numOfPost }, function(responseJson) {
@@ -290,13 +291,14 @@ String search = (String)request.getParameter("search");
 	        follow[index] = post.isFollow;
 	        like[index] = post.isLike;
 	        var html = "";
-	        
+<<<<<<< HEAD
+
 	        var loggedin = <%=request.getSession().getAttribute("loggedin")%>;
-	        
+
 	        if(loggedin===false || loggedin ===null){
 	        html+="<div id='post' class='container post thumbnail'><span><img id=\"userprofpic\" src=\"" + post.userPicURL + "\"><text id=\"userusername\" href=\"#\">" + post.username + "</text></span><a href=\"#\"><img src=\"" +post.imageURL+"\"></a></div><br><br><br>";
-	        	
-	        	
+
+
 	        }else{
 	            html += "<div id='post' class='container thumbnail'>";
 	            html += "<span>" + "<img id='userprofpic' src='"+ post.userPicURL +"'><text id='userusername'>"+ post.username +"</text>";
@@ -309,11 +311,17 @@ String search = (String)request.getParameter("search");
 	            }
 	            html += "</div>";
 	            html += "</div>";
+=======
+	        html += "<div class='container'>";
+	        html += "<div class='follow-btn'><p>" + post.user.username + "</p>";
+	        if (!(post.user.username === "<%= request.getSession().getAttribute("currentusername") %>")) {
+	            html += "<button class='btn btn-primary' id='f" + post.postID + "'>" + (post.isFollow ? "Unfollow" : "Follow") + "</button>";
+>>>>>>> origin/deployment5
 	        }
 	        $("#posts").append(html);
 	        var curID = "#f" + post.postID;
 	        $(document).on("click", curID, function() {
-	            $.post("Follow", {username: post.username, isFollow: follow[index]});
+	            $.post("Follow", {username: post.user.username, isFollow: follow[index]});
 	            if (follow[index]) {
 	              follow[index] = false;
 	              this.innerText = "Follow";
@@ -339,8 +347,8 @@ String search = (String)request.getParameter("search");
 	      }
 	    });
 	  });
->>>>>>> frontend
-  
+
+
 </script>
 </body>
 

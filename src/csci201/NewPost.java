@@ -8,13 +8,14 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
+import database.Database;
 
 /**
  * Servlet implementation class NewPost
@@ -41,11 +42,11 @@ public class NewPost extends HttpServlet {
 		String pic = "";
 		String imageURL = "";
 		String description = "";
-		String tag1 = "";
-		String tag2 = "";
-		String tag3 = "";
-		String tag4 = "";
-		String tag5 = "";
+		String tag1 = null;
+		String tag2 = null;
+		String tag3 = null;
+		String tag4 = null;
+		String tag5 = null;
 		HttpSession s = request.getSession();
 		boolean validInputs = true;
 		username = (String) s.getAttribute("currentusername");
@@ -137,21 +138,12 @@ public class NewPost extends HttpServlet {
 						.getConnection("jdbc:mysql://localhost/DogSpotting?user=root&password=root&useSSL=false");
 				// find userID
 				// System.out.println("test0");
-				ps = conn.prepareStatement("SELECT userID FROM User WHERE username=?");
-				// ps.setString(1, username);
-				ps.setString(1, username);
-				// System.out.println("test0.1");
-				rs = ps.executeQuery();
-				int userID = 0;
-				// System.out.println("test1");
-				while (rs.next()) { // get userID
-					userID = rs.getInt("userID");
-				}
+				int userID = Database.getUser(username).getUserID();
 				// insert new post
 				// System.out.println("test2");
 				ps = conn.prepareStatement(
-						"INSERT INTO Post (userID, image, description, tag1, tag2, tag3, tag4, tag5, dailylike, monthlylike, yearlylike) "
-								+ "VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, 0, 0, 0)");
+						"INSERT INTO Post (userID, image, description, tag1, tag2, tag3, tag4, tag5, lifelike, dailylike, monthlylike, yearlylike) "
+								+ "VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, 0, 0, 0, 0)");
 				// System.out.println("test3");
 				ps.setLong(1, userID);
 				// System.out.println("test4");

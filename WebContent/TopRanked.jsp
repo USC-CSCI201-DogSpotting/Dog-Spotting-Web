@@ -31,7 +31,7 @@
   		var xhttp = new XMLHttpRequest();
   		xhttp.open("GET", "Logout?", false); //synchronous
   		xhttp.send();
-  		window.location.replace("GuestPage.jsp");	
+  		window.location.replace("GuestPage.jsp");
   	}
     function validate() {
         console.log("here");
@@ -142,7 +142,7 @@
     </div>
   </div>
     </div>
-  
+
   <div class="container" style="padding-top: 70px">
   <div id="posts">
   </div>
@@ -160,11 +160,11 @@
   var rank = 0; // type of rank
   var follow = Array();
   var like = Array();
-  
+
   $(document).ready(function() {
     $("#readMore").click();
   });
-  
+
   $("#today").on("click", function() {
 	  rank = 0;
 	  numOfPost = 0;
@@ -179,7 +179,7 @@
 		});
 	  $("#readMore").click();
   })
-  
+
   $("#month").on("click", function() {
     rank = 1;
     numOfPost = 0;
@@ -194,7 +194,7 @@
 	});
     $("#readMore").click();
   })
-  
+
   $("#year").on("click", function() {
     rank = 2;
     numOfPost = 0;
@@ -209,7 +209,7 @@
 	});
     $("#readMore").click();
   })
-  
+
   $("#readMore").on("click", function() {
     numOfPost += postEachPage;
     curCount = 0;
@@ -220,8 +220,8 @@
         follow[index] = post.isFollow;
         like[index] = post.isLike;
         var html = "";
-<<<<<<< HEAD
         html += "<div class='container'>";
+
         html += "<div class='follow-btn'><p><button type='button' id='user1'>" + post.username + "</button></p>";
         if (!(post.username === "<%= request.getSession().getAttribute("currentusername") %>")) {
             html += "<button class='btn btn-primary' id='f" + post.postID + "'>" + (post.isFollow ? "Unfollow" : "Follow") + "</button>";
@@ -238,23 +238,14 @@
 			//break;
 			//opts += "<a type=\'button\' onclick=\'location.href='UserProfile.jsp'\'>"+str + "</a>";
     		});
-=======
-        html += "<div id='post' class='container thumbnail'>";
-        html += "<span>" + "<img id='userprofpic' src='"+ post.userPicURL +"'><text id='userusername'>"+ post.username +"</text>";
-        html += "</span>"
-        html += "<a href='PostPage?postID=" + post.postID + "'><img src='" + post.imageURL + "'></a>";
-        html += "<div id='like' class=\"btn-group btn-group-justified\" role=\"group\" aria-label=\"...\">";
-        html += "<div class=\"btn-group\" role=\"group\"><button class='btn btn-default' id='l" + post.postID + "'>" + (post.isLike ? "Unlike" : "Like") + " " + (post.numOfLikes) + "</button></div>";
-        if (!(post.username === "<%= request.getSession().getAttribute("currentusername") %>")) {
-            html += "<div class=\"btn-group\" role=\"group\"><button class='btn btn-default float-right' id='f" + post.postID + "'>" + (post.isFollow ? "Unfollow" : "Follow") + "</button></div>";
-        }
+
+        html += "<button class='btn btn-primary' id='l" + post.postID + "'>" + (post.isLike ? "Unlike" : "Like") + "</button>" + (post.numOfLikes);
         html += "</div>";
-        html += "</div>";
->>>>>>> frontend
+
         $("#posts").append(html);
         var curID = "#f" + post.postID;
         $(document).on("click", curID, function() {
-            $.post("Follow", {username: post.username, isFollow: follow[index]});
+            $.post("Follow", {username: post.user.username, isFollow: follow[index]});
             if (follow[index]) {
               follow[index] = false;
               this.innerText = "Follow";
@@ -280,14 +271,13 @@
       }
     });
   });
-  
-<<<<<<< HEAD
+
   function userProfile(str){
 	  console.log("str:" + str);
 	  var requeststr = "ValidateUsername?";
       requeststr += "otherusername="
               + str;
-     
+
       console.log(requeststr);
       var xhttp = new XMLHttpRequest();
       xhttp.open("POST", requeststr, true);
@@ -298,13 +288,8 @@
 	  window.location = "OtherProfile.jsp?otherusername="+str;
   	  console.log("other profile buton: " + str);
   }
-=======
-  
->>>>>>> frontend
-  
+
+
 </script>
 </body>
 </html>
-
-
-
