@@ -24,8 +24,18 @@
   	  			socket.send(socketUsername);
   	  		}
   			socket.onmessage = function(event){
-  				document.getElementById("notifyNum").innerHTML += event.data + "<br />";
-  			}
+  				socket.onmessage = function(event){
+  		          console.log(event.data);
+  		          if (event.data != 0) {
+  		            $.post("GetNotifications", { username: socketUsername }, function(responseJson) {
+  		              $.each(responseJson, function(index, notification) {
+  		                document.getElementById("notify").innerHTML += notification.message + "<br>";
+  		              });
+  		            });
+  		          }
+  		          //document.getElementById("notifyNum").innerHTML += event.data + "<br />";
+  		        }
+  				}
   		}
   	}
   	function logout(){
@@ -161,6 +171,7 @@ $("#readMore").on("click", function() {
         curCount++;
         follow[index] = post.isFollow;
         like[index] = post.isLike;
+        numLike[index] = post.numOfLikes;
         var html = "";
 //<<<<<<< HEAD
         html += "<div id='post' class='container thumbnail'>";
@@ -198,14 +209,14 @@ $("#readMore").on("click", function() {
         $(document).on("click", curID, function() {
             $.post("Like", {postID: post.postID, isLike: like[index]});
             if (like[index]) {
-                like[index] = false;
-                numLike[index]--;
-                this.innerHTML = "<i class=\"far fa-heart\"></i>" + numLike[index];
-              } else {
-                 like[index] = true;
-                 numLike[index]++;
-                 this.innerHTML = "<i class=\"fas fa-heart\"></i>" + numLike[index];
-              }
+            	  like[index] = false;
+            	  numLike[index]--;
+            	  this.innerHTML = "<i class=\"far fa-heart\"></i>" + numLike[index];
+            } else {
+            	  like[index] = true;
+            	  numLike[index]++;
+            	  this.innerHTML = "<i class=\"fas fa-heart\"></i>" + numLike[index];
+            }
         });
       });
       if (curCount <= numOfPost - postEachPage) {

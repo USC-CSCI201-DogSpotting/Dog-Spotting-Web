@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+!DOCTYPE html>
 <html lang="en">
 <head>
   <title>Top Ranked User</title>
@@ -24,7 +24,15 @@
   	  			socket.send(socketUsername);
   	  		}
   			socket.onmessage = function(event){
-  				document.getElementById("notifyNum").innerHTML += event.data + "<br />";
+  				console.log(event.data);
+  				if (event.data != 0) {
+  					$.post("GetNotifications", { username: socketUsername }, function(responseJson) {
+  						$.each(responseJson, function(index, notification) {
+  						  document.getElementById("notify").innerHTML += notification.message + "<br>";
+  					  });
+  					});
+  				}
+  				//document.getElementById("notifyNum").innerHTML += event.data + "<br />";
   			}
   		}
 	}
@@ -94,6 +102,7 @@
       <li><a type="button" onclick="logout()">Log Out</a></li>
       </ul>
       <div id="notifyNum"> </div>
+      <div id="notify"> </div>
     </div>
 			<div class="btn-group btn-group-justified" role="group"
 		aria-label="...">
@@ -162,10 +171,13 @@
   var follow = Array();
   var like = Array();
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 =======
+=======
+>>>>>>> origin/chenhui-d3
   var numLike = Array();
-  
+
 >>>>>>> origin/deployment5
   $(document).ready(function() {
     $("#readMore").click();
@@ -225,36 +237,19 @@
         curCount++;
         follow[index] = post.isFollow;
         like[index] = post.isLike;
+        numLike[index] = post.numOfLikes;
         var html = "";
         html += "<div class='container'>";
-<<<<<<< HEAD
-
-        html += "<div class='follow-btn'><p><button type='button' id='user1'>" + post.username + "</button></p>";
-        if (!(post.username === "<%= request.getSession().getAttribute("currentusername") %>")) {
-=======
         html += "<div class='follow-btn'><p>" + post.user.username + "</p>";
         if (!(post.user.username === "<%= request.getSession().getAttribute("currentusername") %>")) {
->>>>>>> origin/deployment5
             html += "<button class='btn btn-primary' id='f" + post.postID + "'>" + (post.isFollow ? "Unfollow" : "Follow") + "</button>";
         }
         html += "</div>"
         html += "<div class='container thumbnail'><a href='PostPage?postID=" + post.postID + "'><img src='" + post.imageURL + "'></a></div>";
-<<<<<<< HEAD
-         html += "<button class='btn btn-primary' id='l" + post.postID + "'>" + (post.isLike ? "Unlike" : "Like") + "</button>" + (post.numOfLikes);
-        html += "</div>";
-        //var try;
-       // try = html;
-        window.addEventListener('click', function(){
-        	console.log("username: " + post.username);
-			userProfile(post.username);
-			//break;
-			//opts += "<a type=\'button\' onclick=\'location.href='UserProfile.jsp'\'>"+str + "</a>";
-    		});
-
-        html += "<button class='btn btn-primary' id='l" + post.postID + "'>" + (post.isLike ? "Unlike" : "Like") + "</button>" + (post.numOfLikes);
+        html += "<span id='l" + post.postID + "'>" + (post.isLike ? "<i class=\"fas fa-heart\"></i>" : "<i class=\"far fa-heart\"></i>") + (post.numOfLikes) + "</span>";
 =======
         html += "<span id='l" + post.postID + "'>" + (post.isLike ? "<i class=\"fas fa-heart\"></i>" : "<i class=\"far fa-heart\"></i>") + (post.numOfLikes) + "</span>";
->>>>>>> origin/deployment5
+>>>>>>> origin/chenhui-d3
         html += "</div>";
 
         $("#posts").append(html);
@@ -288,18 +283,12 @@
       }
     });
   });
-<<<<<<< HEAD
 
   function userProfile(str){
 	  console.log("str:" + str);
 	  var requeststr = "ValidateUsername?";
       requeststr += "otherusername="
               + str;
-=======
-</script>
-</body>
-</html>
->>>>>>> origin/deployment5
 
       console.log(requeststr);
       var xhttp = new XMLHttpRequest();
