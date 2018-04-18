@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
   <link rel="stylesheet" href="guestfile.css" />
+  <script defer src="https://use.fontawesome.com/releases/v5.0.10/js/all.js" integrity="sha384-slN8GvtUJGnv6ca26v8EzVaR9DC58QEwsIk9q1QXdCU8Yu8ck/tL/5szYlBbqmS+" crossorigin="anonymous"></script>  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <script>
@@ -159,6 +160,7 @@
   var rank = 0; // type of rank
   var follow = Array();
   var like = Array();
+  var numLike = Array();
   
   $(document).ready(function() {
     $("#readMore").click();
@@ -221,13 +223,12 @@
         var html = "";
         html += "<div class='container'>";
         html += "<div class='follow-btn'><p>" + post.user.username + "</p>";
-
         if (!(post.user.username === "<%= request.getSession().getAttribute("currentusername") %>")) {
             html += "<button class='btn btn-primary' id='f" + post.postID + "'>" + (post.isFollow ? "Unfollow" : "Follow") + "</button>";
         }
         html += "</div>"
         html += "<div class='container thumbnail'><a href='PostPage?postID=" + post.postID + "'><img src='" + post.imageURL + "'></a></div>";
-        html += "<button class='btn btn-primary' id='l" + post.postID + "'>" + (post.isLike ? "Unlike" : "Like") + "</button>" + (post.numOfLikes);
+        html += "<span id='l" + post.postID + "'>" + (post.isLike ? "<i class=\"fas fa-heart\"></i>" : "<i class=\"far fa-heart\"></i>") + (post.numOfLikes) + "</span>";
         html += "</div>";
         $("#posts").append(html);
         var curID = "#f" + post.postID;
@@ -245,12 +246,14 @@
         $(document).on("click", curID, function() {
             $.post("Like", {postID: post.postID, isLike: like[index]});
             if (like[index]) {
-              like[index] = false;
-              this.innerText = "Like";
-            } else {
-               like[index] = true;
-               this.innerText = "Unlike";
-            }
+                like[index] = false;
+                numLike[index]--;
+                this.innerHTML = "<i class=\"far fa-heart\"></i>" + numLike[index];
+              } else {
+                 like[index] = true;
+                 numLike[index]++;
+                 this.innerHTML = "<i class=\"fas fa-heart\"></i>" + numLike[index];
+              }
         });
       });
       if (curCount <= numOfPost - postEachPage) {
@@ -258,7 +261,6 @@
       }
     });
   });
-
 </script>
 </body>
 </html>
