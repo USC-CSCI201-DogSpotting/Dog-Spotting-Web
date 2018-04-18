@@ -105,31 +105,3 @@ INSERT INTO Comment (userID, refcommentID, content)
 INSERT INTO Comment (userID, refcommentID, content)
 	VALUES  (1, 5, '1111'),
             (1, 4, '121');
-
-
-CREATE TABLE DailyRank (
-	rankID int(4) primary key not null auto_increment,
-    postID int(10) not null,
-    FOREIGN KEY fk2(postID) REFERENCES Post(postID)
-);
-
-CREATE TABLE MonthlyRank (
-	rankID int(4) primary key not null auto_increment,
-    postID int(10) not null,
-    FOREIGN KEY fk2(postID) REFERENCES Post(postID)
-);
-
-CREATE TABLE YearlyRank (
-	rankID int(4) primary key not null auto_increment,
-    postID int(10) not null,
-    FOREIGN KEY fk2(postID) REFERENCES Post(postID)
-);
-
-INSERT INTO DailyRank (postID)
-	VALUES  (1);
-    
-INSERT INTO MOnthlyRank (postID)
-	VALUES  (2);
-
-INSERT INTO YearlyRank (postID)
-	VALUES  (1);
