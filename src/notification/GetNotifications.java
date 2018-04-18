@@ -9,6 +9,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.gson.Gson;
+
 /**
  * Servlet implementation class GetNotifications
  */
@@ -21,8 +23,14 @@ public class GetNotifications extends HttpServlet {
 	 */
 	protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		/* get notifications */
-		String username = "a";
+		String username = request.getParameter("username");
 		Stack<Notification> userNotifications = NotificationSocket.getUserNotifications(username);
+		Gson gson = new Gson();
+		String json = gson.toJson(userNotifications);
+		System.out.println("Json: " + json);
+	    response.setContentType("application/json");
+	    response.setCharacterEncoding("UTF-8");
+	    response.getWriter().write(json);
 	}
 
 }
