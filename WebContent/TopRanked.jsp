@@ -170,15 +170,7 @@
   var rank = 0; // type of rank
   var follow = Array();
   var like = Array();
-<<<<<<< HEAD
-<<<<<<< HEAD
-
-=======
-=======
->>>>>>> origin/chenhui-d3
   var numLike = Array();
-
->>>>>>> origin/deployment5
   $(document).ready(function() {
     $("#readMore").click();
   });
@@ -247,9 +239,6 @@
         html += "</div>"
         html += "<div class='container thumbnail'><a href='PostPage?postID=" + post.postID + "'><img src='" + post.imageURL + "'></a></div>";
         html += "<span id='l" + post.postID + "'>" + (post.isLike ? "<i class=\"fas fa-heart\"></i>" : "<i class=\"far fa-heart\"></i>") + (post.numOfLikes) + "</span>";
-=======
-        html += "<span id='l" + post.postID + "'>" + (post.isLike ? "<i class=\"fas fa-heart\"></i>" : "<i class=\"far fa-heart\"></i>") + (post.numOfLikes) + "</span>";
->>>>>>> origin/chenhui-d3
         html += "</div>";
 
         $("#posts").append(html);
@@ -289,19 +278,23 @@
 	  var requeststr = "ValidateUsername?";
       requeststr += "otherusername="
               + str;
-
+    var validInput = false;
+    var userVal = "<%=(String) session.getAttribute("currentusername")%>"
+    if(str == userVal){
+       validInput = true;
+       window.location = "UserProfile.jsp?username="+"<%=(String) session.getAttribute("currentusername")%>";
+      }
+    if(validInput == false){
       console.log(requeststr);
       var xhttp = new XMLHttpRequest();
       xhttp.open("POST", requeststr, true);
       xhttp.send();
       console.log(xhttp.responseText);
-	  //HttpSession session  = request.getSession();
-	  //session.setAttribute("otherusername",str);
-	  window.location = "OtherProfile.jsp?otherusername="+str;
+	    window.location = "OtherProfile.jsp?otherusername="+str;
   	  console.log("other profile buton: " + str);
+    }
   }
-
-
+  
 </script>
 </body>
 </html>
