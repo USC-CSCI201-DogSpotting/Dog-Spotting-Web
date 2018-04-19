@@ -41,6 +41,8 @@ public class Profile extends HttpServlet {
 		List<Post> likePosts = new ArrayList<Post>(); // user's liked posts
 		List<String> followingUsernames = new ArrayList<String>(); // usernames that user follows
 		List<String> followerUsernames = new ArrayList<String>(); // usernames that follow the user
+		List<String> followingPics = new ArrayList<String>(); 
+		List<String> followerPics = new ArrayList<String>(); 
 		
 		int limit = 100;
 		System.out.println("username: " + username + " from the passed argutment: " + username1);
@@ -164,12 +166,28 @@ public class Profile extends HttpServlet {
 			while (rs.next()) { // add in followings
 				followingUsernames.add(rs.getString("username"));
 			}
+			ps = conn.prepareStatement("SELECT u.picture FROM Follow f, User u WHERE f.followerID = ? AND f.followingID = u.userID");
+			ps.setLong(1, userID);
+			rs = ps.executeQuery();
+			while (rs.next()) { // add in followings
+				//followingUsernames.add(rs.getString("username"));
+				followingPics.add(rs.getString("picture"));
+			}
 			// get followers
 			ps = conn.prepareStatement("SELECT u.username FROM Follow f, User u WHERE f.followingID = ? AND f.followerID = u.userID");
 			ps.setLong(1, userID);
 			rs = ps.executeQuery();
 			while (rs.next()) { // add in followings
 				followerUsernames.add(rs.getString("username"));
+			}
+			ps = conn.prepareStatement("SELECT u.picture FROM Follow f, User u WHERE f.followingID = ? AND f.followerID = u.userID");
+			ps.setLong(1, userID);
+			rs = ps.executeQuery();
+			while (rs.next()) { // add in followings
+				//followerUsernames.add(rs.getString("username"));
+				//System.out.println("----------username: " + rs.getString("username"));
+				System.out.println("picture: "+ rs.getString("picture"));
+				followerPics.add(rs.getString("picture"));
 			}
 		} catch (SQLException sqle) {
 			System.out.println ("SQLException: " + sqle.getMessage());
@@ -234,6 +252,9 @@ public class Profile extends HttpServlet {
 		System.out.println("size: " + ownPosts.size());
 		
 		Gson gson = new Gson();
+		String followerPicString = gson.toJson(followerPics);
+		//String followerString = gson.toJson(followerUsernames);
+		String followingPicString = gson.toJson(followingPics);
 		String followerString = gson.toJson(followerUsernames);
 		String followingString = gson.toJson(followingUsernames);
 		String postsString = gson.toJson(ownPosts);
@@ -242,6 +263,8 @@ public class Profile extends HttpServlet {
 		
 		System.out.println("followerString: " + followerString + " followingString: "+ followingString + " postsString: "+ postsString+ " likedString: " + likedString);
 		try {
+			jsonObject.put("followingPics", followingPicString);
+			jsonObject.put("followerPics", followerPicString);
 			jsonObject.put("followerUsernames", followerString);
 			jsonObject.put("followingUsernames", followingString);
 			jsonObject.put("ownPosts", postsString);

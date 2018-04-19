@@ -22,8 +22,6 @@ import org.json.JSONObject;
 
 import com.google.gson.Gson;
 
-import database.Database;
-
 @WebServlet("/OtherProfile")
 public class OtherProfile extends HttpServlet {
 	private static final long serialVersionUID = 1L;
@@ -40,6 +38,8 @@ public class OtherProfile extends HttpServlet {
 		//String otherUsername = (String) request.getParameter("otherusername");
 		// set the other username as an attribute
 		System.out.println("username: " + username);
+		List<String> followingPics = new ArrayList<String>(); 
+		List<String> followerPics = new ArrayList<String>(); 
 		List<Post> ownPosts = new ArrayList<Post>(); // user's own posts
 		List<Post> likePosts = new ArrayList<Post>(); // user's liked posts
 		List<String> followingUsernames = new ArrayList<String>(); // usernames that user follows
@@ -60,7 +60,14 @@ public class OtherProfile extends HttpServlet {
 			Class.forName("com.mysql.jdbc.Driver");
 			conn = DriverManager.getConnection("jdbc:mysql://localhost/DogSpotting?user=root&password=root&useSSL=false");
 			// get userID
-			int userID = Database.getUser(username).getUserID();
+			ps = conn.prepareStatement("SELECT userID FROM User WHERE username=?");
+			ps.setString(1, username);
+			rs = ps.executeQuery();
+			int userID = 0;
+			while (rs.next()) {
+				userID = rs.getInt("userID");
+			}
+			System.out.println("userID: " + userID);
 			// get user's posts
 			ps = conn.prepareStatement("SELECT * " +
 					"FROM Post p, User u " +
@@ -96,17 +103,16 @@ public class OtherProfile extends HttpServlet {
 					System.out.println("here");
 				}
 				System.out.println("here");
-				Post tempPost = new Post(postID, rs.getInt("lifelike"), rs.getString("image"), 
-						rs.getString("username"), rs.getString("picture"), rs.getString("description"), tags, comments);
+				Post tempPost = new Post(postID,rs.getInt("lifelike"), rs.getString("image"), rs.getString("username"), rs.getString("picture"), rs.getString("description"), tags, comments);
 				ownPosts.add(tempPost);
 			}
 			ps.close();
 			rs.close();
-			ps2.close();
-			rs2.close();
+			//ps2.close();
+			//rs2.close();
 
 			// get user's liked posts
-			ps = conn.prepareStatement("SELECT * " +
+			ps = conn.prepareStatement("SELECT *" +
 					"FROM User u, Post p, Likes l " +
 					"WHERE p.postID = l.postID " +
 					"AND u.userID = p.userID " +
@@ -137,8 +143,7 @@ public class OtherProfile extends HttpServlet {
 					Comment tempComment = new Comment(rs2.getInt("commentID"), rs2.getString("username"), rs2.getString("content"));
 					comments.add(tempComment);
 				}
-				Post tempPost = new Post(postID, rs.getInt("lifelike"), rs.getString("image"), 
-						rs.getString("username"), rs.getString("picture"), rs.getString("description"), tags, comments);
+				Post tempPost = new Post(postID, rs.getInt("lifelike"),rs.getString("image"), rs.getString("username"), rs.getString("picture"), rs.getString("description"), tags, comments);
 				// check like and comment if loggedin
 				ps3.setInt(2, postID);
 				rs3 = ps3.executeQuery();
@@ -161,6 +166,13 @@ public class OtherProfile extends HttpServlet {
 			while (rs.next()) { // add in followings
 				followingUsernames.add(rs.getString("username"));
 			}
+			ps = conn.prepareStatement("SELECT u.picture FROM Follow f, User u WHERE f.followerID = ? AND f.followingID = u.userID");
+			ps.setLong(1, userID);
+			rs = ps.executeQuery();
+			while (rs.next()) { // add in followings
+				//followingUsernames.add(rs.getString("username"));
+				followingPics.add(rs.getString("picture"));
+			}
 			// get followers
 			ps = conn.prepareStatement("SELECT u.username FROM Follow f, User u WHERE f.followingID = ? AND f.followerID = u.userID");
 			ps.setLong(1, userID);
@@ -168,6 +180,16 @@ public class OtherProfile extends HttpServlet {
 			while (rs.next()) { // add in followings
 				followerUsernames.add(rs.getString("username"));
 			}
+			ps = conn.prepareStatement("SELECT u.picture FROM Follow f, User u WHERE f.followingID = ? AND f.followerID = u.userID");
+			ps.setLong(1, userID);
+			rs = ps.executeQuery();
+			while (rs.next()) { // add in followings
+				//followerUsernames.add(rs.getString("username"));
+				//System.out.println("----------username: " + rs.getString("username"));
+				System.out.println("picture: "+ rs.getString("picture"));
+				followerPics.add(rs.getString("picture"));
+			}
+			
 		} catch (SQLException sqle) {
 			System.out.println ("SQLException: " + sqle.getMessage());
 		} catch (ClassNotFoundException cnfe) {
@@ -231,15 +253,18 @@ public class OtherProfile extends HttpServlet {
 		System.out.println("size: " + ownPosts.size());
 		
 		Gson gson = new Gson();
+		String followerPicString = gson.toJson(followerPics);
 		String followerString = gson.toJson(followerUsernames);
+		String followingPicString = gson.toJson(followingPics);
 		String followingString = gson.toJson(followingUsernames);
 		String postsString = gson.toJson(ownPosts);
 		String likedString = gson.toJson(likePosts);
 		JSONObject jsonObject = new JSONObject();
 		
-		System.out.println("followerString: " + followerString + " followingString: "+ followingString + 
-				" postsString: "+ postsString+ " likedString: " + likedString);
+		System.out.println("followerString: " + followerString + " followingString: "+ followingString + " postsString: "+ postsString+ " likedString: " + likedString);
 		try {
+			jsonObject.put("followingPics", followingPicString);
+			jsonObject.put("followerPics", followerPicString);
 			jsonObject.put("followerUsernames", followerString);
 			jsonObject.put("followingUsernames", followingString);
 			jsonObject.put("ownPosts", postsString);

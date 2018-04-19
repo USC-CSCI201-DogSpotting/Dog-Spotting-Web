@@ -81,7 +81,7 @@ public class Follow extends HttpServlet {
 					ps.executeUpdate();
 				}
 				// notify for the follow action
-				NotificationSocket.addUserNotification(followingUsername, followerUsername + " has followed you!");
+				NotificationSocket.addUserNotification(followingUsername, followerUsername, followerUsername + " has followed you!");
 			}else { // invalidate follow
 				ps = conn.prepareStatement("UPDATE Follow SET valid = 0 WHERE followingID = ? AND followerID = ?");
 				ps.setLong(1, followingUserID);

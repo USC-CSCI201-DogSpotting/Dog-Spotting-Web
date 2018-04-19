@@ -71,16 +71,16 @@ public class NotificationSocket extends Thread {
 		return retVal;
 	}
 	
-	public static void addUserNotification(String username, String message) {
+	public static void addUserNotification(String username, String otherUsername, String message) {
 		Stack<Notification> userNotifications = notifications.get(username);
 		if(userNotifications != null) { // notifications for the user existed
 			System.out.println("Username existed.");
-			Notification notification = new Notification(username, message);
+			Notification notification = new Notification(otherUsername, message);
 			userNotifications.add(notification);
 			System.out.println("Added notification stack for '" + username + "' with message: " + notification);
 		}else { // create notification stack if not existed for the user
 			userNotifications = new Stack<Notification>();
-			Notification notification = new Notification(username, message);
+			Notification notification = new Notification(otherUsername, message);
 			userNotifications.add(notification);
 			notifications.put(username, userNotifications);
 			System.out.println("Created notification stack for '" + username + "' with message: " + notification);

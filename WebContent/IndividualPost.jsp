@@ -10,20 +10,22 @@
 <link rel="stylesheet"
 	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 <link rel="stylesheet" href="guestfile.css" />
+<script defer src="https://use.fontawesome.com/releases/v5.0.10/js/all.js" integrity="sha384-slN8GvtUJGnv6ca26v8EzVaR9DC58QEwsIk9q1QXdCU8Yu8ck/tL/5szYlBbqmS+" crossorigin="anonymous"></script>  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script
 	src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script
 	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <title>Dog Spotting</title>
 <script>
-		window.onload = function(){
+	  	window.onload = function(){
 	  		var loggedin = <%=request.getSession().getAttribute("loggedin")%>;
 	  		console.log(loggedin);
 	  		if(loggedin===false || loggedin===null){
 	  			console.log("loggedin");
-	  			//window.location = "GuestPage.jsp";
+	  		//window.location = "GuestPage.jsp";
 	  			document.getElementById("guestusernavbar").innerHTML = "<li><a href=\"#\" data-toggle=\"modal\" data-target=\"#myModalg\">Log In</a></li><li><a href=\"#\" data-toggle=\"modal\" data-target=\"#myModalg2\">Sign Up</a></li>";
 	  			document.getElementById("dogspottinglogo").innerHTML = "<a class=\"navbar-brand\" href=\"GuestPage.jsp\">DogSpotting</a>";
+	  		
 	  		}else{
 	  	  		// socket
 	  	  		var socketUsername = '<%=(String)request.getSession().getAttribute("currentusername")%>';
@@ -31,10 +33,23 @@
 	  	  		socket.onopen = function(event){
 	  	  			socket.send(socketUsername);
 	  	  		}
-	  			socket.onmessage = function(event){
-	  				document.getElementById("notifyNum").innerHTML += event.data + "<br />";
-	  			}
+	  				socket.onmessage = function(event){
+	  		          console.log(event.data);
+	  		          if (event.data != 0) {
+	  		            $.post("GetNotifications", { username: socketUsername }, function(responseJson) {
+	  		              $.each(responseJson, function(index, notification) {
+	  		            	  var html = "";
+	  		            	  html+="<div id='notificationdiv'><img id='userprof' style='height: 15px; width: 15px; border-radius: 10px;' src=\"" + notification.user.userPicURL + "\">  " + notification.user.username +" : ";
+	  		            	  html+= notification.message + "</div><br>";
+	  		                document.getElementById("notifyNum").innerHTML += html;
+	  		              });
+	  		            });
+	  		          }
+	  		          //document.getElementById("notifyNum").innerHTML += event.data + "<br />";
+	  		        }
+	  				
 	  		}
+	  		addPic();
 	  	}
 	  	function logout(){
 	  		var xhttp = new XMLHttpRequest();
@@ -149,8 +164,18 @@
 			<ul id="guestusernavbar" class="nav navbar-nav">
 				<li><a type="button" data-toggle="modal" data-target="#myModal">+</a></li>
 				<li><a href="HomeFeed.jsp" type="button">Feed</a></li>
-				<li><a type="button"><%=request.getSession().getAttribute("currentusername")%></a></li>
+				<li><a type="button" onclick="location.href='UserProfile.jsp'"><%=(String) session.getAttribute("currentusername")%></a></li>
 				<li><a type="button" onclick="logout()">Log Out</a></li>
+									<li>
+							<div class="dropdown show">
+								<a type="button" class="dropdown-toggle" href="#"
+									role="button" id="dropdownMenuLink" data-toggle="dropdown"
+									aria-haspopup="true" aria-expanded="false"> Notifications </a>
+
+								<div id="notifyNum" style="width: 250px; padding: 10px;" class="dropdown-menu large" aria-labelledby="dropdownMenuLink">
+								</div>
+							</div>
+					</li>
 			</ul>
 		</div>
 		</nav>
@@ -244,10 +269,14 @@
 
 
 	<div class=container>
+	<br>
+	<br>
+	<br>
 		<div id="post" class='container post thumbnail'>
 			<p><%= post.getUsername() %></p>
 			<br> <img src="<%= post.getImageURL() %>">
-			<p><%= post.getDescription() %></p>
+		</div>
+		<div id="dropdowncomments">
 			<form method="POST" action="CommentPost">
 			   <!-- use stack to do recursion -->
 			
@@ -266,7 +295,7 @@
 					<p> <% for (int i = 0; i < curInd; i++) { %> &nbsp <% } %>  <!-- add indent -->
 					<%= curComment.getUsername() %>: <%= curComment.getContent() %>
 					<input name="reply" type="radio" id="c<%= curComment.getCommentID() %>" value="<%= curComment.getCommentID() %>" style="display: none">
-					<label for="c<%= curComment.getCommentID() %>">reply to</label></p>
+					<label id="label" for="c<%= curComment.getCommentID() %>">reply</label></p>
           <% } %>
 			<input type="text" placeholder="New Comment..." class="form-control" 
 			name="comment"><br> <input type="hidden" name="postid" value="<%= post.getPostID() %>">
@@ -274,7 +303,93 @@
 			<button type="submit">submit</button>
 		</form>
 		</div>
+		
+		
+		
 	</div>
 
 </body>
+<script>
+function addPic(){
+	var follow;
+	var like;
+	var numLike;
+
+
+	          follow = <%= post.isFollow()%>;
+	          like = <%= post.isLike()%>;
+	          numLike=<%= post.getNumOfLikes()%>;
+	          var tags = <%= post.getTagsToString()%>;
+	          var html = "";
+	          html += "<span>" + "<img id='userprofpic' src='"+ "<%= post.getUserPicURL()%>" +"'>";
+	          html += "<a type='button' onclick='userProfile(\""+ "<%= post.getUsername()%>"+ "\")'>" + "<%= post.getUsername()%>" + "</a>";
+	          html += "</span>"
+	          html += "<a href='PostPage?postID=" +  "<%= post.getPostID()%>" + "'><img src='" +  "<%= post.getImageURL()%>" + "'></a>";
+	          
+	          html+= "<div id=\"description\"><p> <h3>Description: </h3>" + "<%= post.getDescription() %>" + "</p></div><div id='tags'><h3>Tags: </h3>";
+
+	          $.each(tags, function(index, item){
+	        	  html += ("#" + item +" ");
+	          });
+	          html+="<br><br></div>";
+	          html += "<div id='like' class=\"btn-group btn-group-justified\" role=\"group\" aria-label=\"...\">";
+	          html += "<div class=\"btn-group\" role=\"group\"><button class='btn btn-default' id='l" +  "<%= post.getPostID()%>" + "'>" + (like ?  "<i class=\"fas fa-heart\"></i>" : "<i class=\"far fa-heart\"></i>") + " " + (numLike) + "</button></div>";
+	          if (!("<%= post.getUsername()%>" === "<%= request.getSession().getAttribute("currentusername") %>")) {
+	              html += "<div class=\"btn-group\" role=\"group\"><button class='btn btn-default float-right' id='f" + "<%= post.getPostID()%>" + "'>" + (follow ? "Unfollow" : "Follow") + "</button></div>";
+	          }
+	          html += "</div>";
+
+	         document.getElementById("post").innerHTML=html;
+	        
+	          var curID = "#f" + <%= post.getPostID()%>;
+	          $(document).on("click", curID, function() {
+	              $.post("Follow", {username: <%= post.getUsername()%>, isFollow: follow});
+	              if (follow) {
+	                follow = false;
+	                this.innerText = "Follow";
+	              } else {
+	              	 follow = true;
+	              	 this.innerText = "Unfollow";
+	              }
+	          });
+	          curID = "#l" + <%= post.getPostID()%>;
+	          $(document).on("click", curID, function() {
+	              $.post("Like", {postID: <%= post.getUsername()%>, isLike: like});
+	              if (like) {
+	                like = false;
+	                numLike--;
+	                this.innerHTML = "<i class=\"far fa-heart\"></i>" + numLike;
+	              } else {
+	                 like = true;
+	                 numLike++;
+	                 this.innerHTML = "<i class=\"fas fa-heart\"></i>" + numLike;
+	              }
+	          });        
+	
+}
+function userProfile(str){
+	  console.log("str:" + str);
+	  var requeststr = "ValidateUsername?";
+requeststr += "otherusername="
+        + str;
+var validInput = false;
+	  var userVal = "<%=(String) session.getAttribute("currentusername")%>"
+	  if(str == userVal)
+		  {
+		  	validInput = true;
+		  	window.location = "UserProfile.jsp?username="+"<%=(String) session.getAttribute("currentusername")%>";
+		  }
+	  if(validInput == false){
+// add if statement to check if this is you're own profile
+console.log(requeststr);
+var xhttp = new XMLHttpRequest();
+xhttp.open("POST", requeststr, true);
+xhttp.send();
+console.log(xhttp.responseText);
+	  //HttpSession session  = request.getSession();
+	  //session.setAttribute("otherusername",str);
+	  window.location = "OtherProfile.jsp?otherusername="+str;
+	  console.log("other profile buton: " + str);}
+} 
+</script>
 </html>

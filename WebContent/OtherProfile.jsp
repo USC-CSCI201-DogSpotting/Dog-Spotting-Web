@@ -1,8 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- make all the same functionality excpet the settings change to the follow/ unfollow-->
-<!-- make button to redirect to own profile page -->
+
 <title>Home Feed User</title>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -116,50 +115,77 @@
 
 
   
-  window.onload = function(){
-  		var loggedin = <%=request.getSession().getAttribute("loggedin")%>;	
+	window.onload = function(){
+  		var loggedin = <%=request.getSession().getAttribute("loggedin")%>;
   		console.log(loggedin);
-  		if(loggedin===false){
+  		if(loggedin===false || loggedin===null){
   			console.log("loggedin");
   			window.location = "GuestPage.jsp";
-  			
+  		}else{
+  	  		// socket
+  	  		var socketUsername = '<%=(String)request.getSession().getAttribute("currentusername")%>';
+  	  		socket = new WebSocket("ws://localhost:8080/DogSpotting/ws");
+  	  		socket.onopen = function(event){
+  	  			socket.send(socketUsername);
+  	  		}
+  				socket.onmessage = function(event){
+  		          console.log(event.data);
+  		          if (event.data != 0) {
+  		            $.post("GetNotifications", { username: socketUsername }, function(responseJson) {
+  		              $.each(responseJson, function(index, notification) {
+  		            	  var html = "";
+  		            	  html+="<div id='notificationdiv'><img id='userprof' style='height: 15px; width: 15px; border-radius: 10px;' src=\"" + notification.user.userPicURL + "\">  " + notification.user.username +" : ";
+  		            	  html+= notification.message + "</div><br>";
+  		                document.getElementById("notifyNum").innerHTML += html;
+  		              });
+  		            });
+  		          }
+  		          //document.getElementById("notifyNum").innerHTML += event.data + "<br />";
+  		        }
+  				
   		}
-	}
+  	}
   	function logout(){
   		var xhttp = new XMLHttpRequest();
-  		xhttp.open("GET", "Logout?", true); //synchronous
+  		xhttp.open("GET", "Logout?", false); //synchronous
   		xhttp.send();
   		window.location.replace("GuestPage.jsp");	
   	}
 
 		//var validChoice; 
 	 $(document).ready(function() {
-		  $("#postsButton").on("click", function() {
+		  $("#postButton").on("click", function() {
 			 var validChoice = true;
 			  // should there be a limit to the amount of users shown?
 			console.log("postButton working");
-		    $.get("OtherProfile",  { username: "<%= request.getParameter("otherusername") %>"}, function(responseJson) {
+		    $.get("OtherProfile",  { username: "<%=request.getParameter("otherusername")%>"}, function(responseJson) {
 		        	$("#posts").empty();
 		        	var par = JSON.parse(responseJson.ownPosts);
 		        //var par = $.parseJSON(responseJson.ownPosts);
-		        	opts= '';
-		        console.log("lol: " + responseJson.ownPosts);
-		        	
-		        	if(responseJson.ownPosts == "[]"){
-		        		console.log("NULL posts");
-		        	}
-		       
+		        	opts= "<h4 class='modal-title'>Past Posts</h4>";
 		        	console.log("postButton parsing");
-		        console.log("pastPosts: "  + par.description);
 		        	$.each(par, function(index, item) {
-		        		
 		        		console.log("postButton creating tag");
 		        		console.log("descrip: " +item.description + "postID:" + item.postID + "postImageurl:" + item.imageURL);
-		        		opts += "<h4 class='modal-title'>Past Posts</h4><div class='container post thumbnail'> "+item.description+"<a href='PostPage?postID=" + item.postID + "'><img src='" + item.imageURL + "'></a></div>";
+		        		
+		                var html = "";
+		                html += "<div id='post' class='container thumbnail'>";
+		                html += "<span>" + "<img id='userprofpic' src='"+ item.user.userPicURL +"'>";
+		                html += "<a type='button' onclick='userProfile(\""+ item.user.username + "\")'>" + item.user.username + "</a>";
+		                html += "</span>"
+		                html += "<a href='PostPage?postID=" + item.postID + "'><img src='" + item.imageURL + "'></a>";
+		                html += "<div id='like' class=\"btn-group btn-group-justified\" role=\"group\" aria-label=\"...\">";
+		                html += "<div class=\"btn-group\" role=\"group\"><button class='btn btn-default' id='l" + item.postID + "'>" + (item.isLike ? "Unlike" : "Like") + " " + (item.numOfLikes) + "</button></div>";
+		                html += "<div class=\"btn-group\" role=\"group\"><button class='btn btn-default float-right' id='f" + item.postID + "'>" + (item.isFollow ? "Unfollow" : "Follow") + "</button></div>";
+		                html += "</div>";
+		                html += "</div>";
+		        		
+		        		opts += html;
 		                //$("#followers").append("<div class='container post thumbnail' style='padding-right: -110px'>" + item + "</div>");
 		        }); 
 		       
-		        	postsView(true, opts, responseJson.ownPosts);
+		        	console.log("hereee");
+		        	postsView(true, opts);
 		        	console.log("postButton done appending");
 		        // display one image
 		    	});
@@ -169,59 +195,79 @@
 	 $(window).on('load', function() {
 			 var validChoice = true;
 			  // should there be a limit to the amount of users shown?
-			console.log("postButton onload");
+			console.log("postButton working");
 		    $.get("OtherProfile",  { username: "<%= request.getParameter("otherusername") %>"}, function(responseJson) {
 		        	$("#posts").empty();
 		        	var par = JSON.parse(responseJson.ownPosts);
 		        //var par = $.parseJSON(responseJson.ownPosts);
-		        	opts= '';
-		        	if(responseJson.ownPosts == "[]"){
-		        		console.log("NULL posts");
-		        	}
+		        	opts= "<h4 class='modal-title'>Past Posts</h4>";
 		        	console.log("postButton parsing");
-		        console.log("pastPosts: "  + par.description);
 		        	$.each(par, function(index, item) {
 		        		console.log("postButton creating tag");
 		        		console.log("descrip: " +item.description + "postID:" + item.postID + "postImageurl:" + item.imageURL);
-		        		opts += "<h4 class='modal-title'>Past Posts</h4><div class='container post thumbnail'> "+"content: "+ item.description+"<a href='PostPage?postID=" + item.postID + "'><img src='" + item.imageURL + "'></a></div>";
+		                var html = "";
+		                html += "<div id='post' class='container thumbnail'>";
+		                html += "<span>" + "<img id='userprofpic' src='"+ item.user.userPicURL +"'>";
+		                html += "<a type='button' onclick='userProfile(\""+ item.user.username+ "\")'>" + item.user.username + "</a>";
+		                html += "</span>"
+		                html += "<a href='PostPage?postID=" + item.postID + "'><img src='" + item.imageURL + "'></a>";
+		                html += "<div id='like' class=\"btn-group btn-group-justified\" role=\"group\" aria-label=\"...\">";
+		                html += "<div class=\"btn-group\" role=\"group\"><button class='btn btn-default' id='l" + item.postID + "'>" + (item.isLike ? "Unlike" : "Like") + " " + (item.numOfLikes) + "</button></div>";
+		                html += "<div class=\"btn-group\" role=\"group\"><button class='btn btn-default float-right' id='f" + item.postID + "'>" + (item.isFollow ? "Unfollow" : "Follow") + "</button></div>";
+		                html += "</div>";
+		                html += "</div>";
+		        		
+		        		
+		        		opts += html;
 		                //$("#followers").append("<div class='container post thumbnail' style='padding-right: -110px'>" + item + "</div>");
-		        	});
-		        	postsView(true, opts, responseJson.ownPosts);
+		       
+
 		        	console.log("postButton done appending");
 		        // display one image
-		    	
+		    	});
+		        	console.log("herew");
+		        	postsView(true, opts);
 		   });
 		  });
 	 
 	 $(document).ready(function() {
 		  $("#likedButton").on("click", function() {
 			  var validChoice = false;
-			$.get("OtherProfile", { username: "<%= request.getParameter("otherusername") %>"}, function(responseJson) {
+			$.get("OtherProfile", { username: "<%=request.getParameter("otherusername")%>"}, function(responseJson) {
 	        	$("#liked").empty();
 	        	var par = JSON.parse(responseJson.likePosts);
 	        //var par = $.parseJSON(responseJson.ownPosts);
-	        	opts= '';
+	        	opts= "<h4 class='modal-title'>Liked Posts</h4>";
 	        	console.log("likedButton parsing");
-	        console.log("likedPosts: "  + par.description);
 	        	$.each(par, function(index, item) {
 	        		console.log("likedButton creating tag");
 	        		console.log("descrip: " +item.description + "postID:" + item.postID + "postImageurl:" + item.imageURL);
-	        		opts += "<h4 class='modal-title'>Liked Posts</h4><div class='container post thumbnail'> "+item.description+"<a href='PostPage?postID=" + item.postID + "'><img src='" + item.imageURL + "'></a></div>";
+	        		
+	                var html = "";
+	                html += "<div id='post' class='container thumbnail'>";
+	                html += "<span>" + "<img id='userprofpic' src='"+ item.user.userPicURL +"'>";
+	                html += "<a type='button' onclick='userProfile(\""+ item.user.username+ "\")'>" + item.user.username + "</a>";
+	                html += "</span>"
+	                html += "<a href='PostPage?postID=" + item.postID + "'><img src='" + item.imageURL + "'></a>";
+	                html += "<div id='like' class=\"btn-group btn-group-justified\" role=\"group\" aria-label=\"...\">";
+	                html += "<div class=\"btn-group\" role=\"group\"><button class='btn btn-default' id='l" + item.postID + "'>" + (item.isLike ? "Unlike" : "Like") + " " + (item.numOfLikes) + "</button></div>";
+	                html += "<div class=\"btn-group\" role=\"group\"><button class='btn btn-default float-right' id='f" + item.postID + "'>" + (item.isFollow ? "Unfollow" : "Follow") + "</button></div>";
+	                html += "</div>";
+	                html += "</div>";
+	        		
+	        		
+	        		opts += html;
 	                //$("#followers").append("<div class='container post thumbnail' style='padding-right: -110px'>" + item + "</div>");
 	        }); 
 	        //	$("#liked").empty().append(opts)
-	         postsView(false, opts, responseJson.likePosts);
+	         postsView(false, opts);
 	        	console.log("likedButton done appending");
 	        	 // display one image
 	    	});
 	});
 });
 	 
-	function postsView(validChoice,opts,item){
-		if(item == "[]"){
-			console.log("check FINAL")
-			opts = "No Posts";
-		}
+	function postsView(validChoice){
 		if(validChoice == true){
 			console.log("11true");
 		 	$("#posts").empty().append(opts)
@@ -236,7 +282,7 @@
   //$("#followersButton").on("click", function() {
 	  $(document).on("click", "#followersButton", function() { 
 	  // should there be a limit to the amount of users shown?
-    $.get("OtherProfile",  { username: "<%= request.getSession().getAttribute("otherusername") %>"}, function(responseJson) {
+    $.get("OtherProfile",  { username: "<%=request.getSession().getAttribute("otherusername")%>"}, function(responseJson) {
         	$("#followers").empty();
        // 	responseJson = responseJson.followerUsernames.toString();
        	const str = JSON.stringify(responseJson.followerUsernames);
@@ -246,45 +292,28 @@
      console.log(JSON.parse(str));
        // var par = JSON.parse(str);
         var par = JSON.parse(responseJson.followerUsernames);
-        
+        var par1 = JSON.parse(responseJson.followerPics);
         	console.log("followers: "+ par);
         	opts= '';
         	var inputElement;
         	$.each(par, function(index, item) {
         		//opts += "<button onclick='otherProfile("+item+")'>" + item + "<button>";
         		//var str1 = String(item);
+        	        		//opts += "<button onclick='otherProfile("+item+")'>" + item + "<button>";
+        		//var str1 = String(item);
         		console.log("usernameinfollowers: " + this);
-        		//inputElement1 = document.createTextNode(item);
-        		inputElement2 = document.createElement("BR");
-        		inputElement = document.createElement('button');
-        		inputElement.innerHTML = item;
-        		 console.log("CHECKING ITEM: "+ item);
-        		  console.log("CHECKING OTHERUSERNAME: " + "<%=(String) session.getAttribute("currentusername")%>");
-        		  var userVal = "<%=(String) session.getAttribute("currentusername")%>";
-        		  console.log("CHECKING VAL: "+ userVal);
-        		  if(item == userVal){
-        			  console.log("WOKRFJ:KDFJ");
-        		  }
-        	//	inputElement.type = "button";
-        		inputElement.addEventListener('click', function(){
-				otherProfile(item);
-				//console.log("********THIS blah WORKING");
-				if(item == <%=session.getAttribute("currentusername")%>)
-				  {
-				  	//console.log("111111111111111111111111111111THIS IS WORKING");
-				  	//window.location = "UserProfile.jsp";
-				  }
-				//opts += "<a type=\'button\' onclick=\'location.href='UserProfile.jsp'\'>"+str + "</a>";
-        		});
-        		//$("#followers").empty().append(inputElement)
-        		document.getElementById("followers").appendChild(inputElement);
-        		document.getElementById("followers").appendChild(inputElement1);
-        		document.getElementById("followers").appendChild(inputElement2);
-        		//document.getElementById("followers").appendChild(opts);
-        		//opts += "<button type=\'button\' onclick=\'otherProfile(\'"+str1+"\');\'>" + this + "</button>";
-        		//setUser(item);
-                //$("#followers").append("<div class='container post thumbnail' style='padding-right: -110px'>" + item + "</div>");
-        });    
+        		
+    			$.each(par1, function(index1, type){ 	
+        			//console.log("index1: " + index1 + " item1: " + item1);
+      if(index == index1){
+        				//console.log("index1: " + index1 + " item1: " + item1);
+        	opts += "<li class=\"list-group-item\">";
+        opts += "<img id='userprofpic' src='"+ type +"'>";
+       }
+  });	
+      		opts += "<a type='button' onclick='otherProfile(\""+ item + "\")'>" + item + "</a></li>";	
+        		$("#followers").append(opts);
+        	});
     	});
    });
   //});
@@ -292,40 +321,50 @@
   $(document).ready(function() {
 	  $("#followingButton").on("click", function() {
 		  // should there be a limit to the amount of users shown?
-	    $.post("OtherProfile",  { username: "<%= request.getSession().getAttribute("otherusername") %>"}, function(responseJson) {
-	        	$("#following").empty();
-	        	var par = JSON.parse(responseJson.followingUsernames);
-	        	opts= '';
-	        	$.each(par, function(index, item) {
-	        		opts +="<div class='container post thumbnail' style='padding-right: -110px'>" + item + "</div>";
-	        }); 
-	        	$("#following").empty().append(opts)
-	    	});
-	   });
-	  });
-  function validateNewPost() {
-      console.log("here");
-      var requeststr = "NewPost?";
-      requeststr += "img="
-              + document.getElementById("img").value;
-      requeststr += "&description="
-              + document.getElementById("description").value;
-      requeststr += "&tag1="
-          + document.getElementById("tag1").value;
-      requeststr += "&tag2="
-          + document.getElementById("tag2").value;
-      requeststr += "&tag3="
-          + document.getElementById("tag3").value;
-      requeststr += "&tag4="
-          + document.getElementById("tag4").value;
-      requeststr += "&tag5="
-          + document.getElementById("tag5").value;
-      console.log(requeststr);
-      var xhttp = new XMLHttpRequest();
-      xhttp.open("POST", requeststr, false);
-      xhttp.send();
-      console.log(xhttp.responseText);
-
+	    $.post("OtherProfile",  { username: "<%=request.getSession().getAttribute("otherusername")%>"},function(responseJson) {
+			$("#following").empty();
+			var par = JSON.parse(responseJson.followingUsernames);
+			opts = '';
+			var par1 = JSON.parse(responseJson.followingPics);
+			/*$.each(par, function(index,item) {
+			opts += "<div class='container post thumbnail' style='padding-right: -110px'>"+ item + "</div>";
+		});
+		$("#following").empty().append(opts)*/
+			$.each(par, function(index, item) {
+        		//opts += "<button onclick='otherProfile("+item+")'>" + item + "<button>";
+        		//var str1 = String(item);
+        		console.log("usernameinfollowing: " + this);
+        		
+    			$.each(par1, function(index1, type){ 	
+        			//console.log("index1: " + index1 + " item1: " + item1);
+      if(index == index1){
+        				//console.log("index1: " + index1 + " item1: " + item1);
+        	opts += "<li class=\"list-group-item\">";
+        opts += "<img id='userprofpic' src='"+ type +"'>";
+       }
+  });	
+      		opts += "<a type='button' onclick='otherProfile(\""+ item + "\")'>" + item + "</a></li>";	
+        		$("#following").append(opts);
+        });    
+			});
+		});
+	});
+	function validateNewPost() {
+		console.log("here");
+		var requeststr = "NewPost?";
+		requeststr += "img=" + document.getElementById("img").value;
+		requeststr += "&description="
+				+ document.getElementById("description").value;
+		requeststr += "&tag1=" + document.getElementById("tag1").value;
+		requeststr += "&tag2=" + document.getElementById("tag2").value;
+		requeststr += "&tag3=" + document.getElementById("tag3").value;
+		requeststr += "&tag4=" + document.getElementById("tag4").value;
+		requeststr += "&tag5=" + document.getElementById("tag5").value;
+		console.log(requeststr);
+		var xhttp = new XMLHttpRequest();
+		xhttp.open("POST", requeststr, false);
+		xhttp.send();
+		console.log(xhttp.responseText);
       if(document.getElementById("img").value.trim().length == 0 || document.getElementById("description").value.trim().length == 0 ||
       		(document.getElementById("tag1").value.trim().length == 0||document.getElementById("tag2").value.trim().length == 0||
       				document.getElementById("tag3").value.trim().length == 0||document.getElementById("tag4").value.trim().length == 0||
@@ -349,36 +388,40 @@
       }
   }
   
-  function otherProfile(str){ // make a XMLRequest to send the username of the otheruser
+  function userProfile(str){ // make a XMLRequest to send the username of the otheruser
 	  //var str = item;
 	  console.log("str: " +str);
-	  var validInput = false;
+	  var requeststr = "ValidateUsername?";
+      requeststr += "otherusername="
+              + str;
+      var validInput = false;
 	  var userVal = "<%=(String) session.getAttribute("currentusername")%>"
 	  if(str == userVal)
 		  {
-		  	console.log("77777777777777777777777777777777777777777777777THIS IS WORKING");
 		  	validInput = true;
 		  	window.location = "UserProfile.jsp?username="+"<%=(String) session.getAttribute("currentusername")%>";
 		  }
 	  if(validInput == false){
+      console.log(requeststr);
+      var xhttp = new XMLHttpRequest();
+      xhttp.open("POST", requeststr, true);
+      xhttp.send();
+      console.log(xhttp.responseText);
+	  //HttpSession session  = request.getSession();
+	  //session.setAttribute("otherusername",str);
 	  window.location = "OtherProfile.jsp?otherusername="+str;
-	
-	  console.log("other profile buton: " + str);
-      var requeststr = "OtherProfile?";
-      //var str = getUser();     
-      //console.log("otherProfile: " + document.getElementById("otherusername").value);
-      requeststr += "otherusername="
+  	  console.log("other profile buton: " + str);
+      /*var requeststr = "OtherProfile?";
+      requeststr += "otherusername1="
               + str;
      
       console.log(requeststr);
       var xhttp = new XMLHttpRequest();
       xhttp.open("POST", requeststr, true);
       xhttp.send();
-      //window.location = "OtherProfile.jsp"
-      console.log(xhttp.responseText);}
+      console.log(xhttp.responseText);*/
+	  }
   }
-
-  
 </script>
 
 <style>
@@ -391,26 +434,73 @@
 <body>
 
 	<div class="container">
-		<span class="nav"> <img src="none"></img> <text>DogSpotting</text>
-			<input type="text" id="search" placeholder="Search..">
-			<button type="button" class="btn btn-default" data-toggle="modal"
-				data-target="#myModal">+</button>
-			<a type="button" class="btn btn-default" onclick="location.href='TopRanked.jsp'">Top</a>
-			<a type="button" class="btn btn-default" onclick="location.href='UserProfile.jsp'">My Profile</a>
-			<button type="button" class="btn btn-default" onclick="logout()">Log
-				Out</button>
-		</span> <br> <span class="tab" id="userInfo"> <img src="none"></img>
-			<text><%=(String)session.getAttribute("otherusername") %></text>
-			<button type="button" class="btn btn-default" class="tablinks" id="postsButton">Posts</button>
-			<button type="button" class="btn btn-default" class="tablinks" id="likedButton">Liked</button>
-			<button type="button" class="btn btn-default" class="tablinks" data-toggle="modal"
-				data-target="#followersModal" id="followersButton">Followers</button>
-			<button type="button" class="btn btn-default" class="tablinks" data-toggle="modal"
-				data-target="#followingModal" id="followingButton">Following</button>
-			<button type="button" class="btn btn-default" class="tablinks" data-toggle="modal"
-				id="followButton">Follow</button>
-		</span>
+		<nav class="navbar navbar-inverse navbar-fixed-top">
+			<div class="container-fluid">
+				<div class="navbar-header">
+					<a class="navbar-brand" href="TopRanked.jsp">DogSpotting</a>
+				</div>
+				<form method="GET" class="navbar-form navbar-left"
+					action="Search.jsp">
+					<div class="input-group">
+						<input type="text" id="search" class="form-control"
+							placeholder="Search" name="search">
+						<div class="input-group-btn">
+							<button class="btn btn-default" type="submit">
+								<i class="glyphicon glyphicon-search"></i>
+							</button>
+						</div>
+					</div>
+				</form>
+				<ul class="nav navbar-nav">
+					<li><a type="button" data-toggle="modal"
+						data-target="#myModal">+</a></li>
+					<li><a href="TopRanked.jsp" type="button">Top</a></li>
+					<li><a type="button" onclick="location.href='UserProfile.jsp'"><%=(String) session.getAttribute("currentusername")%></a></li>
+					<li><a type="button" onclick="logout()">Log Out</a></li>
+										<li>
+							<div class="dropdown show">
+								<a type="button" class="dropdown-toggle" href="#"
+									role="button" id="dropdownMenuLink" data-toggle="dropdown"
+									aria-haspopup="true" aria-expanded="false"> Notifications </a>
+
+								<div id="notifyNum" style="width: 250px; padding: 10px;" class="dropdown-menu large" aria-labelledby="dropdownMenuLink">
+								</div>
+							</div>
+					</li>
+				</ul>
+				<div id="notifyNum"></div>
+			</div>
+			<div id="userprofilestuff" class="btn-group btn-group-justified"
+				role="group" aria-label="...">
+				<div class="btn-group" role="group">
+					<button type="button" class="btn btn-default" id="nothing"><%=(String) session.getAttribute("otherusername")%></button>
+				</div>
+				<div class="btn-group" role="group">
+					<button type="button" class="btn btn-default" id="postButton">Posts</button>
+				</div>
+				<div class="btn-group" role="group">
+					<button type="button" class="btn btn-default" id="likedButton">Liked</button>
+				</div>
+				<div class="btn-group" role="group">
+					<button type="button" class="btn btn-default" data-toggle="modal"
+						data-target="#followersModal" id="followersButton">Followers</button>
+				</div>
+				<div class="btn-group" role="group">
+					<button type="button" class="btn btn-default" data-toggle="modal"
+						data-target="#followingModal" id="followingButton">Following</button>
+				</div>
+				<div class="btn-group" role="group">
+					<button type="button" class="btn btn-default">Follow</button>
+				</div>
+			</div>
+		</nav>
 	</div>
+	<br>
+	<br>
+
+
+
+
 	<!-- Trigger the modal with a button -->
 
 	<!-- Modal -->
@@ -456,8 +546,8 @@
 					<button type="button" class="close" data-dismiss="modal">&times;</button>
 					Followers
 				</div>
-				<div class="modal-body" >
-				<div class="list-group" id="followers"></div>
+				<div class="modal-body">
+					<ul class="list-group" id="followers"></ul>
 				</div>
 				<div class="modal-footer">
 					<button type="button" id="close" class="btn btn-default"
@@ -477,13 +567,9 @@
 					Following
 				</div>
 				<div class="modal-body">
-					<div class="list-group">
-						<button type="button"
-							class="list-group-item list-group-item-action" id="following"
-							onclick="otherProfile()">
-							<img>
-						</button>
-					</div>
+					<ul class="list-group" id="following">
+						
+					</ul>
 				</div>
 				<div class="modal-footer">
 					<button type="button" id="close" class="btn btn-default"
@@ -493,44 +579,6 @@
 		</div>
 	</div>
 
-	<!-- Modal Settings -->
-	<div class="modal fade" id="settingsModal" role="dialog">
-		<div class="modal-dialog">
-			<!-- Modal content-->
-			<div class="modal-content">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal">&times;</button>
-					<h4 class="modal-title">Settings</h4>
-				</div>
-				<div id="changeform">
-					<div class="modal-body">
-						Image:<input type="text" id="changeimage" name="changeimage"></>
-						<button type="button" class="btn btn-default"
-							onclick="validateImage()">Save</button>
-						<br> <span id="image_err"
-							style="color: darkred; font-weight: bold"></span> <br>Change
-						Username:<input type="text" id="changeusername"
-							name="changeusername"></>
-						<button type="button" class="btn btn-default"
-							onclick="validateUsername()">Save</button>
-						<br> <span id="username_err"
-							style="color: darkred; font-weight: bold"></span> <br>Change
-						Password:<input type="password" id="changepassword"
-							name="changepassword"></> <br> Repeat Password:<input
-							type="password" id="retypepassword" name="retypepassword"></>
-						<button type="button" class="btn btn-default"
-							onclick="validatePassword()">Save</button>
-						<br> <span id="password_err"
-							style="color: darkred; font-weight: bold"></span>
-					</div>
-					<div class="modal-footer">
-						<button type="button" id="closelogin" class="btn btn-default"
-							data-dismiss="modal">Close</button>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
 	<div class="container" style="padding-top: 70px">
 		<div id="posts"></div>
 	</div>

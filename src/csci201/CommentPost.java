@@ -110,13 +110,13 @@ public class CommentPost extends HttpServlet {
 			rs2.close();
 			if(isOnPost) {
 				// push notification to the post user
-				NotificationSocket.addUserNotification(postUsername, username + " commented on your post!");
+				NotificationSocket.addUserNotification(postUsername, username, username + " commented on your post!");
 			}else { // push notification to the comment user
 				ps = conn.prepareStatement("SELECT u.username FROM Comment c, User u WHERE c.userID = u.userID AND CommentID = ?");
 				ps.setInt(1, commentID);
 				rs = ps.executeQuery();
 				while(rs.next()) {
-					NotificationSocket.addUserNotification(rs.getString("username"), " commented on your comment!");
+					NotificationSocket.addUserNotification(rs.getString("username"), username, " commented on your comment!");
 				}
 				ps.close();
 				rs.close();

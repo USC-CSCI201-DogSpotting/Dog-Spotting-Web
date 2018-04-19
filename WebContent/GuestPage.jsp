@@ -7,11 +7,8 @@
 <link rel="stylesheet"
 	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
   <link rel="stylesheet" href="guestfile.css" />
-<script
-	src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-  <script defer src="https://use.fontawesome.com/releases/v5.0.10/js/all.js" integrity="sha384-slN8GvtUJGnv6ca26v8EzVaR9DC58QEwsIk9q1QXdCU8Yu8ck/tL/5szYlBbqmS+" crossorigin="anonymous"></script>  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<script
-	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <script>
 window.onload = function(){
 	var loggedin = <%=request.getSession().getAttribute("loggedin")%>;
@@ -239,11 +236,11 @@ window.onload = function(){
 				  // Add each post through the response Json string
 				  $.each( responseJson, function(index, post) {
 					  curCount++;
-<<<<<<< HEAD
-					  $("#posts").append("<div id='post' class='container post thumbnail'><span><img id=\"userprofpic\" src=\"" + post.userPicURL + "\"><text id=\"userusername\" href=\"#\">" + post.username + "</text></span><a href=\"#\"><img src=\"" +post.imageURL+"\"></a></div><br><br><br>")
-=======
-					  $("#posts").append("<div id='post' class='container post thumbnail'><span><img id=\"userprofpic\" src=\"" + post.user.userPicURL + "\"><a id=\"userusername\" href=\"#\">" + post.user.username + "</a></span><a href=\"#\"><img src=\"" +post.imageURL+"\"></a></div><br><br><br>")
->>>>>>> origin/deployment5
+
+					 // $("#posts").append("<div id='post' class='container post thumbnail'><span><img id=\"userprofpic\" src=\"" + post.userPicURL + "\"><text id=\"userusername\" href=\"#\">" + post.username + "</text></span><a href=\"#\"><img src=\"" +post.imageURL+"\"></a></div><br><br><br>")
+
+					  $("#posts").append("<div id='post' class='container post thumbnail'><span><img id=\"userprofpic\" src=\"" + post.user.userPicURL + "\"><text id=\"userusername\">" + post.user.username + "</text></span><a href=\"#\"><img src=\"" +post.imageURL+"\"></a></div><br><br><br>")
+
 					});  
 				  // No more posts
 					if (curCount <= numOfPost - postEachPage) {

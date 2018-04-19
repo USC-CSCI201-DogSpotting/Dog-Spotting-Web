@@ -23,26 +23,28 @@
   	  		socket.onopen = function(event){
   	  			socket.send(socketUsername);
   	  		}
-  			socket.onmessage = function(event){
   				socket.onmessage = function(event){
   		          console.log(event.data);
   		          if (event.data != 0) {
   		            $.post("GetNotifications", { username: socketUsername }, function(responseJson) {
   		              $.each(responseJson, function(index, notification) {
-  		                document.getElementById("notify").innerHTML += notification.message + "<br>";
+  		            	  var html = "";
+  		            	  html+="<div id='notificationdiv'><img id='userprof' style='height: 15px; width: 15px; border-radius: 10px;' src=\"" + notification.user.userPicURL + "\">  " + notification.user.username +" : ";
+  		            	  html+= notification.message + "</div><br>";
+  		                document.getElementById("notifyNum").innerHTML += html;
   		              });
   		            });
   		          }
   		          //document.getElementById("notifyNum").innerHTML += event.data + "<br />";
   		        }
-  				}
+  				
   		}
   	}
   	function logout(){
   		var xhttp = new XMLHttpRequest();
   		xhttp.open("GET", "Logout?", false); //synchronous
   		xhttp.send();
-  		window.location.replace("GuestPage.jsp");
+  		window.location.replace("GuestPage.jsp");	
   	}
     function validate() {
         console.log("here");
@@ -79,34 +81,45 @@
 </head>
 <body>
 
-<div class="container">
-  	 <nav class="navbar navbar-inverse navbar-fixed-top">
-    <div class="container-fluid">
-      <div class="navbar-header">
-        <a class="navbar-brand" href="TopRanked.jsp">DogSpotting</a>
-      </div>
-      <form method="GET" class="navbar-form navbar-left" action="Search.jsp">
-        <div class="input-group">
-          <input type="text" id="search" class="form-control"
-            placeholder="Search" name="search">
-          <div class="input-group-btn">
-            <button class="btn btn-default" type="submit">
-              <i class="glyphicon glyphicon-search"></i>
-            </button>
-          </div>
-        </div>
-      </form>
-      <ul class="nav navbar-nav">
-      <li><a type="button" data-toggle="modal" data-target="#myModal">+</a></li>
-      <li><a href="TopRanked.jsp" type="button">Top</a></li>
-      <li><a type="button" onclick="location.href='UserProfile.jsp'"><%=(String)session.getAttribute("currentusername")%></a></li>
-      <li><a type="button" onclick="logout()">Log Out</a></li>
-      </ul>
-      <div id="notifyNum"> </div>
-    </div>
-  </nav>
+	<div class="container">
+		<nav class="navbar navbar-inverse navbar-fixed-top">
+			<div class="container-fluid">
+				<div class="navbar-header">
+					<a class="navbar-brand" href="TopRanked.jsp">DogSpotting</a>
+				</div>
+				<form method="GET" class="navbar-form navbar-left"
+					action="Search.jsp">
+					<div class="input-group">
+						<input type="text" id="search" class="form-control"
+							placeholder="Search" name="search">
+						<div class="input-group-btn">
+							<button class="btn btn-default" type="submit">
+								<i class="glyphicon glyphicon-search"></i>
+							</button>
+						</div>
+					</div>
+				</form>
+				<ul class="nav navbar-nav">
+					<li><a type="button" data-toggle="modal"
+						data-target="#myModal">+</a></li>
+					<li><a href="TopRanked.jsp" type="button">Top</a></li>
+					<li><a type="button" onclick="location.href='UserProfile.jsp'"><%=(String) session.getAttribute("currentusername")%></a></li>
+					<li><a type="button" onclick="logout()">Log Out</a></li>
+					<li>
+							<div class="dropdown show">
+								<a type="button" class="dropdown-toggle" href="#"
+									role="button" id="dropdownMenuLink" data-toggle="dropdown"
+									aria-haspopup="true" aria-expanded="false"> Notifications </a>
+
+								<div id="notifyNum" style="width: 250px; padding: 10px;" class="dropdown-menu large" aria-labelledby="dropdownMenuLink">
+								</div>
+							</div>
+					</li>
+				</ul>
+			</div>
+		</nav>
 	</div>
-  <!-- Trigger the modal with a button -->
+	<!-- Trigger the modal with a button -->
 
   <!-- Modal -->
   <div class="modal fade" id="myModal" role="dialog">
@@ -154,14 +167,13 @@
 var numOfPost = 0;
 var postEachPage = 20;
 var curCount = 0;
-/*<<<<<<< HEAD
-=======
 var follow = Array();
 var like = Array();
 var numLike = Array();
 $(document).ready(function() {
   $("#readMore").click();
 });
+
 $("#readMore").on("click", function() {
     numOfPost += postEachPage;
     curCount = 0;
@@ -173,59 +185,78 @@ $("#readMore").on("click", function() {
         like[index] = post.isLike;
         numLike[index] = post.numOfLikes;
         var html = "";
-//<<<<<<< HEAD
         html += "<div id='post' class='container thumbnail'>";
-        html += "<span>" + "<img id='userprofpic' src='"+ post.userPicURL +"'><text id='userusername'>"+ post.username +"</text>";
+        html += "<span>" + "<img id='userprofpic' src='"+ post.user.userPicURL +"'>";
+        html += "<a type='button' onclick='userProfile(\""+ post.user.username+ "\")'>" + post.user.username + "</a>";
         html += "</span>"
         html += "<a href='PostPage?postID=" + post.postID + "'><img src='" + post.imageURL + "'></a>";
         html += "<div id='like' class=\"btn-group btn-group-justified\" role=\"group\" aria-label=\"...\">";
-        html += "<div class=\"btn-group\" role=\"group\"><button class='btn btn-default' id='l" + post.postID + "'>" + (post.isLike ? "Unlike" : "Like") + " " + (post.numOfLikes) + "</button></div>";
-        if (!(post.username === "<%= request.getSession().getAttribute("currentusername") %>")) {
-            html += "<div class=\"btn-group\" role=\"group\"><button class='btn btn-default float-right' id='f" + post.postID + "'>" + (post.isFollow ? "Unfollow" : "Follow") + "</button></div>";
-/*=======
-        html += "<div class='container'>";
-        html += "<div class='follow-btn'><p>" + post.user.username + "</p>";
+        html += "<div class=\"btn-group\" role=\"group\"><button class='btn btn-default' id='l" + post.postID + "'>" + (post.isLike ?  "<i class=\"fas fa-heart\"></i>" : "<i class=\"far fa-heart\"></i>") + " " + (post.numOfLikes) + "</button></div>";
         if (!(post.user.username === "<%= request.getSession().getAttribute("currentusername") %>")) {
-            html += "<button class='btn btn-primary' id='f" + post.postID + "'>" + (post.isFollow ? "Unfollow" : "Follow") + "</button>";
->>>>>>> origin/deployment5*/
+            html += "<div class=\"btn-group\" role=\"group\"><button class='btn btn-default float-right' id='f" + post.postID + "'>" + (post.isFollow ? "Unfollow" : "Follow") + "</button></div>";
         }
-        html += "</div>"
-        html += "<div class='container thumbnail'><a href='PostPage?postID=" + post.postID + "'><img src='" + post.imageURL + "'></a></div>";
-        html += "<span id='l" + post.postID + "'>" + (post.isLike ? "<i class=\"fas fa-heart\"></i>" : "<i class=\"far fa-heart\"></i>") + (post.numOfLikes) + "</span>";
+        html += "</div>";
         html += "</div>";
         $("#posts").append(html);
         var curID = "#f" + post.postID;
         $(document).on("click", curID, function() {
-            $.post("Follow", {username: post.user.username, isFollow: follow[index]});
+            $.post("Follow", {username: post.username, isFollow: follow[index]});
             if (follow[index]) {
               follow[index] = false;
               this.innerText = "Follow";
+          	  
             } else {
                follow[index] = true;
                this.innerText = "Unfollow";
+         	  
             }
         });
         curID = "#l" + post.postID;
         $(document).on("click", curID, function() {
             $.post("Like", {postID: post.postID, isLike: like[index]});
             if (like[index]) {
-            	  like[index] = false;
-            	  numLike[index]--;
-            	  this.innerHTML = "<i class=\"far fa-heart\"></i>" + numLike[index];
+              like[index] = false;
+              this.innerText = "Like";
+              this.innerHTML = "<i class=\"fas fa-heart\"></i>" + numLike[index];
+              numLike[index]--;
             } else {
-            	  like[index] = true;
-            	  numLike[index]++;
-            	  this.innerHTML = "<i class=\"fas fa-heart\"></i>" + numLike[index];
+               like[index] = true;
+               this.innerText = "Unlike";
+               this.innerHTML = "<i class=\"far fa-heart\"></i>" + numLike[index];
+               numLike[index]++;
             }
         });
       });
       if (curCount <= numOfPost - postEachPage) {
         $("#readMoreButton").html("No more posts");
       }
-    });
-  });
 });
-
+});
+  
+function userProfile(str){
+	  console.log("str:" + str);
+	  var requeststr = "ValidateUsername?";
+  requeststr += "otherusername="
+          + str;
+  var validInput = false;
+	  var userVal = "<%=(String) session.getAttribute("currentusername")%>"
+	  if(str == userVal)
+		  {
+		  	validInput = true;
+		  	window.location = "UserProfile.jsp?username="+"<%=(String) session.getAttribute("currentusername")%>";
+		  }
+	  if(validInput == false){
+ // add if statement to check if this is you're own profile
+  console.log(requeststr);
+  var xhttp = new XMLHttpRequest();
+  xhttp.open("POST", requeststr, true);
+  xhttp.send();
+  console.log(xhttp.responseText);
+	  //HttpSession session  = request.getSession();
+	  //session.setAttribute("otherusername",str);
+	  window.location = "OtherProfile.jsp?otherusername="+str;
+	  console.log("other profile buton: " + str);}
+}  
 </script>
 </body>
 </html>

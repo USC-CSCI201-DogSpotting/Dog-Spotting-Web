@@ -90,8 +90,8 @@ public class Like extends HttpServlet {
 							"UPDATE Post " +
 							"SET dailylike = dailylike + 1, " +
 							"monthlylike = monthlylike + 1, " +
-							"yearlylike = yearlylike + 1 " +
-							"lifelike = lifelike + 1" + 
+							"yearlylike = yearlylike + 1, " +
+							"lifelike = lifelike + 1 " + 
 							"WHERE postID = ?");
 					ps.setInt(1, postID);
 					ps.executeUpdate();
@@ -105,7 +105,9 @@ public class Like extends HttpServlet {
 				while(rs.next()) {
 					postUsername = rs.getString("username");
 				}
-				NotificationSocket.addUserNotification(postUsername, username + " liked your post!");
+				if(!postUsername.equals(username)) {
+					NotificationSocket.addUserNotification(postUsername, username, username + " liked your post!");
+				}
 			}else { 
 				// invalidate like
 				ps.close();

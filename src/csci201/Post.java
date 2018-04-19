@@ -29,6 +29,9 @@ public class Post {
 	public String getImageURL() {
 		return imageURL;
 	}
+	public int getNumOfLikes() {
+		return numOfLikes;
+	}
 	public String getUsername() {
 		return user.getUsername();
 	}
@@ -40,6 +43,24 @@ public class Post {
 	}
 	public List<String> getTags() {
 		return tags;
+	}
+	public String getTagsToString() {
+		
+		String s = "[";
+		
+		for(int i = 0; i<tags.size(); i++) {
+			if(!tags.get(i).equals("") && tags.get(i)!=null) {
+			s+="\"";
+			s+= tags.get(i);
+			s+="\"";
+			
+			if(i!=tags.size()-1) {
+				s+=", ";
+			}
+			}
+		}
+		s+="]";
+		return s;
 	}
 	public List<Comment> getComments() {
 		return comments;
