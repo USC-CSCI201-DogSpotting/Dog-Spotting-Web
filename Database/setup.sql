@@ -105,7 +105,6 @@ INSERT INTO Comment (userID, refcommentID, content)
 INSERT INTO Comment (userID, refcommentID, content)
 	VALUES  (1, 5, '1111'),
             (1, 4, '121');
-<<<<<<< HEAD
 
 
 CREATE TABLE DailyRank (
@@ -134,5 +133,4 @@ INSERT INTO MonthlyRank (postID)
 
 INSERT INTO YearlyRank (postID)
 	VALUES  (1);
-=======
->>>>>>> origin/deployment5
+
