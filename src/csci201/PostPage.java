@@ -34,8 +34,8 @@ public class PostPage extends HttpServlet {
 		/* database starts */
 		// variables
 		// for user
-		boolean isLoggedin = false;
-		String username = "a";
+		boolean isLoggedin = (boolean)request.getSession().getAttribute("loggedin");
+		String username = (String)request.getSession().getAttribute("currentusername");
 		// for post
 		int postID = Integer.parseInt(request.getParameter("postID"));
 		Post post = null;

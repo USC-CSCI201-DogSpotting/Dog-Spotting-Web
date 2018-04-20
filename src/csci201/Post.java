@@ -38,6 +38,9 @@ public class Post {
 	public String getDescription() {
 		return description;
 	}
+	public int getNumOfLikes() {
+		return numOfLikes;
+	}
 	public List<String> getTags() {
 		return tags;
 	}

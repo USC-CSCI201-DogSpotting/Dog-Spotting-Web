@@ -70,6 +70,14 @@ public class Like extends HttpServlet {
 					ps.setLong(1, likesID);
 					ps.executeUpdate();
 					ps.close();
+					// increase the lifelike
+					ps = conn.prepareStatement(
+							"UPDATE Post " +
+							"SET lifelike = lifelike + 1 " + 
+							"WHERE postID = ?");
+					ps.setInt(1, postID);
+					ps.executeUpdate();
+					ps.close();
 				}else { // insert new like
 					ps.close();
 					ps = conn.prepareStatement("INSERT INTO Likes (userID, postID, valid) VALUES (?, ?, 1)");

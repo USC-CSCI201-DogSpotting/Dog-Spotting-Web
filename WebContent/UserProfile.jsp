@@ -5,6 +5,7 @@
 <title>Home Feed User</title>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script defer src="https://use.fontawesome.com/releases/v5.0.10/js/all.js" integrity="sha384-slN8GvtUJGnv6ca26v8EzVaR9DC58QEwsIk9q1QXdCU8Yu8ck/tL/5szYlBbqmS+" crossorigin="anonymous"></script>  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <link rel="stylesheet"
 	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
   <link rel="stylesheet" href="guestfile.css" />
@@ -21,6 +22,9 @@ function setUser(str){
 function getUser(){
 	return curruser;
 }
+var follow = Array();
+var like = Array();
+var numLike = Array();
 //var newu = changeUser(str);
 
   function ImageExists(url){
@@ -146,18 +150,37 @@ function getUser(){
 			  // should there be a limit to the amount of users shown?
 			console.log("postButton working");
 		    $.get("Profile",  { username: "<%= request.getParameter("username") %>"}, function(responseJson) {
-		        	$("#posts").empty();
-		        	var par = JSON.parse(responseJson.ownPosts);
-		        //var par = $.parseJSON(responseJson.ownPosts);
-		        	opts= '';
-		        	console.log("postButton parsing");
-		        console.log("pastPosts: "  + par.description);
-		        	$.each(par, function(index, item) {
-		        		console.log("postButton creating tag");
-		        		console.log("descrip: " +item.description + "postID:" + item.postID + "postImageurl:" + item.imageURL);
-		        		opts += "<h4 class='modal-title'>Past Posts</h4><div class='container post thumbnail'> "+item.description+"<a href='PostPage?postID=" + item.postID + "'><img src='" + item.imageURL + "'></a></div>";
-		                //$("#followers").append("<div class='container post thumbnail' style='padding-right: -110px'>" + item + "</div>");
-		        }); 
+		    	$("#posts").empty();
+	              var par = JSON.parse(responseJson.ownPosts);
+	            //var par = $.parseJSON(responseJson.ownPosts);
+	              opts= '';
+	              console.log("postButton parsing");
+	            console.log("pastPosts: "  + par.description);
+	            opts += "<h4 class='modal-title'>Past Posts</h4>";
+	              $.each(par, function(index, item) {
+	                like[index] = item.isLike;
+	                numLike[index] = item.numOfLikes;
+	                console.log("postButton creating tag");
+	                console.log("descrip: " +item.description + "postID:" + item.postID + "postImageurl:" + item.imageURL);
+	                opts += "<div class='container post thumbnail'>";
+	                opts += "<a href='PostPage?postID=" + item.postID + "'><img src='" + item.imageURL + "'></a>";
+	                opts += "<div>" + item.description + "</div>";
+	                opts += "<span id='l" + item.postID + "'>" + (like[index] ? "<i class=\"fas fa-heart\"></i>" : "<i class=\"far fa-heart\"></i>") + (numLike[index]) + "</span>";
+	                opts += "</div>";
+
+	                var curID = "#l" + item.postID;
+	                $(document).on("click", curID, function() {
+	                $.post("Like", {postID: item.postID, isLike: like[index]});
+	                if (like[index]) {
+	                    like[index] = false;
+	                    numLike[index]--;
+	                    this.innerHTML = "<i class=\"far fa-heart\"></i>" + numLike[index];
+	                } else {
+	                    like[index] = true;
+	                    numLike[index]++;
+	                    this.innerHTML = "<i class=\"fas fa-heart\"></i>" + numLike[index];
+	                }
+	                });
 		       
 		        	postsView(true, opts);
 		        	console.log("postButton done appending");
@@ -165,6 +188,7 @@ function getUser(){
 		    	});
 		   });
 		  });
+	 });
 		//var validChoice; 
 	 $(window).on('load', function() {
 			 var validChoice = true;
@@ -177,12 +201,31 @@ function getUser(){
 		        	opts= '';
 		        	console.log("postButton parsing");
 		        console.log("pastPosts: "  + par.description);
+		        opts += "<h4 class='modal-title'>Past Posts</h4>";
 		        	$.each(par, function(index, item) {
+		        		like[index] = item.isLike;
+		        		numLike[index] = item.numOfLikes;
 		        		console.log("postButton creating tag");
 		        		console.log("descrip: " +item.description + "postID:" + item.postID + "postImageurl:" + item.imageURL);
-		        		opts += "<h4 class='modal-title'>Past Posts</h4><div class='container post thumbnail'> "+item.description+"<a href='PostPage?postID=" + item.postID + "'><img src='" + item.imageURL + "'></a></div>";
-		                //$("#followers").append("<div class='container post thumbnail' style='padding-right: -110px'>" + item + "</div>");
-		       
+		        		opts += "<div class='container post thumbnail'>";
+		        		opts += "<a href='PostPage?postID=" + item.postID + "'><img src='" + item.imageURL + "'></a>";
+		        		opts += "<div>" + item.description + "</div>";
+		        		opts += "<span id='l" + item.postID + "'>" + (like[index] ? "<i class=\"fas fa-heart\"></i>" : "<i class=\"far fa-heart\"></i>") + (numLike[index]) + "</span>";
+		        		opts += "</div>";
+
+		        		var curID = "#l" + item.postID;
+		        		$(document).on("click", curID, function() {
+		        		$.post("Like", {postID: item.postID, isLike: like[index]});
+		        		if (like[index]) {
+		        			  like[index] = false;
+		        			  numLike[index]--;
+		        			  this.innerHTML = "<i class=\"far fa-heart\"></i>" + numLike[index];
+		        		} else {
+		        			  like[index] = true;
+		        			  numLike[index]++;
+		        			  this.innerHTML = "<i class=\"fas fa-heart\"></i>" + numLike[index];
+		        		}
+        })
 		        	postsView(true, opts);
 		        	console.log("postButton done appending");
 		        // display one image
@@ -200,19 +243,55 @@ function getUser(){
 	        	opts= '';
 	        	console.log("likedButton parsing");
 	        console.log("likedPosts: "  + par.description);
+	        opts += "<h4 class='modal-title'>Liked Posts</h4>";
 	        	$.each(par, function(index, item) {
-	        		console.log("likedButton creating tag");
-	        		console.log("descrip: " +item.description + "postID:" + item.postID + "postImageurl:" + item.imageURL);
-	        		opts += "<h4 class='modal-title'>Liked Posts</h4><div class='container post thumbnail'> "+item.description+"<a href='PostPage?postID=" + item.postID + "'><img src='" + item.imageURL + "'></a></div>";
-	                //$("#followers").append("<div class='container post thumbnail' style='padding-right: -110px'>" + item + "</div>");
-	        }); 
-	        //	$("#liked").empty().append(opts)
+		        		follow[index] = item.isFollow;
+	        		  like[index] = item.isLike;
+	                numLike[index] = item.numOfLikes;
+	                console.log("postButton creating tag");
+	                console.log("descrip: " +item.description + "postID:" + item.postID + "postImageurl:" + item.imageURL);
+	                opts += "<div class='container post thumbnail'>";
+	                opts += item.user.username;
+	                if (!(item.user.username === "<%= request.getSession().getAttribute("currentusername") %>")) {
+	                    opts += "<button class='btn btn-primary' id='f" + item.postID + "'>" + (post.isFollow ? "Unfollow" : "Follow") + "</button>";
+	                }
+	                opts += "<a href='PostPage?postID=" + item.postID + "'><img src='" + item.imageURL + "'></a>";
+	                opts += "<div>" + item.description + "</div>";
+	                opts += "<span id='l" + item.postID + "'>" + (like[index] ? "<i class=\"fas fa-heart\"></i>" : "<i class=\"far fa-heart\"></i>") + (numLike[index]) + "</span>";
+	                opts += "</div>";
+	                
+	                
+	                var curID = "#f" + item.postID;
+	                $(document).on("click", curID, function() {
+	                    $.post("Follow", {username: item.user.username, isFollow: follow[index]});
+	                    if (follow[index]) {
+	                      follow[index] = false;
+	                      this.innerText = "Follow";
+	                    } else {
+	                       follow[index] = true;
+	                       this.innerText = "Unfollow";
+	                    }
+	                });
+	                curID = "#l" + item.postID;
+	                $(document).on("click", curID, function() {
+		                $.post("Like", {postID: item.postID, isLike: like[index]});
+		                if (like[index]) {
+		                    like[index] = false;
+		                    numLike[index]--;
+		                    this.innerHTML = "<i class=\"far fa-heart\"></i>" + numLike[index];
+		                } else {
+		                    like[index] = true;
+		                    numLike[index]++;
+		                    this.innerHTML = "<i class=\"fas fa-heart\"></i>" + numLike[index];
+		                }	       
+	                }); 
 	         postsView(false, opts);
 	        	console.log("likedButton done appending");
 	        	 // display one image
-	    	});
+	        	});
+		    	});
+		});
 	});
-});
 	 
 	function postsView(validChoice){
 		if(validChoice == true){

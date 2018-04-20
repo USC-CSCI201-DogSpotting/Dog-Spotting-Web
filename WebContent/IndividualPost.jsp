@@ -10,6 +10,7 @@
 <link rel="stylesheet"
 	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 <link rel="stylesheet" href="guestfile.css" />
+  <script defer src="https://use.fontawesome.com/releases/v5.0.10/js/all.js" integrity="sha384-slN8GvtUJGnv6ca26v8EzVaR9DC58QEwsIk9q1QXdCU8Yu8ck/tL/5szYlBbqmS+" crossorigin="anonymous"></script>  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script
 	src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script
@@ -32,8 +33,15 @@
 	  	  			socket.send(socketUsername);
 	  	  		}
 	  			socket.onmessage = function(event){
-	  				document.getElementById("notifyNum").innerHTML += event.data + "<br />";
-	  			}
+	  				console.log(event.data);
+	  	            if (event.data != 0) {
+	  	              $.post("GetNotifications", { username: socketUsername }, function(responseJson) {
+	  	                $.each(responseJson, function(index, notification) {
+	  	                  document.getElementById("notify").innerHTML += notification.message + "<br>";
+	  	                });
+	  	              });
+	  	            }
+	  	        }
 	  		}
 	  	}
 	  	function logout(){
@@ -124,6 +132,7 @@
 		  Post post = (Post)request.getAttribute("post");
 	    Stack<Comment> recursive = new Stack<Comment>();
 	    Stack<Integer> indent = new Stack<Integer>();
+	    Stack<String> replyTo = new Stack<String>();
 		%>
 
 
@@ -152,6 +161,7 @@
 				<li><a type="button"><%=request.getSession().getAttribute("currentusername")%></a></li>
 				<li><a type="button" onclick="logout()">Log Out</a></li>
 			</ul>
+      <div id="notify"></div>
 		</div>
 		</nav>
 	</div>
@@ -246,7 +256,11 @@
 	<div class=container>
 		<div id="post" class='container post thumbnail'>
 			<p><%= post.getUsername() %></p>
+			<% if ((boolean)request.getSession().getAttribute("loggedin") != false && !post.getUsername().equals(request.getSession().getAttribute("currentusername"))) { %>
+			 <button class="btn btn-default" id="follow"><%= post.isFollow() ? "Unfollow" : "Follow" %></button>
+			<% } %>
 			<br> <img src="<%= post.getImageURL() %>">
+			<span id="like"><%= post.isLike() ? "<i class=\"fas fa-heart\"></i>" : "<i class=\"far fa-heart\"></i>" %><%= post.getNumOfLikes() %></span>
 			<p><%= post.getDescription() %></p>
 			<form method="POST" action="CommentPost">
 			   <!-- use stack to do recursion -->
@@ -254,17 +268,20 @@
 					<% for (int i = 0; i < post.getComments().size(); i++) { 
 						 recursive.push(post.getComments().get(i));
 						 indent.push(0);
+						 replyTo.push("");
 					} %>
 					<% while (!recursive.empty()) { %>
 					<% Comment curComment = recursive.pop(); %>
 					<% int curInd = indent.pop(); %>
+					<% String reply = replyTo.pop(); %>
 					<% for (int i = 0; i < curComment.getComments().size(); i++) { 
              recursive.push(curComment.getComments().get(i));
              indent.push(curInd + 1);
+             replyTo.push("@ " + curComment.getUsername());
           } %>
           <!-- Show each Comments -->
 					<p> <% for (int i = 0; i < curInd; i++) { %> &nbsp <% } %>  <!-- add indent -->
-					<%= curComment.getUsername() %>: <%= curComment.getContent() %>
+					<%= curComment.getUsername() %> <%= reply %>: <%= curComment.getContent() %>
 					<input name="reply" type="radio" id="c<%= curComment.getCommentID() %>" value="<%= curComment.getCommentID() %>" style="display: none">
 					<label for="c<%= curComment.getCommentID() %>">reply to</label></p>
           <% } %>
@@ -275,6 +292,32 @@
 		</form>
 		</div>
 	</div>
-
+<script>
+var follow = <%= post.isFollow() %>
+var like = <%= post.isLike() %>
+var numLike = <%= post.getNumOfLikes() %>
+$("#follow").on("click", function() {
+    $.post("Follow", {username: "<%= post.getUsername() %>", isFollow: follow});
+    if (follow) {
+      follow = false;
+      this.innerText = "Follow";
+    } else {
+       follow = true;
+       this.innerText = "Unfollow";
+    }
+});
+$("#like").on("click", function() {
+    $.post("Like", {postID: <%= post.getPostID() %>, isLike: like});
+    if (like) {
+        like = false;
+        numLike--;
+        this.innerHTML = "<i class=\"far fa-heart\"></i>" + numLike;
+      } else {
+         like = true;
+         numLike++;
+         this.innerHTML = "<i class=\"fas fa-heart\"></i>" + numLike;
+      }
+});
+</script>
 </body>
 </html>

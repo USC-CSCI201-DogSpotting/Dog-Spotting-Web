@@ -23,9 +23,16 @@
   	  		socket.onopen = function(event){
   	  			socket.send(socketUsername);
   	  		}
-  			socket.onmessage = function(event){
-  				document.getElementById("notifyNum").innerHTML += event.data + "<br />";
-  			}
+  	  	  socket.onmessage = function(event){
+  	  	    console.log(event.data);
+  	  	    if (event.data != 0) {
+  	  	      $.post("GetNotifications", { username: socketUsername }, function(responseJson) {
+  	  	        $.each(responseJson, function(index, notification) {
+  	  	          document.getElementById("notify").innerHTML += notification.message + "<br>";
+  	  	        });
+  	    	    });
+  	  	    }
+  	  	  }
   		}
   	}
   	function logout(){
@@ -92,7 +99,7 @@
       <li><a type="button" onclick="location.href='UserProfile.jsp'"><%=(String)session.getAttribute("currentusername")%></a></li>
       <li><a type="button" onclick="logout()">Log Out</a></li>
       </ul>
-      <div id="notifyNum"> </div>
+      <div id="notify"> </div>
     </div>
   </nav>
 	</div>
@@ -159,6 +166,7 @@ $("#readMore").on("click", function() {
         curCount++;
         follow[index] = post.isFollow;
         like[index] = post.isLike;
+        numLike[index] = post.numOfLikes;
         var html = "";
         html += "<div class='container'>";
         html += "<div class='follow-btn'><p>" + post.user.username + "</p>";
@@ -167,7 +175,7 @@ $("#readMore").on("click", function() {
         }
         html += "</div>"
         html += "<div class='container thumbnail'><a href='PostPage?postID=" + post.postID + "'><img src='" + post.imageURL + "'></a></div>";
-        html += "<span id='l" + post.postID + "'>" + (post.isLike ? "<i class=\"fas fa-heart\"></i>" : "<i class=\"far fa-heart\"></i>") + (post.numOfLikes) + "</span>";
+        html += "<span id='l" + post.postID + "'>" + (post.isLike ? "<i class=\"fas fa-heart\"></i>" : "<i class=\"far fa-heart\"></i>") + (numLike[index]) + "</span>";
         html += "</div>";
         $("#posts").append(html);
         var curID = "#f" + post.postID;
